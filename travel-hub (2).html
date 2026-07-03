@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{
+  --bg:#f0f2f7;--white:#fff;--navy:#0c1f40;--navy2:#1a3360;
+  --blue:#1a56db;--blue-t:#e8effe;
+  --green:#006b41;--green-t:#e4f5ee;
+  --amber:#9a4d00;--amber-t:#fef3e2;
+  --red:#b51d15;--red-t:#fdecea;
+  --text:#111827;--text2:#4b5668;--text3:#9ca3af;
+  --border:#d1d9e8;--border-l:#e8edf5;
+  --sh:0 1px 4px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --topnav-h:52px; --subtab-h:46px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:100vh;}
+
+/* ── TOP NAV ── */
+.topnav{background:var(--navy);height:var(--topnav-h);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:300;gap:0;}
+.nav-brand{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-right:28px;white-space:nowrap;}
+.nav-brand span{color:rgba(255,255,255,.35);font-weight:400;}
+.nav-sections{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.nav-sections::-webkit-scrollbar{display:none;}
+.sec-btn{padding:6px 14px;border-radius:5px;border:none;background:none;color:rgba(255,255,255,.55);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.sec-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sec-btn.active{background:rgba(255,255,255,.15);color:#fff;}
+.nav-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.35);white-space:nowrap;flex-shrink:0;}
+
+/* ── SUBTAB BAR ── */
+.subtab-bar{background:var(--white);border-bottom:1px solid var(--border);height:var(--subtab-h);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--topnav-h);z-index:200;}
+.subtab-bar::-webkit-scrollbar{display:none;}
+.stab{padding:0 20px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .12s;flex-shrink:0;}
+.stab:hover{background:#fafbfd;}
+.stab.active{border-bottom-color:var(--navy);}
+.stab-name{font-size:12px;font-weight:600;color:var(--text2);}
+.stab.active .stab-name{color:var(--navy);}
+.stab-sub{font-size:9.5px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:1px;}
+
+/* ── CONTENT ── */
+.content{max-width:960px;margin:0 auto;padding:22px 16px 80px;}
+.sec{display:none;}.sec.active{display:block;}
+.sub-panel{display:none;}.sub-panel.active{display:block;}
+
+/* ── SHARED PANELS ── */
+.panel{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:var(--sh);margin-bottom:14px;}
+.panel-head{background:var(--navy);color:#fff;padding:11px 20px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.ph-name{font-size:13px;font-weight:600;}
+.ph-fee{font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.5;}
+.ph-tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;background:rgba(255,255,255,.12);padding:2px 8px;border-radius:3px;opacity:.85;}
+.grp-head{background:#f5f7fb;padding:5px 20px;font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border-l);border-top:1px solid var(--border-l);}
+.og-item{display:flex;gap:10px;padding:7px 20px;border-bottom:1px solid var(--border-l);}
+.og-item:last-child{border-bottom:none;}
+.og-bullet{color:var(--text3);font-size:11px;margin-top:2px;flex-shrink:0;}
+.og-text{font-size:12.5px;line-height:1.4;}
+.og-note{font-size:10.5px;color:var(--text3);display:block;margin-top:1px;}
+
+/* ── BENEFITS TRACKER ── */
+.summary-bar{background:var(--navy2);color:#fff;padding:0 28px;height:38px;display:flex;align-items:center;gap:0;margin-bottom:20px;border-radius:6px;}
+.sb-item{display:flex;align-items:baseline;gap:6px;padding:0 20px 0 0;margin-right:20px;border-right:1px solid rgba(255,255,255,.15);}
+.sb-item:last-child{border-right:none;}
+.sb-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
+.sb-label{font-size:10px;opacity:.55;text-transform:uppercase;letter-spacing:.07em;}
+.sb-bar-wrap{flex:1;display:flex;align-items:center;gap:8px;padding-left:20px;}
+.sb-track{height:4px;width:120px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
+.sb-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:15px 18px 13px;box-shadow:var(--sh);}
+.kpi-v{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;line-height:1;margin-bottom:5px;letter-spacing:-.02em;}
+.kpi-l{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);}
+.kpi-s{font-size:10px;color:var(--text3);margin-top:2px;}
+.kpi-bar{height:3px;border-radius:2px;margin-top:10px;background:var(--border-l);}
+.kpi-bar-fill{height:100%;border-radius:2px;}
+.sh{display:flex;align-items:center;gap:12px;margin:22px 0 10px;}
+.sh:first-child{margin-top:0;}
+.sh-label{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);white-space:nowrap;}
+.sh-line{flex:1;height:1px;background:var(--border);}
+.sh-sup{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text3);}
+.dq{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:var(--sh);}
+.dq-head{background:var(--navy);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+.dq-title{color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.dq-ct{color:rgba(255,255,255,.4);font-family:'IBM Plex Mono',monospace;font-size:10px;}
+.dq-tier{border-bottom:1px solid var(--border);}
+.dq-tier:last-child{border-bottom:none;}
+.dq-tier-lbl{padding:5px 20px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--border-l);}
+.tier-imm .dq-tier-lbl{background:var(--red-t);color:var(--red);}
+.tier-mo .dq-tier-lbl{background:var(--amber-t);color:var(--amber);}
+.tier-yr .dq-tier-lbl{background:var(--blue-t);color:var(--blue);}
+.tier-done .dq-tier-lbl{background:#f5f7fb;color:var(--text3);}
+.dq-item{display:flex;align-items:center;gap:12px;padding:9px 20px;border-bottom:1px solid var(--border-l);}
+.dq-item:last-child{border-bottom:none;}
+.dq-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.c-red{background:var(--red);}.c-amber{background:var(--amber);}.c-blue{background:var(--blue);}.c-green{background:var(--green);}.c-gray{background:var(--text3);}
+.dq-text{flex:1;font-size:12px;font-weight:500;line-height:1.3;}
+.dq-note{font-size:10.5px;color:var(--text2);display:block;margin-top:1px;font-weight:400;}
+.dq-val{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.dq-val.red{color:var(--red);}.dq-val.amber{color:var(--amber);}.dq-val.blue{color:var(--blue);}.dq-val.green{color:var(--green);}.dq-val.gray{color:var(--text3);}
+.anniv-row{background:#f8f9fc;padding:8px 20px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.anniv-row label{font-size:11px;color:var(--text2);}
+.anniv-row input[type=date]{font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);background:var(--white);}
+.bt-cols{display:grid;grid-template-columns:1fr 68px 100px 125px 88px;align-items:center;}
+.bt-header{background:#f5f7fb;padding:5px 10px 5px 20px;border-bottom:1px solid var(--border);border-top:1px solid var(--border-l);}
+.bt-header .bt-cell{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.bt-row{border-bottom:1px solid var(--border-l);min-height:44px;}
+.bt-row:hover{background:#fafbfd;}
+.bt-row:last-child{border-bottom:none;}
+.bt-cell{padding:8px 10px 8px 20px;}
+.bt-cell:not(:first-child){padding-left:10px;}
+.bt-name{font-size:12.5px;font-weight:500;line-height:1.3;}
+.bt-sub{font-size:10.5px;color:var(--text3);margin-top:2px;line-height:1.35;}
+.bt-amt{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--navy);}
+.bt-reset{font-size:11px;color:var(--text2);}
+.st{display:flex;align-items:center;gap:5px;}
+.st-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.st-txt{font-size:11px;font-weight:500;}
+.st-avail .st-dot{background:var(--green);}.st-avail .st-txt{color:var(--green);}
+.st-used .st-dot{background:var(--text3);}.st-used .st-txt{color:var(--text3);}
+.st-warn .st-dot{background:var(--amber);}.st-warn .st-txt{color:var(--amber);}
+.st-info .st-dot{background:var(--blue);}.st-info .st-txt{color:var(--blue);}
+.act-btn{font-size:10.5px;padding:3px 9px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;transition:all .12s;white-space:nowrap;}
+.act-btn:hover{border-color:var(--blue);color:var(--blue);}
+.mt-section{padding:11px 20px 13px;border-bottom:1px solid var(--border-l);}
+.mt-section:last-child{border-bottom:none;}
+.mt-row{display:flex;align-items:flex-start;gap:16px;}
+.mt-info{flex:1;min-width:0;}
+.mt-name{font-size:12.5px;font-weight:500;}
+.mt-sub{font-size:10.5px;color:var(--text3);margin-top:1px;}
+.mt-dots{display:flex;gap:3px;margin-top:7px;flex-wrap:wrap;}
+.m-cell{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.m-cell.future{opacity:.35;cursor:default;pointer-events:none;}
+.m-box{width:20px;height:20px;border-radius:3px;border:1px solid var(--border);background:var(--white);transition:all .1s;display:flex;align-items:center;justify-content:center;}
+.m-cell.used .m-box{background:var(--green);border-color:var(--green);}
+.m-cell.current .m-box{border-color:var(--navy);border-width:2px;}
+.m-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text3);}
+.m-cell.used .m-lbl{color:var(--green);}
+.m-chk{display:none;color:white;font-size:9px;font-weight:700;line-height:1;}
+.m-cell.used .m-chk{display:block;}
+.mt-stat{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:5px;}
+.mt-right{text-align:right;flex-shrink:0;}
+.mt-val{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--navy);}
+.mt-rlabel{font-size:9.5px;color:var(--text3);margin-bottom:2px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.prog-section{padding:13px 20px 15px;border-bottom:1px solid var(--border-l);}
+.prog-hrow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;}
+.prog-label{font-size:12.5px;font-weight:500;}
+.prog-pct{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text2);}
+.prog-track{height:6px;background:var(--border-l);border-radius:3px;border:1px solid var(--border);overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--navy2),var(--blue));border-radius:3px;transition:width .4s;}
+.prog-irow{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap;}
+.prog-irow input{font-family:'IBM Plex Mono',monospace;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;width:116px;color:var(--text);}
+.prog-irow span{font-size:11.5px;color:var(--text2);}
+.prog-note{font-size:11.5px;margin-top:5px;font-weight:500;}
+.chk-item{display:flex;gap:12px;align-items:flex-start;padding:9px 20px;border-bottom:1px solid var(--border-l);}
+.chk-item:last-child{border-bottom:none;}
+.chk-box{width:15px;height:15px;border-radius:3px;flex-shrink:0;margin-top:2px;border:1.5px solid var(--border);cursor:pointer;background:var(--white);display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.chk-box.done{background:var(--green);border-color:var(--green);}
+.chk-box svg{display:none;}.chk-box.done svg{display:block;}
+.chk-info{flex:1;}.chk-title{font-size:12.5px;font-weight:500;}
+.chk-sub{font-size:10.5px;color:var(--text2);margin-top:2px;}.chk-sub.urgent{color:var(--amber);font-weight:500;}
+.chk-right{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text3);white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.roi-head{display:grid;grid-template-columns:1.4fr 90px 110px 110px 80px;background:#f5f7fb;padding:6px 10px 6px 20px;border-bottom:1px solid var(--border);}
+.roi-row{display:grid;grid-template-columns:1.4fr 90px 110px 110px 80px;border-bottom:1px solid var(--border-l);min-height:40px;align-items:center;}
+.roi-row:last-child{border-bottom:none;}
+.roi-row:hover{background:#fafbfd;}
+.roi-cell{padding:8px 10px 8px 20px;font-size:12.5px;}
+.roi-cell:not(:first-child){padding-left:10px;font-family:'IBM Plex Mono',monospace;}
+.roi-head .roi-cell{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:0 10px 0 0;}
+.roi-head .roi-cell:first-child{padding-left:0;}
+.pos{color:var(--green);font-weight:600;}
+
+/* ── GAMIFICATION ── */
+.pp-rank-bar{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:11px 18px;margin-bottom:12px;box-shadow:var(--sh);display:flex;align-items:center;gap:16px;}
+.rank-badge{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.rank-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.rank-info{display:flex;flex-direction:column;}
+.rank-name{font-size:13px;font-weight:700;letter-spacing:.03em;}
+.rank-sub{font-size:10px;color:var(--text3);margin-top:1px;font-family:'IBM Plex Mono',monospace;}
+.rank-progress{flex:1;display:flex;flex-direction:column;gap:5px;}
+.rank-prg-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;}
+.rank-prg-track{height:6px;background:var(--border-l);border-radius:3px;border:1px solid var(--border);overflow:hidden;}
+.rank-prg-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.pp-section-panel{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh);}
+.pp-section-head{background:#f5f7fb;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.pp-section-head span:first-child{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);}
+.pp-section-head span:last-child{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.achv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0;}
+.achv-card{padding:12px 14px;border-right:1px solid var(--border-l);border-bottom:1px solid var(--border-l);}
+.achv-card.unlocked{background:linear-gradient(135deg,#f0faf5,#fff);}
+.achv-card.locked{opacity:.4;filter:grayscale(.5);}
+.achv-icon{font-size:20px;margin-bottom:5px;line-height:1;}
+.achv-name{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.2;}
+.achv-desc{font-size:9.5px;color:var(--text3);line-height:1.4;}
+.achv-card.unlocked .achv-name{color:var(--green);}
+.achv-stamp{font-size:8.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-top:4px;font-family:'IBM Plex Mono',monospace;}
+.chal-row{padding:11px 18px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:14px;}
+.chal-row:last-child{border-bottom:none;}
+.chal-info{flex:1;min-width:0;}
+.chal-name{font-size:12.5px;font-weight:500;}
+.chal-desc{font-size:10.5px;color:var(--text3);margin-top:1px;}
+.chal-prg{width:160px;flex-shrink:0;}
+.chal-prg-row{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:4px;}
+.chal-prg-track{height:5px;background:var(--border-l);border-radius:3px;border:1px solid var(--border);overflow:hidden;}
+.chal-prg-fill{height:100%;border-radius:3px;transition:width .4s;}
+.chal-done{font-size:11px;font-weight:600;color:var(--green);font-family:'IBM Plex Mono',monospace;}
+@keyframes pop-in{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.achv-card.just-unlocked{animation:pop-in .4s ease forwards;}
+
+/* ── PASSPORT MAP & GRID ── */
+.pp-stats-bar{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:13px 20px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;box-shadow:var(--sh);}
+.pp-stat{display:flex;align-items:baseline;gap:6px;}
+.pp-stat-v{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--navy);}
+.pp-stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;}
+.pp-stat-div{width:1px;background:var(--border);align-self:stretch;margin:0 14px;}
+.pp-bar-wrap{flex:1;display:flex;align-items:center;gap:10px;min-width:80px;}
+.pp-bar-track{flex:1;height:5px;background:var(--border-l);border-radius:3px;overflow:hidden;border:1px solid var(--border);}
+.pp-bar-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s;}
+.pp-filters{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:11px 14px;margin-bottom:12px;box-shadow:var(--sh);}
+.pp-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.pp-pill{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border);background:var(--white);color:var(--text2);cursor:pointer;transition:all .12s;white-space:nowrap;}
+.pp-pill:hover{border-color:var(--navy);color:var(--navy);}
+.pp-pill.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.pp-frow{display:flex;gap:7px;flex-wrap:wrap;}
+.pp-frow select,.pp-frow input{font-family:'Inter',sans-serif;font-size:11.5px;border:1px solid var(--border);border-radius:4px;padding:5px 9px;color:var(--text);background:var(--white);}
+.pp-frow input{flex:1;min-width:150px;}
+#pp-map{height:380px;border-radius:6px;border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh);}
+.pp-list-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.pp-list-hdr span{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;}
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:9px;}
+.prop-card{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:11px 13px;box-shadow:var(--sh);transition:border-color .12s;position:relative;}
+.prop-card:hover{border-color:var(--navy2);}
+.prop-card.visited{border-left:3px solid var(--green);}
+.prop-card.wishlisted{border-left:3px solid #e55;}
+.prop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.prop-badge{font-size:8.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:2px 6px;border-radius:3px;}
+.prop-stamp{font-size:14px;line-height:1;}
+.prop-name{font-size:12px;font-weight:600;line-height:1.3;color:var(--text);margin-bottom:3px;}
+.prop-loc{font-size:10.5px;color:var(--text3);margin-bottom:8px;}
+.prop-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+.prop-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);border:1px solid var(--border-l);padding:1px 5px;border-radius:3px;flex-shrink:0;}
+.prop-actions{display:flex;gap:4px;}
+.prop-btn{font-size:10px;padding:3px 7px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text2);font-family:'Inter',sans-serif;font-weight:500;transition:all .12s;white-space:nowrap;}
+.prop-btn:hover{border-color:var(--green);color:var(--green);}
+.prop-btn.done{background:var(--green);border-color:var(--green);color:#fff;}
+.prop-btn.done:hover{background:var(--red);border-color:var(--red);}
+.prop-btn.wl{border-color:#e55;color:#e55;}
+.prop-btn.wl:hover{background:#e55;color:#fff;}
+.prop-btn.wl-add:hover{border-color:#e55;color:#e55;}
+.pp-empty{padding:28px;text-align:center;color:var(--text3);font-style:italic;font-size:12px;}
+
+/* ── DASHBOARD ── */
+.dash-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:8px;padding:22px 24px;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+.dash-hero-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;}
+.dash-hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;}
+.dash-hero-sub{font-size:12px;opacity:.5;margin-top:2px;}
+.dash-hero-date{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.4;}
+.dash-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.dash-kpi{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:14px 16px;cursor:pointer;transition:background .15s;}
+.dash-kpi:hover{background:rgba(255,255,255,.1);}
+.dk-section{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
+.dk-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;line-height:1;margin-bottom:4px;}
+.dk-sub{font-size:11px;opacity:.6;}
+.dk-bar{height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:8px;overflow:hidden;}
+.dk-bar-fill{height:100%;background:#6ee7b7;border-radius:2px;transition:width .4s;}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.dash-col{display:flex;flex-direction:column;gap:14px;}
+.dash-card{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:var(--sh);}
+.dash-card-head{padding:10px 16px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;justify-content:space-between;}
+.dch-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);}
+.dch-link{font-size:10.5px;color:var(--blue);cursor:pointer;font-weight:500;}
+.dch-link:hover{text-decoration:underline;}
+.dash-action-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border-l);}
+.dash-action-row:last-child{border-bottom:none;}
+.dash-action-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dash-action-text{font-size:12px;font-weight:500;flex:1;}
+.dash-action-val{font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;}
+.dash-trip-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-l);}
+.dash-trip-row:last-child{border-bottom:none;}
+.dash-trip-dest{font-size:12.5px;font-weight:600;flex:1;}
+.dash-trip-sub{font-size:10.5px;color:var(--text3);margin-top:2px;}
+.dash-trip-tag{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0;margin-top:2px;}
+.tag-planning{background:var(--blue-t);color:var(--blue);}
+.tag-booked{background:var(--green-t);color:var(--green);}
+.tag-completed{background:#f5f7fb;color:var(--text3);}
+.dash-achv-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border-l);}
+.dash-achv-row:last-child{border-bottom:none;}
+.dash-achv-icon{font-size:18px;flex-shrink:0;}
+.dash-achv-info{flex:1;}
+.dash-achv-name{font-size:12px;font-weight:600;}
+.dash-achv-desc{font-size:10.5px;color:var(--text3);margin-top:1px;}
+.dash-empty{padding:20px 16px;font-size:12px;color:var(--text3);font-style:italic;}
+.dash-achv-prg{width:80px;flex-shrink:0;}
+.dash-achv-bar{height:4px;background:var(--border-l);border-radius:2px;overflow:hidden;margin-top:4px;}
+.dash-achv-bar-fill{height:100%;background:var(--amber);border-radius:2px;}
+
+/* ── TRAVEL PLANNING ── */
+.travel-summary-bar{background:var(--navy2);color:#fff;padding:0 20px;height:38px;display:flex;align-items:center;gap:0;border-radius:6px;margin-bottom:18px;}
+.trip-panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 20px;background:var(--navy);border-radius:6px 6px 0 0;}
+.tph-left{display:flex;align-items:baseline;gap:12px;}
+.tph-title{font-size:13px;font-weight:600;color:#fff;}
+.tph-ct{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.5);}
+.new-trip-btn{font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:4px;border:none;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;transition:background .12s;}
+.new-trip-btn:hover{background:rgba(255,255,255,.25);}
+.trip-form-wrap{background:#f8f9fc;border-bottom:1px solid var(--border);padding:16px 20px;}
+.trip-form-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.tf-grid.three{grid-template-columns:1fr 1fr 1fr;}
+.tf-field{display:flex;flex-direction:column;gap:4px;}
+.tf-field label{font-size:10.5px;font-weight:500;color:var(--text2);}
+.tf-field input,.tf-field select,.tf-field textarea{font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--text);background:var(--white);}
+.tf-field textarea{resize:vertical;min-height:52px;}
+.tf-actions{display:flex;gap:8px;margin-top:10px;}
+.tf-save{font-size:11.5px;font-weight:600;padding:6px 16px;border-radius:4px;border:none;background:var(--navy);color:#fff;cursor:pointer;}
+.tf-save:hover{background:var(--navy2);}
+.tf-cancel{font-size:11.5px;padding:6px 12px;border-radius:4px;border:1px solid var(--border);background:var(--white);color:var(--text2);cursor:pointer;}
+.trips-section-head{padding:8px 20px;font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);background:#f5f7fb;border-bottom:1px solid var(--border-l);border-top:1px solid var(--border-l);}
+.trip-row{display:flex;align-items:flex-start;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border-l);}
+.trip-row:last-child{border-bottom:none;}
+.trip-row:hover{background:#fafbfd;}
+.trip-left{flex:1;min-width:0;}
+.trip-dest{font-size:14px;font-weight:600;margin-bottom:3px;}
+.trip-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px;}
+.trip-dates{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text2);}
+.trip-hotel{font-size:11.5px;color:var(--text3);}
+.trip-flight{font-size:11px;color:var(--text3);}
+.trip-notes{font-size:11px;color:var(--text3);margin-top:3px;font-style:italic;}
+.trip-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.trip-status{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px;}
+.s-planning{background:var(--blue-t);color:var(--blue);}
+.s-booked{background:var(--green-t);color:var(--green);}
+.s-completed{background:#f5f7fb;color:var(--text3);}
+.trip-countdown{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text2);}
+.trip-btns{display:flex;gap:5px;}
+.trip-edit-btn,.trip-del-btn{font-size:10px;padding:2px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--white);font-family:'Inter',sans-serif;font-weight:500;}
+.trip-edit-btn{color:var(--text2);}
+.trip-edit-btn:hover{border-color:var(--blue);color:var(--blue);}
+.trip-del-btn{color:var(--text3);}
+.trip-del-btn:hover{border-color:var(--red);color:var(--red);}
+.trip-empty-state{padding:40px 20px;text-align:center;color:var(--text3);}
+.trip-empty-icon{font-size:32px;margin-bottom:10px;}
+.trip-empty-text{font-size:13px;font-weight:500;margin-bottom:4px;}
+.trip-empty-sub{font-size:11.5px;}
+.calc-layout{display:grid;grid-template-columns:280px 1fr;gap:14px;align-items:start;}
+.calc-inputs{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:var(--sh);}
+.calc-field{padding:12px 16px;border-bottom:1px solid var(--border-l);}
+.calc-field:last-child{border-bottom:none;}
+.calc-field label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.calc-prop-search{width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--text);}
+.calc-prop-list{max-height:140px;overflow-y:auto;border:1px solid var(--border);border-radius:4px;margin-top:5px;display:none;}
+.calc-prop-list.open{display:block;}
+.calc-prop-opt{padding:6px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border-l);}
+.calc-prop-opt:last-child{border-bottom:none;}
+.calc-prop-opt:hover{background:#f5f7fb;}
+.calc-prop-opt span{font-size:10px;color:var(--text3);margin-left:6px;font-family:'IBM Plex Mono',monospace;}
+.calc-cat-input{width:60px;font-family:'IBM Plex Mono',monospace;font-size:14px;border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-weight:600;}
+.calc-cat-row{display:flex;align-items:center;gap:8px;}
+.calc-cat-name{font-size:11px;color:var(--text3);}
+.nights-ctrl{display:flex;align-items:center;gap:8px;}
+.nc-btn{width:28px;height:28px;border-radius:4px;border:1px solid var(--border);background:var(--white);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);}
+.nc-btn:hover{border-color:var(--navy);color:var(--navy);}
+.nc-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;width:32px;text-align:center;}
+.rate-toggles{display:flex;gap:4px;}
+.rate-btn{flex:1;padding:5px 8px;border-radius:4px;border:1px solid var(--border);background:var(--white);font-size:11px;font-weight:500;cursor:pointer;color:var(--text2);text-align:center;}
+.rate-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.calc-results{background:var(--white);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:var(--sh);}
+.calc-res-head{background:var(--navy);color:#fff;padding:11px 18px;}
+.calc-res-title{font-size:13px;font-weight:600;}
+.calc-res-prop{font-size:10.5px;opacity:.55;margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.calc-res-main{padding:18px;}
+.calc-pts-big{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:600;color:var(--navy);line-height:1;}
+.calc-pts-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.calc-divider{height:1px;background:var(--border-l);margin:14px 0;}
+.calc-row{display:flex;align-items:baseline;justify-content:space-between;padding:4px 0;}
+.calc-row-label{font-size:12px;color:var(--text2);}
+.calc-row-val{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;color:var(--text);}
+.calc-row-val.green{color:var(--green);}
+.calc-row-val.amber{color:var(--amber);}
+.calc-note{background:#f5f7fb;border-radius:4px;padding:8px 12px;font-size:11px;color:var(--text2);margin-top:12px;line-height:1.5;}
+.calc-note.good{background:var(--green-t);color:var(--green);}
+.wl-filter-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.wl-toggle{display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.wl-toggle-btn{padding:5px 12px;font-size:11.5px;font-weight:500;cursor:pointer;background:var(--white);color:var(--text2);border:none;border-right:1px solid var(--border);}
+.wl-toggle-btn:last-child{border-right:none;}
+.wl-toggle-btn.active{background:var(--navy);color:#fff;}
+
+/* ── UTILITIES ── */
+.flash{position:fixed;bottom:18px;right:20px;background:var(--navy);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:7px 13px;border-radius:4px;opacity:0;transform:translateY(4px);transition:all .18s;pointer-events:none;z-index:999;}
+.flash.show{opacity:1;transform:translateY(0);}
+footer{text-align:center;color:var(--text3);font-size:9.5px;margin-top:20px;font-family:'IBM Plex Mono',monospace;line-height:1.8;}
+@media(max-width:680px){
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .dash-kpi-row{grid-template-columns:1fr;}
+  .dash-grid{grid-template-columns:1fr;}
+  .calc-layout{grid-template-columns:1fr;}
+  .bt-cols{grid-template-columns:1fr 60px 80px;}
+  .bt-cols .bt-cell:nth-child(n+4){display:none;}
+  .pp-stat-div{display:none;}
+  .topnav{padding:0 12px;}
+  .nav-brand{margin-right:12px;}
+  .nav-sections{gap:0;}
+  .sec-btn{padding:4px 8px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-brand">Travel<span>HQ</span></div>
+  <div class="nav-sections">
+    <button class="sec-btn active" data-section="dashboard">Dashboard</button>
+    <button class="sec-btn" data-section="cards">Credit Cards</button>
+    <button class="sec-btn" data-section="passport">Hotel Passport</button>
+    <button class="sec-btn" data-section="travel">Travel Planning</button>
+  </div>
+  <div class="nav-date" id="nav-date"></div>
+</nav>
+
+<!-- SUBTAB BAR -->
+<div class="subtab-bar" id="subtab-bar" style="display:none"></div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <section class="sec active" id="sec-dashboard">
+    <div id="dash-content"></div>
+  </section>
+
+  <!-- CREDIT CARDS -->
+  <section class="sec" id="sec-cards">
+    <div class="summary-bar" id="cards-summary"></div>
+    <div class="sub-panel" id="panel-overview"></div>
+    <div class="sub-panel" id="panel-csr"></div>
+    <div class="sub-panel" id="panel-hyatt-card"></div>
+    <div class="sub-panel" id="panel-fu"></div>
+    <div class="sub-panel" id="panel-roi"></div>
+  </section>
+
+  <!-- PASSPORT -->
+  <section class="sec" id="sec-passport">
+    <div class="pp-stats-bar">
+      <div class="pp-stat"><span class="pp-stat-v" id="pp-v">0</span><span class="pp-stat-l">&nbsp;visited</span></div>
+      <div class="pp-stat-div"></div>
+      <div class="pp-stat"><span class="pp-stat-v" id="pp-tot">0</span><span class="pp-stat-l">&nbsp;properties</span></div>
+      <div class="pp-stat-div"></div>
+      <div class="pp-stat"><span class="pp-stat-v" id="pp-reg">—</span><span class="pp-stat-l">&nbsp;regions</span></div>
+      <div class="pp-stat-div"></div>
+      <div class="pp-stat"><span class="pp-stat-v" id="pp-ctry">—</span><span class="pp-stat-l">&nbsp;countries</span></div>
+      <div class="pp-stat-div"></div>
+      <div class="pp-stat"><span class="pp-stat-v" id="pp-top" style="font-size:13px">—</span><span class="pp-stat-l">&nbsp;top brand</span></div>
+      <div class="pp-bar-wrap"><div class="pp-bar-track"><div id="pp-bar" class="pp-bar-fill" style="width:0%"></div></div>
+        <span id="pp-pct" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">0%</span></div>
+    </div>
+    <div class="pp-rank-bar" id="pp-rank-bar"></div>
+    <div class="pp-section-panel">
+      <div class="pp-section-head"><span>Achievements</span><span id="pp-achv-ct">0/16 unlocked</span></div>
+      <div id="pp-achv-grid" class="achv-grid"></div>
+    </div>
+    <div class="pp-section-panel">
+      <div class="pp-section-head"><span>Active Challenges</span><span>Progress toward collection goals</span></div>
+      <div id="pp-challenges"></div>
+    </div>
+    <div class="pp-filters">
+      <div class="pp-pills" id="pp-pills"></div>
+      <div class="pp-frow">
+        <select id="pp-brand"></select>
+        <select id="pp-status">
+          <option value="all">All Properties</option>
+          <option value="visited">Visited Only</option>
+          <option value="unvisited">Not Yet Visited</option>
+        </select>
+        <input id="pp-search" type="text" placeholder="Search by name, city or country…">
+      </div>
+    </div>
+    <div id="pp-map"></div>
+    <div class="pp-list-hdr"><span id="pp-count"></span></div>
+    <div id="pp-grid" class="pp-grid"></div>
+  </section>
+
+  <!-- TRAVEL PLANNING -->
+  <section class="sec" id="sec-travel">
+    <div class="sub-panel" id="panel-trips"></div>
+    <div class="sub-panel" id="panel-calculator"></div>
+    <div class="sub-panel" id="panel-wishlist"></div>
+  </section>
+
+</div>
+<div class="flash" id="flash">Saved</div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now=new Date(),CY=now.getFullYear(),CM=now.getMonth();
+const KEY='benefits-v4',PKEY='passport-v1',TKEY='travel-v2';
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let S={
+  resAnniv:null,hyattAnniv:null,travelCredit:null,
+  editBook1:null,editBook2:null,selectHotel:null,
+  diningH1:{},diningH2:{},stubhubH1:{},stubhubH2:{},
+  doordash:{},lyft:{},peloton:{},
+  globalEntry:null,
+  appleActivated:false,ihgActivated:false,dashpassActivated:false,marriottRegistered:false,
+  hyattFreeNight:null,hyattSpend:0,hyattSpendYear:CY,
+};
+let PS={visited:{}};
+let TS={trips:[],wishlist:{}};
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+let activeSection='dashboard',activeTab='';
+const SECTION_TABS={
+  dashboard:[],
+  cards:['overview','csr','hyatt-card','fu','roi'],
+  passport:[],
+  travel:['trips','calculator','wishlist'],
+};
+const TAB_META={
+  overview:{name:'Overview',sub:'Decision queue'},
+  csr:{name:'Sapphire Reserve',sub:'$795 / yr'},
+  'hyatt-card':{name:'World of Hyatt',sub:'$95 / yr'},
+  fu:{name:'Freedom Unlimited',sub:'$0 / yr'},
+  roi:{name:'ROI Analysis',sub:'Fee vs. value'},
+  trips:{name:'Trips',sub:'Your travel plans'},
+  calculator:{name:'Points Calculator',sub:'Hyatt award chart'},
+  wishlist:{name:'Wishlist',sub:'Dream properties'},
+};
+
+function setSection(section,tab){
+  activeSection=section;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('active',b.dataset.section===section));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('active',s.id==='sec-'+section));
+  const tabs=SECTION_TABS[section]||[];
+  const bar=document.getElementById('subtab-bar');
+  if(!tabs.length){bar.style.display='none';activeTab='';}
+  else{
+    bar.style.display='flex';
+    const t=tab||(tabs.includes(activeTab)?activeTab:tabs[0]);
+    activeTab=t;
+    bar.innerHTML=tabs.map(k=>`<div class="stab${k===t?' active':''}" data-tab="${k}">
+      <span class="stab-name">${TAB_META[k].name}</span>
+      <span class="stab-sub">${TAB_META[k].sub}</span></div>`).join('');
+    bar.querySelectorAll('.stab').forEach(st=>st.onclick=()=>setTab(st.dataset.tab));
+    showTab(t,section);
+  }
+  renderSection(section,tab);
+  if(section==='passport'){setTimeout(()=>{initPMap();renderPassport();},60);}
+}
+
+function setTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.stab').forEach(st=>st.classList.toggle('active',st.dataset.tab===tab));
+  showTab(tab,activeSection);
+}
+function showTab(tab,section){
+  document.querySelectorAll('#sec-'+section+' .sub-panel').forEach(p=>{
+    p.classList.toggle('active',p.id==='panel-'+tab);
+  });
+}
+document.querySelectorAll('.sec-btn').forEach(b=>b.onclick=()=>setSection(b.dataset.section));
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+async function hybridGet(key){
+  try{if(typeof window.storage!=='undefined'){const r=await window.storage.get(key);if(r?.value)return JSON.parse(r.value);}}catch(e){}
+  try{const l=localStorage.getItem(key);if(l)return JSON.parse(l);}catch(e){}
+  return null;
+}
+async function hybridSet(key,data){
+  const j=JSON.stringify(data);
+  try{if(typeof window.storage!=='undefined')await window.storage.set(key,j);}catch(e){}
+  try{localStorage.setItem(key,j);}catch(e){}
+}
+async function load(){const d=await hybridGet(KEY);if(d)S=Object.assign({},S,d);}
+async function loadPassport(){const d=await hybridGet(PKEY);if(d)PS=Object.assign({},PS,d);}
+async function loadTravel(){const d=await hybridGet(TKEY);if(d)TS=Object.assign({},TS,d);}
+async function save(){await hybridSet(KEY,S);flash();}
+async function savePassport(){await hybridSet(PKEY,PS);flash();}
+async function saveTravel(){await hybridSet(TKEY,TS);flash();}
+function flash(){const f=document.getElementById('flash');f.classList.add('show');setTimeout(()=>f.classList.remove('show'),1300);}
+
+// ── DATE HELPERS ──────────────────────────────────────────────────────────
+function iso(){return now.toISOString().slice(0,10);}
+function fmtD(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function fmtDY(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function daysUntil(s){return Math.ceil((new Date(s+'T23:59:59')-now)/86400000);}
+function mkKey(y,m){return`${y}-${String(m+1).padStart(2,'0')}`;}
+function mUsed(o,y,m){return!!o[mkKey(y,m)];}
+
+// ── BENEFIT STATUS HELPERS ─────────────────────────────────────────────────
+function annivSt(anniv,usedOn){
+  if(!anniv)return{cls:'st-warn',txt:'Set anniversary date'};
+  const a=new Date(anniv+'T12:00:00');
+  let cs=new Date(CY,a.getMonth(),a.getDate());
+  if(cs>now)cs.setFullYear(CY-1);
+  const ce=new Date(cs);ce.setFullYear(cs.getFullYear()+1);ce.setDate(ce.getDate()-1);
+  const used=usedOn&&new Date(usedOn+'T12:00:00')>=cs;
+  const ri=Math.ceil((ce-now)/86400000);
+  const rl=ri<=30?`⚠ Resets in ${ri}d`:`Resets ${fmtD(ce.toISOString().slice(0,10))}`;
+  return used?{cls:'st-used',txt:`Used · ${rl}`}:{cls:'st-avail',txt:`Available · ${rl}`};
+}
+function calYrSt(usedOn){
+  const used=usedOn&&usedOn.startsWith(String(CY));
+  return used?{cls:'st-used',txt:'Used · Resets Jan 1'}:{cls:'st-avail',txt:'Available · Resets Jan 1'};
+}
+function countSemi(obj,half){const[ms,me]=half===1?[0,5]:[6,11];let n=0;for(let m=ms;m<=me;m++)if(obj[mkKey(CY,m)])n++;return n;}
+function semiSt(obj,half){
+  const[ss,se]=half===1?[new Date(CY,0,1),new Date(CY,5,30)]:[new Date(CY,6,1),new Date(CY,11,31)];
+  if(now<ss)return{cls:'st-info',txt:`Opens ${fmtD(ss.toISOString().slice(0,10))}`};
+  const n=countSemi(obj,half);
+  if(now>se)return n>0?{cls:'st-used',txt:`Closed · ${n}/6 months tracked`}:{cls:'st-used',txt:'Window closed'};
+  const ri=daysUntil(se.toISOString().slice(0,10));
+  const exp=ri<=14?`⚠ ${ri}d left`:`Through Dec 31`;
+  return n===0?{cls:'st-avail',txt:`Available · ${exp}`}:{cls:'st-warn',txt:`${n}/6 months used · ${exp}`};
+}
+function fourYrSt(last){
+  if(!last)return{cls:'st-avail',txt:'Available now'};
+  const nx=new Date(last+'T12:00:00');nx.setFullYear(nx.getFullYear()+4);
+  return nx<=now?{cls:'st-avail',txt:'Available now'}:{cls:'st-used',txt:`Next ${fmtD(nx.toISOString().slice(0,10))}`};
+}
+
+// ── CARD VALUE CALCULATOR ──────────────────────────────────────────────────
+function calcVal(){
+  const editDone=(calYrSt(S.editBook1).cls==='st-used'?250:0)+(calYrSt(S.editBook2).cls==='st-used'?250:0);
+  const selectDone=CY===2026&&calYrSt(S.selectHotel).cls==='st-used'?250:0;
+  let dd=0,ly=0,pe=0;
+  for(let m=0;m<=CM;m++){if(mUsed(S.doordash,CY,m))dd+=25;if(mUsed(S.lyft,CY,m))ly+=10;if(mUsed(S.peloton,CY,m))pe+=10;}
+  const tDone=S.resAnniv&&annivSt(S.resAnniv,S.travelCredit).cls==='st-used'?300:0;
+  const d1=Math.round(countSemi(S.diningH1,1)/6*150),d2=Math.round(countSemi(S.diningH2,2)/6*150);
+  const s1=Math.round(countSemi(S.stubhubH1,1)/6*150),s2=Math.round(countSemi(S.stubhubH2,2)/6*150);
+  const hyFN=S.hyattAnniv&&annivSt(S.hyattAnniv,S.hyattFreeNight).cls==='st-used'?250:0;
+  const hy2=S.hyattSpend>=15000?250:0;
+  const sel=CY===2026?250:0;
+  const total=300+500+sel+300+300+300+120+120+288+250+250;
+  const captured=tDone+editDone+selectDone+d1+d2+s1+s2+dd+ly+pe+(S.appleActivated?288:0)+hyFN+hy2;
+  return{total,captured,remaining:total-captured,pct:Math.round(captured/total*100)};
+}
+
+// ── DECISION QUEUE ─────────────────────────────────────────────────────────
+function buildDQ(){
+  const items=[];
+  const add=(tier,dot,text,note,val,vc)=>items.push({tier,dot,text,note,val,vc});
+  const h1End=new Date(CY,5,30);
+  if(now<=h1End){
+    const ri=daysUntil(h1End.toISOString().slice(0,10));
+    if(ri<=14&&countSemi(S.diningH1,1)===0)add('imm','c-red',`Dining H1 expires in ${ri} days`,'$150 at Exclusive Tables — Jan–Jun window closing','$150 at risk','red');
+    if(ri<=14&&countSemi(S.stubhubH1,1)===0)add('imm','c-red',`StubHub H1 expires in ${ri} days`,'$150 on StubHub/Viagogo — Jan–Jun window closing','$150 at risk','red');
+  }
+  if(!S.resAnniv||!S.hyattAnniv)add('imm','c-red','Anniversary dates not set','Status and reset dates cannot calculate without them','Required','red');
+  if(!S.appleActivated)add('mo','c-amber','Activate Apple TV+ & Apple Music','One-time link in Chase app · free through Jun 22, 2027','$288/yr','amber');
+  if(!S.ihgActivated)add('mo','c-amber','Activate IHG Platinum Elite Status','Link IHG account in Chase app · valid through Dec 31, 2027','Status','amber');
+  if(!S.dashpassActivated)add('mo','c-amber','Activate DashPass to unlock DoorDash credits','Required to receive $25/month in DoorDash promos','$300/yr','amber');
+  const mOpen=new Date(CY,6,1)<=now&&now<=new Date(CY,8,30);
+  if(mOpen&&!S.marriottRegistered)add('mo','c-amber','Register for Marriott Gold Elite (window open now)','Register + 3 paid nights by Sep 30, 2026 → status through Feb 2028','Limited','amber');
+  if(!mUsed(S.doordash,CY,CM))add('mo','c-amber',`DoorDash ${MONTHS[CM]} credit available`,'$5 restaurant + 2×$10 non-restaurant. Expires end of month.','$25','amber');
+  if(!mUsed(S.lyft,CY,CM))add('mo','c-amber',`Lyft ${MONTHS[CM]} credit available`,'$10 in-app credit — add CSR as payment method in Lyft.','$10','amber');
+  if(!mUsed(S.peloton,CY,CM))add('mo','c-amber',`Peloton ${MONTHS[CM]} credit available`,'$10 on eligible Peloton memberships. Activation required.','$10','amber');
+  if(calYrSt(S.editBook1).cls!=='st-used')add('yr','c-blue','The Edit — Booking 1 available','2-night prepaid via Chase Travel. Can book for 2027 travel.','$250','blue');
+  if(calYrSt(S.editBook2).cls!=='st-used')add('yr','c-blue','The Edit — Booking 2 available','Same rules. Both expire Dec 31, 2026.','$250','blue');
+  if(CY===2026&&calYrSt(S.selectHotel).cls!=='st-used')add('yr','c-blue','2026 Select Hotel Credit (expires Dec 31)','IHG, Omni, Montage, Pendry, Virgin, Minor, Pan Pacific. 2-night min.','$250','blue');
+  const geSt=fourYrSt(S.globalEntry);
+  if(geSt.cls==='st-avail')add('yr','c-blue','Global Entry / TSA PreCheck available','Pay $120 app fee with Sapphire Reserve.','$120','blue');
+  const d2n=countSemi(S.diningH2,2),s2n=countSemi(S.stubhubH2,2);
+  if(now>=new Date(CY,6,1)){
+    if(d2n===0)add('yr','c-blue','Dining Credit H2 open (not yet tracked)','$150 at Exclusive Tables through Dec 31.','$150','blue');
+    else if(d2n<6)add('yr','c-blue',`Dining H2 partial — ${d2n}/6 months tracked`,'Continue marking months through Dec 31.','est. $'+Math.round((6-d2n)/6*150)+' left','blue');
+    if(s2n===0)add('yr','c-blue','StubHub Credit H2 open (not yet tracked)','$150 on StubHub/Viagogo through Dec 31.','$150','blue');
+    else if(s2n<6)add('yr','c-blue',`StubHub H2 partial — ${s2n}/6 months tracked`,'Continue marking months through Dec 31.','est. $'+Math.round((6-s2n)/6*150)+' left','blue');
+  }
+  if(S.hyattAnniv&&annivSt(S.hyattAnniv,S.hyattFreeNight).cls==='st-avail')add('yr','c-blue','Hyatt free night available','Category 1–4. Valid 12 months from anniversary.','~$250','blue');
+  const v=calcVal();
+  if(v.captured>0)add('done','c-gray',`$${v.captured.toLocaleString()} captured this cycle (${v.pct}%)`,'Benefits claimed or activated','','gray');
+  return items;
+}
+
+// ── RENDER HELPERS ─────────────────────────────────────────────────────────
+function stHTML(s){return`<div class="st ${s.cls}"><div class="st-dot"></div><span class="st-txt">${s.txt}</span></div>`;}
+function togBtn(st,key){
+  if(st.cls==='st-warn'||st.cls==='st-info')return'';
+  return`<button class="act-btn" data-key="${key}">${st.cls==='st-used'?'Mark unused':'Mark used'}</button>`;
+}
+function btRow(name,sub,amt,reset,st,key){
+  return`<div class="bt-cols bt-row">
+    <div class="bt-cell"><div class="bt-name">${name}</div><div class="bt-sub">${sub}</div></div>
+    <div class="bt-cell"><span class="bt-amt">${amt}</span></div>
+    <div class="bt-cell bt-reset">${reset}</div>
+    <div class="bt-cell">${stHTML(st)}</div>
+    <div class="bt-cell">${togBtn(st,key)}</div>
+  </div>`;
+}
+function wireTogBtns(el){
+  el.querySelectorAll('.act-btn[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;S[k]=S[k]?null:iso();save();renderSection('cards',activeTab);});
+}
+function buildSemiTracker(container,items){
+  items.forEach(([name,win,sub,obj,key,half])=>{
+    const[ms,me]=half===1?[0,5]:[6,11];
+    const wClosed=half===1?now>new Date(CY,5,30):now>new Date(CY,11,31);
+    const wFuture=half===2&&now<new Date(CY,6,1);
+    const n=countSemi(obj,half);const st=semiSt(obj,half);
+    const el=half===2&&now<new Date(CY,6,1)? CM-ms+1 : wClosed ? 6 : CM-ms+1;
+    const sec=document.createElement('div');sec.className='mt-section';
+    sec.innerHTML=`<div class="mt-row"><div class="mt-info">
+      <div style="display:flex;align-items:baseline;gap:8px"><div class="mt-name">${name}</div>
+        <div style="font-size:9.5px;font-family:'IBM Plex Mono',monospace;color:var(--text3)">${win}</div></div>
+      <div class="mt-sub">${sub}</div>
+      <div class="mt-dots" id="sdots-${key}"></div>
+      <div class="mt-stat">${wClosed?(n>0?`${n}/6 months tracked before window closed`:'Not used — window closed'):wFuture?'Window opens Jul 1':`${n} of ${Math.max(0,CM-ms+1)} elapsed months marked`}</div>
+    </div>
+    <div class="mt-right"><div class="mt-rlabel">Window</div><div class="mt-val">$150</div>
+      <div style="margin-top:6px">${stHTML(st)}</div></div></div>`;
+    container.appendChild(sec);
+    const dotsEl=sec.querySelector(`#sdots-${key}`);
+    for(let m=ms;m<=me;m++){
+      const cell=document.createElement('div');cell.className='m-cell';
+      const isUsed=!!obj[mkKey(CY,m)];
+      const isFut=!wClosed&&(wFuture||m>CM);
+      if(isFut)cell.classList.add('future');
+      if(isUsed)cell.classList.add('used');
+      if(m===CM&&!wClosed&&!wFuture)cell.classList.add('current');
+      cell.innerHTML=`<div class="m-box"><span class="m-chk">✓</span></div><div class="m-lbl">${MONTHS[m]}</div>`;
+      if(!wFuture)cell.onclick=()=>{const mk=mkKey(CY,m);if(S[key][mk])delete S[key][mk];else S[key][mk]=true;save();renderSection('cards',activeTab);};
+      dotsEl.appendChild(cell);
+    }
+  });
+}
+function buildMonthTracker(container,items){
+  items.forEach(([name,sub,amt,obj,key])=>{
+    const usedCount=Object.keys(obj).filter(k=>k.startsWith(String(CY))).length;
+    const sec=document.createElement('div');sec.className='mt-section';
+    sec.innerHTML=`<div class="mt-row"><div class="mt-info">
+      <div class="mt-name">${name}</div><div class="mt-sub">${sub}</div>
+      <div class="mt-dots" id="dots-${key}"></div>
+      <div class="mt-stat">${usedCount} of ${CM+1} past months marked</div>
+    </div><div class="mt-right"><div class="mt-rlabel">Per Month</div><div class="mt-val">${amt}</div></div></div>`;
+    container.appendChild(sec);
+    const dotsEl=sec.querySelector(`#dots-${key}`);
+    for(let m=0;m<12;m++){
+      const cell=document.createElement('div');cell.className='m-cell';
+      const isFut=m>CM,isUsed=mUsed(S[key],CY,m),isCur=m===CM;
+      if(isFut)cell.classList.add('future');if(isUsed)cell.classList.add('used');if(isCur)cell.classList.add('current');
+      cell.innerHTML=`<div class="m-box"><span class="m-chk">✓</span></div><div class="m-lbl">${MONTHS[m]}</div>`;
+      if(!isFut)cell.onclick=()=>{const mk=mkKey(CY,m);if(S[key][mk])delete S[key][mk];else S[key][mk]=true;save();renderSection('cards',activeTab);};
+      dotsEl.appendChild(cell);
+    }
+  });
+}
+
+// ── RENDER CREDIT CARDS ────────────────────────────────────────────────────
+function renderCards(){
+  const v=calcVal();
+  const csEl=document.getElementById('cards-summary');
+  csEl.innerHTML=`
+    <div class="sb-item"><span class="sb-val">$${v.total.toLocaleString()}</span><span class="sb-label">&nbsp;Annual Value</span></div>
+    <div class="sb-item"><span class="sb-val" style="color:#6ee7b7">$${v.captured.toLocaleString()}</span><span class="sb-label">&nbsp;Captured</span></div>
+    <div class="sb-item"><span class="sb-val" style="color:#fcd34d">$${v.remaining.toLocaleString()}</span><span class="sb-label">&nbsp;Available</span></div>
+    <div class="sb-bar-wrap"><div class="sb-track"><div class="sb-fill" style="width:${v.pct}%"></div></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.6">${v.pct}% captured</span></div>`;
+
+  // Overview
+  const ov=document.getElementById('panel-overview');
+  const items=buildDQ();const tiers={imm:[],mo:[],yr:[],done:[]};
+  items.forEach(i=>tiers[i.tier]?.push(i));
+  let dqHTML=`<div class="kpi-grid">
+    <div class="kpi"><div class="kpi-v" style="color:var(--navy)">$${v.total.toLocaleString()}</div><div class="kpi-l">Annual Value</div><div class="kpi-s">All benefits, 3 cards</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--green)">$${v.captured.toLocaleString()}</div><div class="kpi-l">Captured YTD</div><div class="kpi-s">${v.pct}% of total<div class="kpi-bar"><div class="kpi-bar-fill" style="width:${v.pct}%;background:var(--green)"></div></div></div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--amber)">$${v.remaining.toLocaleString()}</div><div class="kpi-l">Still Available</div><div class="kpi-s">Unclaimed or pending</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--navy2)">3</div><div class="kpi-l">Active Cards</div><div class="kpi-s">CSR · Hyatt · Freedom Unlim</div></div>
+  </div>
+  <div class="dq"><div class="dq-head"><span class="dq-title">Decision Queue</span><span class="dq-ct">${items.length} items · sorted by urgency</span></div>`;
+  const rt=(arr,cls,lbl)=>{if(!arr.length)return'';return`<div class="dq-tier ${cls}"><div class="dq-tier-lbl">${lbl}</div>${arr.map(i=>`<div class="dq-item"><div class="dq-dot ${i.dot}"></div><div class="dq-text">${i.text}<span class="dq-note">${i.note}</span></div><div class="dq-val ${i.vc}">${i.val}</div></div>`).join('')}</div>`;};
+  dqHTML+=rt(tiers.imm,'tier-imm','● Immediate — Action Required');
+  dqHTML+=rt(tiers.mo,'tier-mo','● This Month');
+  dqHTML+=rt(tiers.yr,'tier-yr','● Before Year-End');
+  dqHTML+=rt(tiers.done,'tier-done','✓ Captured');
+  dqHTML+='</div>';
+  ov.innerHTML=dqHTML;
+
+  // CSR
+  const csrEl=document.getElementById('panel-csr');
+  const tcSt=annivSt(S.resAnniv,S.travelCredit),e1St=calYrSt(S.editBook1),e2St=calYrSt(S.editBook2);
+  const selSt=CY===2026?calYrSt(S.selectHotel):{cls:'st-used',txt:'2026 only'};
+  const geSt=fourYrSt(S.globalEntry);
+  const colsHeader=`<div class="bt-cols bt-header"><div class="bt-cell">Benefit</div><div class="bt-cell">Value</div><div class="bt-cell">Cadence</div><div class="bt-cell">Status</div><div class="bt-cell">Action</div></div>`;
+  csrEl.innerHTML=`
+    <div class="panel"><div class="panel-head"><span class="ph-name">Chase Sapphire Reserve</span><span class="ph-fee">$795 / yr</span><span class="ph-tag">Net fee after credits: ~$0–$125</span></div>
+    <div class="anniv-row"><label>Card anniversary</label><input type="date" id="res-anniv" value="${S.resAnniv||''}"></div>
+    <div class="grp-head">Annual — Travel Credit</div>${colsHeader}
+    ${btRow('$300 Travel Credit','Auto-applies to travel purchases. No enrollment. No points on credited portion.','$300','Anniversary year',tcSt,'travelCredit')}
+    <div class="grp-head">Calendar Year — Hotel Credits</div>${colsHeader}
+    ${btRow('The Edit — Booking 1','2-night prepaid via Chase Travel. Breakfast for 2, $100 property credit, upgrade if avail. Can book for 2027 stays.','$250','Jan 1 – Dec 31',e1St,'editBook1')}
+    ${btRow('The Edit — Booking 2','Same rules. Cannot combine with Booking 1 on same stay.','$250','Jan 1 – Dec 31',e2St,'editBook2')}
+    ${btRow('2026 Select Hotel Credit ★','IHG, Montage, Pendry, Omni, Virgin, Minor, Pan Pacific — 2-night min. Stackable with Edit.','$250','2026 only',selSt,'selectHotel')}
+    <div class="grp-head">Semi-Annual — Click months you used the credit</div><div id="csr-semi"></div>
+    <div class="grp-head">Every 4 Years</div>${colsHeader}
+    ${btRow('Global Entry / TSA PreCheck','$120 on application fee — pay with CSR. GE includes TSA PreCheck.','$120','4-year cycle',geSt,'globalEntry')}
+    <div class="grp-head">Monthly — Click a month to toggle</div><div id="csr-monthly"></div>
+    <div class="grp-head">One-Time Activation — Check when complete</div><div id="csr-activations"></div>
+    <div class="grp-head">Ongoing — Always On</div><div id="csr-ongoing"></div></div>`;
+  document.getElementById('res-anniv').onchange=e=>{S.resAnniv=e.target.value||null;save();renderSection('cards',activeTab);};
+  wireTogBtns(csrEl);
+  buildSemiTracker(csrEl.querySelector('#csr-semi'),[
+    ['Dining Credit','Jan – Jun','Exclusive Tables on OpenTable. Activation required.',S.diningH1,'diningH1',1],
+    ['Dining Credit','Jul – Dec','Same rules. Unused balance forfeits Dec 31.',S.diningH2,'diningH2',2],
+    ['StubHub / Viagogo','Jan – Jun','StubHub.com, app, or Viagogo. Through Dec 31, 2027.',S.stubhubH1,'stubhubH1',1],
+    ['StubHub / Viagogo','Jul – Dec','Same rules. H1 window closed Jun 30.',S.stubhubH2,'stubhubH2',2],
+  ]);
+  buildMonthTracker(csrEl.querySelector('#csr-monthly'),[
+    ['DoorDash Credits','$5 restaurant + 2×$10 non-restaurant per month. DashPass required.','$25',S.doordash,'doordash'],
+    ['Lyft Credit','$10/month — add CSR as payment in Lyft app. Through Sep 2027.','$10',S.lyft,'lyft'],
+    ['Peloton Credit','$10/month on eligible memberships. Activation required. Through Dec 2027.','$10',S.peloton,'peloton'],
+  ]);
+  const actC=csrEl.querySelector('#csr-activations');
+  [['Apple TV+ & Apple Music','Link Apple ID in Chase app. Through Jun 22, 2027.','$288/yr','appleActivated',false],
+   ['IHG Platinum Elite Status','Link IHG account in Chase app. Through Dec 31, 2027.','Status','ihgActivated',false],
+   ['DashPass Membership','Unlocks monthly DoorDash credits. Through Dec 31, 2027.','Unlocks $300/yr','dashpassActivated',false],
+   ['Marriott Gold Elite ★ Window Open Now','Register Jul 1–Sep 30, 2026 + 3 paid nights → status through Feb 2028.','Limited','marriottRegistered',true],
+  ].forEach(([title,sub,right,key,urgent])=>{
+    const d=document.createElement('div');d.className='chk-item';
+    d.innerHTML=`<div class="chk-box${S[key]?' done':''}" data-key="${key}"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="chk-info"><div class="chk-title">${title}</div><div class="chk-sub${urgent?' urgent':''}">${sub}</div></div>
+      <div class="chk-right">${right}</div>`;
+    d.querySelector('.chk-box').onclick=function(){S[key]=!S[key];save();renderSection('cards',activeTab);};
+    actC.appendChild(d);
+  });
+  const ogC=csrEl.querySelector('#csr-ongoing');
+  [['Chase Sapphire Lounge + Priority Pass Select (1,300+ lounges)','Up to 2 guests at Sapphire Lounges. DFW and LAX opening 2026.'],
+   ['1:1 Ultimate Rewards → World of Hyatt','Reserve keeps 1:1 — Preferred was cut to 4:3 in June 2026.'],
+   ['Primary rental car insurance','Up to $75,000. Decline CDW — saves $15–30/day.'],
+   ['Trip cancellation / interruption insurance','Up to $10,000/traveler, $20,000/trip.'],
+   ['Trip delay reimbursement','Up to $500/traveler for delays 6+ hours.'],
+   ['No foreign transaction fees',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;ogC.appendChild(r);});
+
+  // Hyatt Card
+  const hyEl=document.getElementById('panel-hyatt-card');
+  const fnSt=annivSt(S.hyattAnniv,S.hyattFreeNight);
+  const pct2=Math.min(100,Math.round((S.hyattSpend||0)/15000*100));
+  const rem2=Math.max(0,15000-(S.hyattSpend||0));
+  const earned=(S.hyattSpend||0)>=15000;
+  hyEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">World of Hyatt Credit Card</span><span class="ph-fee">$95 / yr</span></div>
+    <div class="anniv-row"><label>Card anniversary</label><input type="date" id="hyatt-anniv" value="${S.hyattAnniv||''}"></div>
+    <div class="grp-head">Anniversary — Free Night Award</div>${colsHeader}
+    ${btRow('Category 1–4 Free Night Award','Issued on card anniversary. Book at hyatt.com. Valid 12 months.','~$250','Anniversary year',fnSt,'hyattFreeNight')}
+    <div class="grp-head">Calendar Year — $15,000 Spend → 2nd Free Night</div>
+    <div class="prog-section">
+      <div class="prog-hrow"><span class="prog-label">Spend Progress (${CY})</span><span class="prog-pct">${pct2}% · $${(S.hyattSpend||0).toLocaleString()} of $15,000</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct2}%"></div></div>
+      <div class="prog-irow"><input type="number" id="hyatt-spend" value="${S.hyattSpend||''}" placeholder="0"><span>total Hyatt card spend in ${CY}</span></div>
+      <div class="prog-note" style="color:${earned?'var(--green)':'var(--text3)'}">${earned?'✓ 2nd free night earned — redeem at hyatt.com':'$'+rem2.toLocaleString()+' remaining to unlock 2nd Category 1–4 free night'}</div>
+    </div>
+    <div class="grp-head">Ongoing — Always On</div>
+    <div id="hyatt-card-og"></div></div>`;
+  document.getElementById('hyatt-anniv').onchange=e=>{S.hyattAnniv=e.target.value||null;save();renderSection('cards',activeTab);};
+  document.getElementById('hyatt-spend').onchange=e=>{S.hyattSpend=Math.max(0,parseInt(e.target.value)||0);S.hyattSpendYear=CY;save();renderSection('cards',activeTab);};
+  wireTogBtns(hyEl);
+  const ogH=hyEl.querySelector('#hyatt-card-og');
+  [['Automatic Discoverist elite status','2PM checkout, upgrades, waived resort fees on award nights, premium internet.'],
+   ['5 qualifying night credits per anniversary year','Count toward Explorist (30) or Globalist (60).'],
+   ['2 qualifying night credits per $5,000 card spend',''],
+   ['9x total points at Hyatt stays','4 bonus pts/$ on card + up to 5 base pts/$ as member.'],
+   ['2x on dining, airline tickets, transit, rideshares, gym memberships',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;ogH.appendChild(r);});
+
+  // Freedom Unlimited
+  document.getElementById('panel-fu').innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Chase Freedom Unlimited</span><span class="ph-fee">$0 / yr</span><span class="ph-tag">Earning reference</span></div>
+    <div class="grp-head">Earning Rates — Points Pool with Sapphire Reserve</div>
+    ${[['Chase Travel (via portal)','5%','8x effective when booking via Chase Travel with CSR'],
+       ['Dining & Drugstores','3%','Ties with Sapphire Reserve on dining'],
+       ['Everything Else (flat rate)','1.5%','No activation, no rotating categories, ever'],
+      ].map(([cat,rate,note])=>`<div style="display:grid;grid-template-columns:1fr 70px 1fr;border-bottom:1px solid var(--border-l);min-height:40px;align-items:center">
+        <div style="padding:8px 10px 8px 20px;font-size:12.5px;font-weight:500">${cat}</div>
+        <div style="padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--navy)">${rate}</div>
+        <div style="padding:8px 10px;font-size:11px;color:var(--text2)">${note}</div>
+      </div>`).join('')}
+    <div class="og-item" style="border-top:1px solid var(--border-l)"><span class="og-bullet">★</span>
+      <span class="og-text"><strong>Key mechanic:</strong> Freedom Unlimited earns UR points that pool with CSR — fully transferable 1:1 to World of Hyatt, turning 1.5% cash back into ~3% Hyatt redemption value.</span></div>
+  </div>`;
+
+  // ROI
+  document.getElementById('panel-roi').innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Annual Fee vs. Benefits Value</span><span class="ph-fee">Estimated at full utilization</span></div>
+    <div class="roi-head"><div class="roi-cell">Card</div><div class="roi-cell">Annual Fee</div><div class="roi-cell">Benefits Value</div><div class="roi-cell">Net Value</div><div class="roi-cell">Multiple</div></div>
+    ${[['Chase Sapphire Reserve','$795','$2,478','$1,683','3.1×'],
+       ['World of Hyatt','$95','$445','$350','4.7×'],
+       ['Chase Freedom Unlimited','$0','— (earner)','—','—'],
+       ['Portfolio Total','$890','$2,923+','$2,033+','3.3×'],
+      ].map(([card,fee,val,net,mult],i)=>`<div class="roi-row" style="${i===3?'background:#f5f7fb;font-weight:600':''}">
+        <div class="roi-cell">${card}</div><div class="roi-cell">${fee}</div>
+        <div class="roi-cell pos">${val}</div><div class="roi-cell pos">${net}</div>
+        <div class="roi-cell" style="color:var(--navy2);font-weight:600">${mult}</div>
+      </div>`).join('')}
+    <div class="og-item" style="border-top:1px solid var(--border-l)"><span class="og-bullet">†</span>
+      <span class="og-text" style="font-size:11px;color:var(--text3)">CSR: $300 travel + $500 Edit + $250 select hotel + $300 dining + $300 StubHub + $300 DoorDash + $120 Lyft + $120 Peloton + $288 Apple + $120 GE (amortized). Actual varies by usage.</span></div>
+  </div>`;
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const v=calcVal();
+  const vc=Object.keys(PS.visited).length;
+  const rank=getRank(vc);
+  const achvDone=ACHV.filter(a=>a.check(PS.visited)).length;
+  const today=iso();
+  const upcoming=TS.trips.filter(t=>t.startDate>=today&&t.status!=='completed').sort((a,b)=>a.startDate.localeCompare(b.startDate));
+  const nextTrip=upcoming[0];
+  const dqItems=buildDQ().filter(i=>i.tier!=='done').slice(0,5);
+  const nextAchvs=ACHV.filter(a=>!a.check(PS.visited)).slice(0,4);
+  const wishCount=Object.keys(TS.wishlist).length;
+  const el=document.getElementById('dash-content');
+  el.innerHTML=`
+    <div class="dash-hero">
+      <div class="dash-hero-top">
+        <div><div class="dash-hero-title">Travel HQ</div><div class="dash-hero-sub">Your points, stays, and trips in one place</div></div>
+        <div class="dash-hero-date">${now.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
+      </div>
+      <div class="dash-kpi-row">
+        <div class="dash-kpi" onclick="setSection('cards','overview')">
+          <div class="dk-section">Credit Cards</div>
+          <div class="dk-val">$${v.captured.toLocaleString()}</div>
+          <div class="dk-sub">captured · $${v.remaining.toLocaleString()} still available</div>
+          <div class="dk-bar"><div class="dk-bar-fill" style="width:${v.pct}%"></div></div>
+        </div>
+        <div class="dash-kpi" onclick="setSection('passport')">
+          <div class="dk-section">Hotel Passport</div>
+          <div class="dk-val">${vc} <span style="font-size:14px;opacity:.7">visited</span></div>
+          <div class="dk-sub">${rank.icon} ${rank.name} · ${achvDone}/16 achievements</div>
+        </div>
+        <div class="dash-kpi" onclick="setSection('travel','trips')">
+          <div class="dk-section">Travel Planning</div>
+          <div class="dk-val">${upcoming.length} <span style="font-size:14px;opacity:.7">upcoming</span></div>
+          <div class="dk-sub">${nextTrip?'Next: '+nextTrip.destination+' in '+daysUntil(nextTrip.startDate)+'d':'No upcoming trips planned'} · ${wishCount} wishlisted</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-col">
+        <div class="dash-card">
+          <div class="dash-card-head"><span class="dch-title">Priority Actions</span><span class="dch-link" onclick="setSection('cards','overview')">View all →</span></div>
+          ${dqItems.length?dqItems.map(i=>`<div class="dash-action-row">
+            <div class="dash-action-dot c-${i.vc}"></div>
+            <div class="dash-action-text">${i.text}</div>
+            <div class="dash-action-val" style="color:var(--${i.vc})">${i.val}</div>
+          </div>`).join(''):'<div class="dash-empty">All actions complete. 🎉</div>'}
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><span class="dch-title">Upcoming Trips</span><span class="dch-link" onclick="setSection('travel','trips')">Manage →</span></div>
+          ${upcoming.length?upcoming.slice(0,4).map(t=>`<div class="dash-trip-row">
+            <div style="flex:1"><div class="dash-trip-dest">${t.destination}</div>
+              <div class="dash-trip-sub">${fmtDY(t.startDate)}${t.endDate?' – '+fmtDY(t.endDate):''} ${t.hotelName?'· '+t.hotelName:''}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              <span class="dash-trip-tag tag-${t.status}">${t.status}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${daysUntil(t.startDate)}d away</span>
+            </div>
+          </div>`).join(''):'<div class="dash-empty">No upcoming trips. <span class="dch-link" onclick="setSection(\'travel\',\'trips\')">Add one →</span></div>'}
+        </div>
+      </div>
+      <div class="dash-col">
+        <div class="dash-card">
+          <div class="dash-card-head"><span class="dch-title">Next Achievements</span><span class="dch-link" onclick="setSection('passport')">View passport →</span></div>
+          ${nextAchvs.length?nextAchvs.map(a=>{
+            const progFns={
+              bali3:v=>PROPS.filter(p=>p[3].toLowerCase().includes('bali')&&v[p[0]]).length,
+              alila3:v=>PROPS.filter(p=>p[2]==='Alila'&&v[p[0]]).length,
+              andaz5:v=>PROPS.filter(p=>p[2]==='Andaz'&&v[p[0]]).length,
+              ph5:v=>PROPS.filter(p=>p[2]==='Park Hyatt'&&v[p[0]]).length,
+              gh5:v=>PROPS.filter(p=>p[2]==='Grand Hyatt'&&v[p[0]]).length,
+              us5:v=>PROPS.filter(p=>p[4]==='USA'&&v[p[0]]).length,
+              eu4:v=>PROPS.filter(p=>p[5]==='eu'&&v[p[0]]).length,
+              as5:v=>PROPS.filter(p=>p[5]==='as'&&v[p[0]]).length,
+              globe8:v=>new Set(PROPS.filter(p=>v[p[0]]).map(p=>p[4])).size,
+              lux5:v=>PROPS.filter(p=>p[6]>=7&&v[p[0]]).length,
+              globalist30:v=>Object.keys(v).length,
+            };
+            const targets={bali3:3,alila3:3,andaz5:5,ph5:5,gh5:5,us5:5,eu4:4,as5:5,globe8:8,lux5:5,globalist30:30};
+            const pFn=progFns[a.id];const tgt=targets[a.id];
+            const cur=pFn?pFn(PS.visited):0;const pct=tgt?Math.round(cur/tgt*100):0;
+            return`<div class="dash-achv-row">
+              <div class="dash-achv-icon">${a.icon}</div>
+              <div class="dash-achv-info"><div class="dash-achv-name">${a.name}</div><div class="dash-achv-desc">${a.desc}</div></div>
+              ${tgt?`<div class="dash-achv-prg"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);text-align:right">${cur}/${tgt}</div>
+                <div class="dash-achv-bar"><div class="dash-achv-bar-fill" style="width:${pct}%"></div></div></div>`:''}
+            </div>`;
+          }).join(''):'<div class="dash-empty">All achievements unlocked! 🏆</div>'}
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-head"><span class="dch-title">Quick Actions</span></div>
+          ${[
+            {label:'Calculate award points',sub:'Hyatt award chart calculator',action:`setSection('travel','calculator')`,icon:'🧮'},
+            {label:'View wishlist',sub:`${wishCount} properties saved`,action:`setSection('travel','wishlist')`,icon:'❤️'},
+            {label:'Add a trip',sub:'Plan upcoming travel',action:`setSection('travel','trips')`,icon:'✈️'},
+          ].map(q=>`<div class="dash-trip-row" style="cursor:pointer" onclick="${q.action}">
+            <span style="font-size:20px;flex-shrink:0">${q.icon}</span>
+            <div><div class="dash-trip-dest" style="font-size:13px">${q.label}</div><div class="dash-trip-sub">${q.sub}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <footer style="margin-top:20px">Travel HQ · State saved automatically · Data is for personal planning use only</footer>`;
+}
+
+// ── PASSPORT DATA & GAMIFICATION ───────────────────────────────────────────
+const PREG={all:'All Regions',na:'North America',ca:'Caribbean & Lat. Am.',eu:'Europe',mea:'Middle East & Africa',as:'Asia',pa:'Pacific'};
+const PBRANDS=['All Brands','Park Hyatt','Grand Hyatt','Andaz','Alila','Hyatt Regency','Thompson','Hyatt Centric','Other'];
+const BC={'Park Hyatt':'#0c1f40','Grand Hyatt':'#1a3360','Andaz':'#6b2252','Alila':'#7a4e2d','Hyatt Regency':'#1a4a7a','Thompson':'#2e4057','Hyatt Centric':'#c45a28','Other':'#5a6172'};
+
+const RANKS=[
+  {id:'discoverer',name:'Discoverer',icon:'🧭',min:0,next:5,color:'#6b7280'},
+  {id:'traveler',name:'Traveler',icon:'🎒',min:5,next:15,color:'#1a4a7a'},
+  {id:'explorer',name:'Explorer',icon:'🌍',min:15,next:30,color:'#006b41'},
+  {id:'globalist',name:'Globalist',icon:'✈️',min:30,next:50,color:'#9a4d00'},
+  {id:'legend',name:'Legend',icon:'🏆',min:50,next:100,color:'#6b2252'},
+  {id:'grandmaster',name:'Grand Master',icon:'👑',min:100,next:null,color:'#0c1f40'},
+];
+function getRank(n){return[...RANKS].reverse().find(r=>n>=r.min)||RANKS[0];}
+const ACHV=[
+  {id:'first',icon:'🔰',name:'First Stamp',desc:'Check in to your first property',check:v=>Object.keys(v).length>=1},
+  {id:'pinnacle',icon:'⭐',name:'Pinnacle Suite',desc:'Stay at a Category 8 property',check:v=>PROPS.some(p=>p[6]===8&&v[p[0]])},
+  {id:'tokyo',icon:'🗼',name:'Lost in Translation',desc:'Stay at Park Hyatt Tokyo',check:v=>!!v['phtok']},
+  {id:'paris',icon:'🥂',name:'Vendôme',desc:'Stay at Park Hyatt Paris-Vendôme',check:v=>!!v['phpv']},
+  {id:'bali3',icon:'🌴',name:'Bali Bound',desc:'Visit 3+ Bali properties',check:v=>PROPS.filter(p=>p[3].toLowerCase().includes('bali')&&v[p[0]]).length>=3},
+  {id:'alila3',icon:'🌿',name:'Alila Devotee',desc:'Stay at 3+ Alila properties',check:v=>PROPS.filter(p=>p[2]==='Alila'&&v[p[0]]).length>=3},
+  {id:'andaz5',icon:'🎭',name:'Andaz Aficionado',desc:'Stay at 5+ Andaz properties',check:v=>PROPS.filter(p=>p[2]==='Andaz'&&v[p[0]]).length>=5},
+  {id:'ph5',icon:'🏛️',name:'Park Hyatt Collector',desc:'Stay at 5+ Park Hyatt properties',check:v=>PROPS.filter(p=>p[2]==='Park Hyatt'&&v[p[0]]).length>=5},
+  {id:'gh5',icon:'🏆',name:'Grand Circuit',desc:'Stay at 5+ Grand Hyatt properties',check:v=>PROPS.filter(p=>p[2]==='Grand Hyatt'&&v[p[0]]).length>=5},
+  {id:'us5',icon:'🇺🇸',name:'Home Base',desc:'Visit 5+ US properties',check:v=>PROPS.filter(p=>p[4]==='USA'&&v[p[0]]).length>=5},
+  {id:'eu4',icon:'🏰',name:'Euro Wanderer',desc:'Visit 4+ European properties',check:v=>PROPS.filter(p=>p[5]==='eu'&&v[p[0]]).length>=4},
+  {id:'as5',icon:'⛩️',name:'Asia Devoted',desc:'Visit 5+ Asian properties',check:v=>PROPS.filter(p=>p[5]==='as'&&v[p[0]]).length>=5},
+  {id:'allsix',icon:'🌐',name:'All Six',desc:'Visit at least 1 property in every region',check:v=>Object.keys(PREG).filter(k=>k!=='all').every(r=>PROPS.some(p=>p[5]===r&&v[p[0]]))},
+  {id:'globe8',icon:'🗺️',name:'Globetrotter',desc:'Visit properties in 8+ countries',check:v=>new Set(PROPS.filter(p=>v[p[0]]).map(p=>p[4])).size>=8},
+  {id:'lux5',icon:'💎',name:'Luxury Tier',desc:'Visit 5+ Category 7 or 8 properties',check:v=>PROPS.filter(p=>p[6]>=7&&v[p[0]]).length>=5},
+  {id:'globalist30',icon:'🌟',name:'Globalist Level',desc:'Visit 30+ total properties',check:v=>Object.keys(v).length>=30},
+];
+const CHALLENGES=[
+  {id:'ph-slam',name:'Park Hyatt Grand Slam',desc:'PH in New York, Tokyo, Paris, Vienna & Milan',ids:['phny','phtok','phpv','phvie','phmi']},
+  {id:'bali-col',name:'Bali Collection',desc:'All 5 Hyatt Bali properties',ids:['alubud','alulu','alsem','abali','hrbali']},
+  {id:'maldives',name:'The Maldives Duo',desc:'Both Maldives Hyatt properties',ids:['phmal','alvel']},
+  {id:'cat8',name:'Category 8 Grand Slam',desc:'All three Category 8 properties',ids:['phny','phtok','phpv']},
+  {id:'us10',name:'US Circuit',desc:'Visit 10 US properties',ids:null,target:10,tally:v=>PROPS.filter(p=>p[4]==='USA'&&v[p[0]]).length},
+  {id:'mea4',name:'Middle East & Africa Explorer',desc:'Visit 4 MEA properties',ids:null,target:4,tally:v=>PROPS.filter(p=>p[5]==='mea'&&v[p[0]]).length},
+];
+
+// [id, name, brand, city, country, region, cat, lat, lng]
+const PROPS=[
+  ['phny','Park Hyatt New York','Park Hyatt','New York','USA','na',8,40.761,-73.978],
+  ['phchi','Park Hyatt Chicago','Park Hyatt','Chicago','USA','na',7,41.896,-87.626],
+  ['phwdc','Park Hyatt Washington DC','Park Hyatt','Washington DC','USA','na',7,38.900,-77.036],
+  ['phavi','Park Hyatt Aviara','Park Hyatt','Carlsbad, CA','USA','na',7,33.099,-117.272],
+  ['phbv','Park Hyatt Beaver Creek','Park Hyatt','Beaver Creek, CO','USA','na',6,39.604,-106.517],
+  ['a5th','Andaz 5th Avenue','Andaz','New York','USA','na',5,40.754,-73.982],
+  ['awh','Andaz West Hollywood','Andaz','Los Angeles','USA','na',5,34.090,-118.386],
+  ['amaui','Andaz Maui at Wailea','Andaz','Maui, HI','USA','na',5,20.691,-156.444],
+  ['ascott','Andaz Scottsdale','Andaz','Scottsdale, AZ','USA','na',5,33.539,-111.925],
+  ['anapa','Andaz Napa','Andaz','Napa, CA','USA','na',4,38.298,-122.287],
+  ['asd','Andaz San Diego','Andaz','San Diego, CA','USA','na',4,32.715,-117.156],
+  ['alvent','Alila Ventana Big Sur','Alila','Big Sur, CA','USA','na',7,36.232,-121.778],
+  ['almar','Alila Marea Beach','Alila','Encinitas, CA','USA','na',6,33.045,-117.293],
+  ['ghny','Grand Hyatt New York','Grand Hyatt','New York','USA','na',5,40.753,-73.977],
+  ['ghsf','Grand Hyatt San Francisco','Grand Hyatt','San Francisco','USA','na',5,37.792,-122.407],
+  ['ghkauai','Grand Hyatt Kauai','Grand Hyatt','Kauai, HI','USA','na',5,21.895,-159.497],
+  ['hrchi','Hyatt Regency Chicago','Hyatt Regency','Chicago','USA','na',4,41.887,-87.622],
+  ['hrmaui','Hyatt Regency Maui','Hyatt Regency','Maui, HI','USA','na',5,20.931,-156.692],
+  ['hrwaikiki','Hyatt Regency Waikiki','Hyatt Regency','Honolulu, HI','USA','na',5,21.269,-157.826],
+  ['hrscott','Hyatt Regency Scottsdale','Hyatt Regency','Scottsdale, AZ','USA','na',4,33.559,-111.889],
+  ['hcmny','Hyatt Centric Midtown NYC','Hyatt Centric','New York','USA','na',4,40.755,-73.984],
+  ['thnash','Thompson Nashville','Thompson','Nashville, TN','USA','na',4,36.163,-86.782],
+  ['thchi','Thompson Chicago','Thompson','Chicago','USA','na',4,41.895,-87.627],
+  ['hrlp','Hyatt Regency Lost Pines','Hyatt Regency','Austin, TX','USA','na',3,30.157,-97.322],
+  ['hrgc','Hyatt Regency Grand Cypress','Hyatt Regency','Orlando, FL','USA','na',4,28.390,-81.565],
+  ['thaust','Thompson Austin','Thompson','Austin, TX','USA','na',4,30.267,-97.743],
+  ['thden','Thompson Denver','Thompson','Denver, CO','USA','na',4,39.748,-104.992],
+  ['thdc','Thompson Washington DC','Thompson','Washington DC','USA','na',4,38.899,-77.035],
+  ['thhou','Thompson Houston','Thompson','Houston, TX','USA','na',4,29.756,-95.368],
+  ['ghwdc','Grand Hyatt Washington DC','Grand Hyatt','Washington DC','USA','na',5,38.895,-77.028],
+  ['ghatl','Grand Hyatt Atlanta','Grand Hyatt','Atlanta, GA','USA','na',4,33.762,-84.389],
+  ['ghsea','Grand Hyatt Seattle','Grand Hyatt','Seattle, WA','USA','na',4,47.607,-122.335],
+  ['ghnash','Grand Hyatt Nashville','Grand Hyatt','Nashville, TN','USA','na',4,36.162,-86.779],
+  ['ghden','Grand Hyatt Denver','Grand Hyatt','Denver, CO','USA','na',4,39.742,-104.985],
+  ['hrsf','Hyatt Regency San Francisco','Hyatt Regency','San Francisco, CA','USA','na',4,37.793,-122.397],
+  ['hrmiami','Hyatt Regency Miami','Hyatt Regency','Miami, FL','USA','na',4,25.774,-80.187],
+  ['hratl','Hyatt Regency Atlanta','Hyatt Regency','Atlanta, GA','USA','na',4,33.769,-84.386],
+  ['hrbos','Hyatt Regency Boston','Hyatt Regency','Boston, MA','USA','na',4,42.349,-71.065],
+  ['hrmin','Hyatt Regency Minneapolis','Hyatt Regency','Minneapolis, MN','USA','na',4,44.977,-93.274],
+  ['hrnola','Hyatt Regency New Orleans','Hyatt Regency','New Orleans, LA','USA','na',4,29.950,-90.071],
+  ['hrsea','Hyatt Regency Seattle','Hyatt Regency','Seattle, WA','USA','na',4,47.609,-122.336],
+  ['hrhb','Hyatt Regency Huntington Beach','Hyatt Regency','Huntington Beach, CA','USA','na',5,33.658,-117.999],
+  ['hrdal','Hyatt Regency Dallas','Hyatt Regency','Dallas, TX','USA','na',4,32.781,-96.801],
+  ['hrhou','Hyatt Regency Houston','Hyatt Regency','Houston, TX','USA','na',4,29.760,-95.361],
+  ['hrbalt','Hyatt Regency Baltimore','Hyatt Regency','Baltimore, MD','USA','na',3,39.286,-76.617],
+  ['hrlak','Hyatt Regency Lake Tahoe','Hyatt Regency','Incline Village, NV','USA','na',4,39.247,-119.961],
+  ['hrcp','Hyatt Regency Coconut Point','Hyatt Regency','Bonita Springs, FL','USA','na',4,26.312,-81.792],
+  ['hclv','Hyatt Centric Las Vegas','Hyatt Centric','Las Vegas, NV','USA','na',4,36.105,-115.173],
+  ['hcden','Hyatt Centric Downtown Denver','Hyatt Centric','Denver, CO','USA','na',4,39.742,-104.991],
+  ['hcsb','Hyatt Centric South Beach','Hyatt Centric','Miami Beach, FL','USA','na',4,25.781,-80.131],
+  ['hcmag','Hyatt Centric Magnificent Mile','Hyatt Centric','Chicago, IL','USA','na',4,41.892,-87.626],
+  ['hclas','Hyatt Centric Las Olas Fort Lauderdale','Hyatt Centric','Fort Lauderdale, FL','USA','na',4,26.119,-80.143],
+  ['amaya','Andaz Mayakoba','Andaz','Playa del Carmen','Mexico','ca',5,20.694,-87.064],
+  ['ghpdm','Grand Hyatt Playa del Carmen','Grand Hyatt','Playa del Carmen','Mexico','ca',5,20.630,-87.074],
+  ['hzcan','Hyatt Ziva Cancun','Other','Cancun','Mexico','ca',5,21.130,-86.770],
+  ['hzlcan','Hyatt Zilara Cancun','Other','Cancun','Mexico','ca',5,21.141,-86.771],
+  ['phsk','Park Hyatt St. Kitts','Park Hyatt','St. Kitts','St. Kitts & Nevis','ca',6,17.303,-62.718],
+  ['hzcap','Hyatt Ziva Cap Cana','Other','Punta Cana','Dominican Republic','ca',5,18.560,-68.374],
+  ['hzrh','Hyatt Zilara Rose Hall','Other','Montego Bay','Jamaica','ca',5,18.501,-77.920],
+  ['hraru','Hyatt Regency Aruba','Hyatt Regency','Palm Beach','Aruba','ca',5,12.557,-70.033],
+  ['hrcar','Hyatt Regency Cartagena','Hyatt Regency','Cartagena','Colombia','ca',4,10.406,-75.550],
+  ['acr','Andaz Costa Rica','Andaz','Peninsula Papagayo','Costa Rica','ca',5,10.583,-85.703],
+  ['hzriv','Hyatt Ziva Riviera Cancun','Other','Cancun','Mexico','ca',5,20.967,-87.068],
+  ['phba','Park Hyatt Buenos Aires','Park Hyatt','Buenos Aires','Argentina','ca',5,-34.598,-58.375],
+  ['atc','Andaz Turks & Caicos','Andaz','Providenciales','Turks & Caicos','ca',6,21.775,-72.266],
+  ['hrmex','Hyatt Regency Mexico City','Hyatt Regency','Mexico City','Mexico','ca',4,19.433,-99.133],
+  ['phpv','Park Hyatt Paris-Vendôme','Park Hyatt','Paris','France','eu',8,48.866,2.331],
+  ['phmi','Park Hyatt Milan','Park Hyatt','Milan','Italy','eu',7,45.467,9.191],
+  ['phvie','Park Hyatt Vienna','Park Hyatt','Vienna','Austria','eu',7,48.208,16.374],
+  ['phzu','Park Hyatt Zurich','Park Hyatt','Zurich','Switzerland','eu',7,47.377,8.542],
+  ['phhh','Park Hyatt Hamburg','Park Hyatt','Hamburg','Germany','eu',6,53.551,9.994],
+  ['phist','Park Hyatt Istanbul','Park Hyatt','Istanbul','Turkey','eu',7,41.078,29.013],
+  ['phma','Park Hyatt Madrid','Park Hyatt','Madrid','Spain','eu',6,40.426,-3.688],
+  ['aams','Andaz Amsterdam Prinsengracht','Andaz','Amsterdam','Netherlands','eu',5,52.368,4.883],
+  ['alon','Andaz London Liverpool Street','Andaz','London','UK','eu',6,51.519,-0.081],
+  ['apr','Andaz Prague','Andaz','Prague','Czech Republic','eu',5,50.076,14.438],
+  ['amun','Andaz Munich Hofgarten','Andaz','Munich','Germany','eu',5,48.143,11.582],
+  ['grath','Grand Hyatt Athens','Grand Hyatt','Athens','Greece','eu',5,37.984,23.728],
+  ['grber','Grand Hyatt Berlin','Grand Hyatt','Berlin','Germany','eu',5,52.510,13.380],
+  ['grmun','Grand Hyatt Munich','Grand Hyatt','Munich','Germany','eu',5,48.140,11.578],
+  ['hrlon','Hyatt Regency London The Churchill','Hyatt Regency','London','UK','eu',5,51.515,-0.159],
+  ['hrnice','Hyatt Regency Nice','Hyatt Regency','Nice','France','eu',5,43.696,7.266],
+  ['hcven','Hyatt Centric Murano Venice','Hyatt Centric','Venice','Italy','eu',4,45.459,12.354],
+  ['throme','Thompson Rome','Thompson','Rome','Italy','eu',5,41.903,12.496],
+  ['hcmad','Hyatt Centric Gran Via Madrid','Hyatt Centric','Madrid','Spain','eu',4,40.417,-3.704],
+  ['hrpar','Hyatt Regency Paris Étoile','Hyatt Regency','Paris','France','eu',4,48.882,2.296],
+  ['grbcn','Grand Hyatt Barcelona','Grand Hyatt','Barcelona','Spain','eu',5,41.385,2.173],
+  ['hrth','Hyatt Regency Thessaloniki','Hyatt Regency','Thessaloniki','Greece','eu',4,40.640,22.944],
+  ['phdxb','Park Hyatt Dubai','Park Hyatt','Dubai','UAE','mea',7,25.205,55.271],
+  ['phauh','Park Hyatt Abu Dhabi','Park Hyatt','Abu Dhabi','UAE','mea',7,24.454,54.377],
+  ['ghdxb','Grand Hyatt Dubai','Grand Hyatt','Dubai','UAE','mea',5,25.229,55.327],
+  ['adpalm','Andaz Dubai The Palm','Andaz','Dubai','UAE','mea',5,25.112,55.139],
+  ['adcreek','Andaz Dubai Creek','Andaz','Dubai','UAE','mea',5,25.264,55.307],
+  ['phdoh','Park Hyatt Doha','Park Hyatt','Doha','Qatar','mea',6,25.287,51.533],
+  ['ghmus','Grand Hyatt Muscat','Grand Hyatt','Muscat','Oman','mea',5,23.588,58.406],
+  ['aljab','Alila Jabal Akhdar','Alila','Al Hajar Mountains','Oman','mea',6,23.054,57.641],
+  ['phzan','Park Hyatt Zanzibar','Park Hyatt','Zanzibar','Tanzania','mea',6,-6.172,39.191],
+  ['hrcas','Hyatt Regency Casablanca','Hyatt Regency','Casablanca','Morocco','mea',4,33.573,-7.590],
+  ['phcai','Park Hyatt Cairo','Park Hyatt','Cairo','Egypt','mea',5,30.063,31.250],
+  ['ghriy','Grand Hyatt Riyadh','Grand Hyatt','Riyadh','Saudi Arabia','mea',5,24.688,46.687],
+  ['ghamm','Grand Hyatt Amman','Grand Hyatt','Amman','Jordan','mea',5,31.957,35.946],
+  ['alsey','Andaz Seychelles','Andaz','Mahé','Seychelles','mea',6,-4.680,55.455],
+  ['grjhb','Grand Hyatt Johannesburg','Grand Hyatt','Johannesburg','South Africa','mea',4,-26.137,28.066],
+  ['hrdar','Hyatt Regency Dar es Salaam','Hyatt Regency','Dar es Salaam','Tanzania','mea',4,-6.819,39.289],
+  ['phtok','Park Hyatt Tokyo','Park Hyatt','Tokyo','Japan','as',8,35.687,139.696],
+  ['phkyo','Park Hyatt Kyoto','Park Hyatt','Kyoto','Japan','as',6,34.996,135.789],
+  ['phbej','Park Hyatt Beijing','Park Hyatt','Beijing','China','as',7,39.918,116.455],
+  ['phsha','Park Hyatt Shanghai','Park Hyatt','Shanghai','China','as',7,31.235,121.502],
+  ['phsel','Park Hyatt Seoul','Park Hyatt','Seoul','South Korea','as',7,37.524,127.033],
+  ['phbkk','Park Hyatt Bangkok','Park Hyatt','Bangkok','Thailand','as',6,13.737,100.548],
+  ['phsr','Park Hyatt Siem Reap','Park Hyatt','Siem Reap','Cambodia','as',5,13.363,103.860],
+  ['phche','Park Hyatt Chennai','Park Hyatt','Chennai','India','as',5,13.083,80.271],
+  ['phjkt','Park Hyatt Jakarta','Park Hyatt','Jakarta','Indonesia','as',5,-6.209,106.846],
+  ['ghhk','Grand Hyatt Hong Kong','Grand Hyatt','Hong Kong','China','as',7,22.278,114.175],
+  ['ghsin','Grand Hyatt Singapore','Grand Hyatt','Singapore','Singapore','as',6,1.300,103.832],
+  ['ghtpe','Grand Hyatt Taipei','Grand Hyatt','Taipei','Taiwan','as',5,25.048,121.532],
+  ['ghmum','Grand Hyatt Mumbai','Grand Hyatt','Mumbai','India','as',5,19.076,72.878],
+  ['ghtok','Grand Hyatt Tokyo','Grand Hyatt','Tokyo','Japan','as',5,35.665,139.729],
+  ['ghcdg','Grand Hyatt Chengdu','Grand Hyatt','Chengdu','China','as',5,30.573,104.067],
+  ['athills','Andaz Tokyo Toranomon Hills','Andaz','Tokyo','Japan','as',5,35.667,139.745],
+  ['asin','Andaz Singapore','Andaz','Singapore','Singapore','as',5,1.285,103.860],
+  ['abali','Andaz Bali','Andaz','Seminyak, Bali','Indonesia','as',4,-8.712,115.167],
+  ['adel','Andaz Delhi','Andaz','Delhi','India','as',4,28.527,77.209],
+  ['amao','Andaz Macau','Andaz','Macau','Macau','as',5,22.155,113.550],
+  ['alubud','Alila Ubud','Alila','Ubud, Bali','Indonesia','as',6,-8.507,115.263],
+  ['alulu','Alila Villas Uluwatu','Alila','Uluwatu, Bali','Indonesia','as',7,-8.829,115.088],
+  ['alsem','Alila Seminyak','Alila','Seminyak, Bali','Indonesia','as',5,-8.691,115.159],
+  ['almang','Alila Manggis','Alila','Karangasem, Bali','Indonesia','as',4,-8.532,115.606],
+  ['algoa','Alila Diwa Goa','Alila','Goa','India','as',4,15.299,74.124],
+  ['alfb','Alila Fort Bishangarh','Alila','Rajasthan','India','as',5,27.818,75.740],
+  ['phmal','Park Hyatt Maldives Hadahaa','Park Hyatt','Hadahaa Atoll','Maldives','as',7,0.517,73.050],
+  ['alvel','Alila Veli Maldives','Alila','South Malé Atoll','Maldives','as',7,3.942,73.402],
+  ['hrbali','Hyatt Regency Bali','Hyatt Regency','Bali','Indonesia','as',5,-8.671,115.213],
+  ['aptty','Andaz Pattaya','Andaz','Pattaya','Thailand','as',4,12.901,100.872],
+  ['ghmao','Grand Hyatt Macau','Grand Hyatt','Macau','Macau','as',5,22.148,113.561],
+  ['ghbkk','Grand Hyatt Erawan Bangkok','Grand Hyatt','Bangkok','Thailand','as',5,13.744,100.540],
+  ['alsolo','Alila Solo','Alila','Solo, Java','Indonesia','as',4,-7.570,110.827],
+  ['thkl','Thompson Kuala Lumpur','Thompson','Kuala Lumpur','Malaysia','as',4,3.141,101.687],
+  ['phsyd','Park Hyatt Sydney','Park Hyatt','Sydney','Australia','pa',7,-33.865,151.215],
+  ['phmel','Park Hyatt Melbourne','Park Hyatt','Melbourne','Australia','pa',6,-37.814,144.963],
+  ['ghmel','Grand Hyatt Melbourne','Grand Hyatt','Melbourne','Australia','pa',5,-37.814,144.967],
+  ['hrsyd','Hyatt Regency Sydney','Hyatt Regency','Sydney','Australia','pa',4,-33.869,151.209],
+  ['hrbne','Hyatt Regency Brisbane','Hyatt Regency','Brisbane','Australia','pa',4,-27.470,153.025],
+  ['hrakl','Hyatt Regency Auckland','Hyatt Regency','Auckland','New Zealand','pa',4,-36.849,174.763],
+  ['ankh','Andaz Nuku Hiva','Andaz','Nuku Hiva','French Polynesia','pa',5,-8.917,-140.100],
+  ['hrguam','Hyatt Regency Guam','Hyatt Regency','Tumon','Guam','pa',3,13.484,144.798],
+];
+
+// ── PASSPORT RENDER ────────────────────────────────────────────────────────
+let pMap=null,pMarkers=[];
+let pF={region:'all',brand:'all',status:'all',search:''};
+
+function fpProps(){
+  return PROPS.filter(([id,name,brand,city,country,region])=>{
+    if(pF.region!=='all'&&region!==pF.region)return false;
+    if(pF.brand!=='all'&&brand!==pF.brand)return false;
+    if(pF.status==='visited'&&!PS.visited[id])return false;
+    if(pF.status==='unvisited'&&PS.visited[id])return false;
+    if(pF.search){const q=pF.search.toLowerCase();if(!name.toLowerCase().includes(q)&&!city.toLowerCase().includes(q)&&!country.toLowerCase().includes(q))return false;}
+    return true;
+  });
+}
+function countSemiProp(obj,half){const[ms,me]=half===1?[0,5]:[6,11];let n=0;for(let m=ms;m<=me;m++)if(obj[mkKey(CY,m)])n++;return n;}
+function fireConfetti(){
+  const c=document.createElement('canvas');c.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+  document.body.appendChild(c);const ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const cols=['#006b41','#e3a857','#1a56db','#6b2252','#0c1f40','#c45a28'];
+  const pts=Array.from({length:90},()=>({x:Math.random()*c.width,y:-12,vx:(Math.random()-.5)*7,vy:Math.random()*4+2,col:cols[Math.floor(Math.random()*cols.length)],sz:Math.random()*7+3,rot:Math.random()*360,vr:Math.random()*8-4}));
+  let f=0;(function tick(){ctx.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.rot+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.col;ctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz*.6);ctx.restore();});if(++f<130)requestAnimationFrame(tick);else c.remove();})();
+}
+function toggleVisit(id){
+  const prev=new Set(ACHV.filter(a=>a.check(PS.visited)).map(a=>a.id));
+  if(PS.visited[id])delete PS.visited[id];else PS.visited[id]=true;
+  if(ACHV.some(a=>a.check(PS.visited)&&!prev.has(a.id)))setTimeout(fireConfetti,80);
+  savePassport();renderPassport();
+}
+function initPMap(){
+  if(pMap||!document.getElementById('pp-map'))return;
+  pMap=L.map('pp-map',{scrollWheelZoom:false}).setView([25,15],2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:18}).addTo(pMap);
+  const regPills=document.getElementById('pp-pills');
+  Object.entries(PREG).forEach(([k,v])=>{
+    const p=document.createElement('div');p.className='pp-pill'+(k==='all'?' active':'');p.textContent=v;
+    p.onclick=()=>{pF.region=k;document.querySelectorAll('.pp-pill').forEach(x=>x.classList.toggle('active',x===p));renderPassport();};
+    regPills.appendChild(p);
+  });
+  const brandSel=document.getElementById('pp-brand');
+  PBRANDS.forEach(b=>{const o=document.createElement('option');o.value=b==='All Brands'?'all':b;o.textContent=b;brandSel.appendChild(o);});
+  brandSel.onchange=e=>{pF.brand=e.target.value;renderPassport();};
+  document.getElementById('pp-status').onchange=e=>{pF.status=e.target.value;renderPassport();};
+  let st;document.getElementById('pp-search').oninput=e=>{clearTimeout(st);st=setTimeout(()=>{pF.search=e.target.value.trim();renderPassport();},200);};
+}
+function updatePMarkers(){
+  if(!pMap)return;
+  pMarkers.forEach(m=>m.remove());pMarkers=[];
+  const fp=new Set(fpProps().map(p=>p[0]));
+  PROPS.forEach(([id,name,brand,city,country,region,cat,lat,lng])=>{
+    const vis=!!PS.visited[id];const inF=fp.has(id);
+    const m=L.circleMarker([lat,lng],{radius:vis?8:5,color:vis?'#006b41':'#0c1f40',fillColor:vis?'#006b41':'#0c1f40',fillOpacity:inF?(vis?.85:.2):.05,weight:vis?2:1,opacity:inF?1:.15});
+    const bc=BC[brand]||BC['Other'];
+    m.bindPopup(`<div style="font-family:'Inter',sans-serif;min-width:170px;padding:2px">
+      <div style="font-size:12px;font-weight:600;color:#0c1f40;margin-bottom:3px;line-height:1.3">${name}</div>
+      <div style="font-size:11px;color:#4b5668;margin-bottom:6px">${city}, ${country}</div>
+      <div style="display:flex;gap:5px;margin-bottom:8px">
+        <span style="font-size:9px;font-weight:700;text-transform:uppercase;color:#fff;background:${bc};padding:2px 6px;border-radius:3px">${brand}</span>
+        <span style="font-size:9.5px;color:#9ca3af;border:1px solid #e8edf5;padding:1px 6px;border-radius:3px;font-family:'IBM Plex Mono',monospace">Cat ${cat}</span>
+      </div>
+      <button onclick="toggleVisit('${id}')" style="width:100%;padding:5px 0;border-radius:4px;border:none;background:${vis?'#b51d15':'#006b41'};color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">${vis?'Remove Visit':'Mark Visited'}</button>
+    </div>`,{maxWidth:220});
+    m.addTo(pMap);pMarkers.push(m);
+  });
+}
+function renderPassport(){
+  const vc=Object.keys(PS.visited).length,tot=PROPS.length;
+  const byReg={};PROPS.forEach(([id,,,,,region])=>{if(!byReg[region])byReg[region]={t:0,v:0};byReg[region].t++;if(PS.visited[id])byReg[region].v++;});
+  const regsVis=Object.values(byReg).filter(r=>r.v>0).length;
+  const ctries=new Set(PROPS.filter(([id])=>PS.visited[id]).map(p=>p[4])).size;
+  const brandCts={};PROPS.forEach(([id,,brand])=>{if(PS.visited[id])brandCts[brand]=(brandCts[brand]||0)+1;});
+  const top=Object.entries(brandCts).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('pp-v').textContent=vc;document.getElementById('pp-tot').textContent=tot;
+  document.getElementById('pp-reg').textContent=regsVis+'/6';document.getElementById('pp-ctry').textContent=ctries||'—';
+  document.getElementById('pp-top').textContent=top?top[0]+' ('+top[1]+')':'—';
+  document.getElementById('pp-bar').style.width=Math.round(vc/tot*100)+'%';
+  document.getElementById('pp-pct').textContent=Math.round(vc/tot*100)+'%';
+  const rank=getRank(vc);const nextRank=RANKS[RANKS.indexOf(rank)+1];
+  const rPct=nextRank?Math.round((vc-rank.min)/(nextRank.min-rank.min)*100):100;
+  const rb=document.getElementById('pp-rank-bar');
+  if(rb)rb.innerHTML=`<div class="rank-badge"><div class="rank-icon" style="background:${rank.color}20;border:2px solid ${rank.color}30">${rank.icon}</div>
+    <div class="rank-info"><div class="rank-name" style="color:${rank.color}">${rank.name}</div>
+      <div class="rank-sub">${nextRank?`${vc-rank.min}/${nextRank.min-rank.min} toward ${nextRank.name}`:'Max rank — Grand Master'}</div></div></div>
+    <div class="rank-progress"><div class="rank-prg-label"><span style="color:${rank.color};font-weight:600">${rank.name}</span><span>${nextRank?nextRank.name+' at '+nextRank.min:'👑 Grand Master'}</span></div>
+      <div class="rank-prg-track"><div class="rank-prg-fill" style="width:${rPct}%;background:${rank.color}"></div></div></div>`;
+  const ag=document.getElementById('pp-achv-grid');
+  if(ag){
+    const unlocked=ACHV.filter(a=>a.check(PS.visited)).length;
+    document.getElementById('pp-achv-ct').textContent=unlocked+'/'+ACHV.length+' unlocked';
+    ag.innerHTML='';
+    ACHV.forEach(a=>{const ok=a.check(PS.visited);const card=document.createElement('div');card.className='achv-card '+(ok?'unlocked':'locked');
+      card.innerHTML=`<div class="achv-icon">${a.icon}</div><div class="achv-name">${a.name}</div><div class="achv-desc">${a.desc}</div>${ok?'<div class="achv-stamp">✓ Earned</div>':''}`;ag.appendChild(card);});
+  }
+  const ch=document.getElementById('pp-challenges');
+  if(ch){ch.innerHTML='';CHALLENGES.forEach(c=>{const done=c.ids?c.ids.filter(id=>PS.visited[id]).length:(c.tally?c.tally(PS.visited):0);const total=c.ids?c.ids.length:c.target;const complete=done>=total;const cp=Math.round(done/total*100);
+    const row=document.createElement('div');row.className='chal-row';
+    row.innerHTML=`<div class="chal-info"><div class="chal-name">${complete?'✓ ':''}<strong>${c.name}</strong></div><div class="chal-desc">${c.desc}</div></div>
+      <div class="chal-prg">${complete?'<div class="chal-done">Complete!</div>':`<div class="chal-prg-row"><span>${done}/${total}</span><span>${cp}%</span></div><div class="chal-prg-track"><div class="chal-prg-fill" style="width:${cp}%;background:${cp===100?'var(--green)':'var(--blue)'}"></div></div>`}</div>`;
+    ch.appendChild(row);});}
+  const fp=fpProps();document.getElementById('pp-count').textContent='Showing '+fp.length+' of '+tot+' properties';
+  const grid=document.getElementById('pp-grid');grid.innerHTML='';
+  if(!fp.length){grid.innerHTML='<div class="pp-empty">No properties match filters.</div>';}
+  else fp.forEach(([id,name,brand,city,country,region,cat])=>{
+    const vis=!!PS.visited[id];const wl=!!TS.wishlist[id];const bc=BC[brand]||BC['Other'];
+    const card=document.createElement('div');card.className='prop-card'+(vis?' visited':wl?' wishlisted':'');
+    card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span><span class="prop-stamp">${vis?'✓':wl?'❤️':''}</span></div>
+      <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
+      <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
+        <div class="prop-actions">
+          <button class="prop-btn${vis?' done':''}" onclick="toggleVisit('${id}')">${vis?'Visited':'Visit'}</button>
+          ${!vis?`<button class="prop-btn${wl?' wl':' wl-add'}" onclick="toggleWishlist('${id}')">${wl?'❤️':'♡'}</button>`:''}
+        </div></div>`;
+    grid.appendChild(card);});
+  updatePMarkers();
+}
+function toggleWishlist(id){
+  if(TS.wishlist[id])delete TS.wishlist[id];else TS.wishlist[id]=true;
+  saveTravel();renderPassport();
+}
+
+// ── TRAVEL PLANNING ────────────────────────────────────────────────────────
+const CHART={1:{s:3500,lo:2000,hi:5000},2:{s:8000,lo:5500,hi:9000},3:{s:12000,lo:10000,hi:14000},4:{s:15000,lo:12000,hi:17000},5:{s:20000,lo:17000,hi:22000},6:{s:25000,lo:22000,hi:28000},7:{s:30000,lo:27000,hi:33000},8:{s:40000,lo:37000,hi:44000}};
+const CASH_EST={1:120,2:200,3:300,4:400,5:525,6:700,7:950,8:1400};
+const PPT=0.017;
+let calcState={cat:5,nights:3,rate:'s',propName:''};
+let showTripForm=false,editTripId=null;
+
+function renderTravel(){
+  if(activeTab==='trips')renderTrips();
+  else if(activeTab==='calculator')renderCalc();
+  else if(activeTab==='wishlist')renderWishlist();
+}
+
+function renderTrips(){
+  const el=document.getElementById('panel-trips');
+  const today=iso();
+  const upcoming=TS.trips.filter(t=>t.status!=='completed').sort((a,b)=>a.startDate.localeCompare(b.startDate));
+  const done=TS.trips.filter(t=>t.status==='completed').sort((a,b)=>b.startDate.localeCompare(a.startDate));
+  el.innerHTML=`<div class="panel">
+    <div class="trip-panel-head">
+      <div class="tph-left"><div class="tph-title">My Trips</div><div class="tph-ct">${TS.trips.length} total · ${upcoming.length} upcoming</div></div>
+      <button class="new-trip-btn" onclick="openTripForm()">+ New Trip</button>
+    </div>
+    <div id="trip-form-wrap" style="display:${showTripForm?'block':'none'}">
+      <div class="trip-form-wrap">
+        <div class="trip-form-title">${editTripId?'Edit Trip':'New Trip'}</div>
+        <div class="tf-grid">
+          <div class="tf-field"><label>Trip Name</label><input id="tf-name" placeholder="Tokyo Winter 2027"></div>
+          <div class="tf-field"><label>Destination</label><input id="tf-dest" placeholder="Tokyo, Japan"></div>
+          <div class="tf-field"><label>Start Date</label><input type="date" id="tf-start"></div>
+          <div class="tf-field"><label>End Date</label><input type="date" id="tf-end"></div>
+          <div class="tf-field"><label>Status</label><select id="tf-status"><option value="planning">Planning</option><option value="booked">Booked</option><option value="completed">Completed</option></select></div>
+          <div class="tf-field"><label>Hotel</label><input id="tf-hotel" placeholder="Park Hyatt Tokyo"></div>
+        </div>
+        <div class="tf-grid" style="grid-template-columns:1fr">
+          <div class="tf-field"><label>Flight Info</label><input id="tf-flight" placeholder="UA 837 SFO→NRT"></div>
+          <div class="tf-field"><label>Notes</label><textarea id="tf-notes" rows="2"></textarea></div>
+        </div>
+        <div class="tf-actions"><button class="tf-save" onclick="saveTrip()">Save Trip</button><button class="tf-cancel" onclick="cancelTripForm()">Cancel</button></div>
+      </div>
+    </div>
+    ${!TS.trips.length?`<div class="trip-empty-state"><div class="trip-empty-icon">✈️</div><div class="trip-empty-text">No trips yet</div><div class="trip-empty-sub">Add your first trip to get started</div></div>`:''}
+    ${upcoming.length?'<div class="trips-section-head">Upcoming & In Planning</div>'+upcoming.map(t=>tripRowHTML(t,today)).join(''):''}
+    ${done.length?'<div class="trips-section-head">Completed</div>'+done.map(t=>tripRowHTML(t,today)).join(''):''}
+  </div>`;
+  if(editTripId){const t=TS.trips.find(x=>x.id===editTripId);if(t){['name','dest','start','end','status','hotel','flight','notes'].forEach(f=>{const el2=document.getElementById('tf-'+f);if(el2)el2.value=t[f]||'';});}}
+}
+function tripRowHTML(t,today){
+  const du=daysUntil(t.startDate);
+  const cd=t.startDate>=today&&t.status!=='completed'?`${du>0?du+'d away':'Today!'}`:t.status==='completed'?`Completed ${fmtD(t.endDate||t.startDate)}`:'';
+  return`<div class="trip-row"><div class="trip-left">
+    <div class="trip-dest">${t.destination||'Untitled Trip'}${t.name?` <span style="font-size:11px;color:var(--text3);font-weight:400">· ${t.name}</span>`:''}</div>
+    <div class="trip-meta">
+      <span class="trip-dates">${fmtD(t.startDate)}${t.endDate?' – '+fmtD(t.endDate):''}</span>
+      ${t.hotelName?`<span class="trip-hotel">🏨 ${t.hotelName}</span>`:''}
+      ${t.flightInfo?`<span class="trip-flight">✈️ ${t.flightInfo}</span>`:''}
+    </div>
+    ${t.notes?`<div class="trip-notes">${t.notes}</div>`:''}
+  </div>
+  <div class="trip-right">
+    <span class="trip-status s-${t.status}">${t.status}</span>
+    ${cd?`<span class="trip-countdown">${cd}</span>`:''}
+    <div class="trip-btns">
+      <button class="trip-edit-btn" onclick="editTrip('${t.id}')">Edit</button>
+      <button class="trip-del-btn" onclick="deleteTrip('${t.id}')">Delete</button>
+    </div>
+  </div></div>`;
+}
+function openTripForm(){showTripForm=true;editTripId=null;renderTrips();}
+function cancelTripForm(){showTripForm=false;editTripId=null;renderTrips();}
+function editTrip(id){editTripId=id;showTripForm=true;renderTrips();}
+function saveTrip(){
+  const get=id=>document.getElementById(id)?.value.trim()||'';
+  const trip={id:editTripId||'trip-'+Date.now(),name:get('tf-name'),destination:get('tf-dest'),startDate:get('tf-start'),endDate:get('tf-end'),status:get('tf-status')||'planning',hotelName:get('tf-hotel'),flightInfo:get('tf-flight'),notes:get('tf-notes')};
+  if(!trip.destination){alert('Please enter a destination.');return;}
+  if(editTripId){const idx=TS.trips.findIndex(t=>t.id===editTripId);if(idx>=0)TS.trips[idx]=trip;}else{TS.trips.push(trip);}
+  showTripForm=false;editTripId=null;saveTravel();renderTrips();
+}
+function deleteTrip(id){if(!confirm('Delete this trip?'))return;TS.trips=TS.trips.filter(t=>t.id!==id);saveTravel();renderTrips();}
+
+function renderCalc(){
+  const el=document.getElementById('panel-calculator');
+  el.innerHTML=`<div class="calc-layout">
+    <div class="calc-inputs">
+      <div class="grp-head" style="margin:0">Inputs</div>
+      <div class="calc-field"><label>Search Property</label>
+        <input class="calc-prop-search" id="calc-psearch" placeholder="Park Hyatt Tokyo…" oninput="filterCalcProps(this.value)">
+        <div class="calc-prop-list" id="calc-plist"></div>
+      </div>
+      <div class="calc-field"><label>Category (1–8)</label>
+        <div class="calc-cat-row">
+          <input class="calc-cat-input" id="calc-cat" type="number" min="1" max="8" value="${calcState.cat}" oninput="calcState.cat=Math.min(8,Math.max(1,parseInt(this.value)||1));calcUpdate()">
+          <span class="calc-cat-name">${['','Entry','Moderate','Standard','Select','Upper Upscale','Deluxe','Premium','Luxury'][calcState.cat]}</span>
+        </div>
+      </div>
+      <div class="calc-field"><label>Nights</label>
+        <div class="nights-ctrl">
+          <button class="nc-btn" onclick="adjNights(-1)">−</button>
+          <span class="nc-val" id="nc-val">${calcState.nights}</span>
+          <button class="nc-btn" onclick="adjNights(1)">+</button>
+        </div>
+      </div>
+      <div class="calc-field"><label>Rate Type</label>
+        <div class="rate-toggles">
+          <button class="rate-btn${calcState.rate==='lo'?' active':''}" onclick="setRate('lo')">Off-Peak</button>
+          <button class="rate-btn${calcState.rate==='s'?' active':''}" onclick="setRate('s')">Standard</button>
+          <button class="rate-btn${calcState.rate==='hi'?' active':''}" onclick="setRate('hi')">Peak</button>
+        </div>
+      </div>
+    </div>
+    <div class="calc-results" id="calc-results"></div>
+  </div>`;
+  calcUpdate();
+}
+function filterCalcProps(q){
+  const list=document.getElementById('calc-plist');if(!list)return;
+  if(!q){list.classList.remove('open');return;}
+  const matches=PROPS.filter(([,name,,,city])=>name.toLowerCase().includes(q.toLowerCase())||city.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(!matches.length){list.classList.remove('open');return;}
+  list.classList.add('open');
+  list.innerHTML=matches.map(([id,name,brand,city,,, cat])=>{
+    return '<div class="calc-prop-opt" onclick="selectCalcProp(\''+id+'\',\''+name+'\','+cat+')">'+name+'<span>Cat '+cat+' \xb7 '+city+'</span></div>';
+  }).join('');
+}
+function selectCalcProp(id,name,cat){
+  calcState.cat=cat;calcState.propName=name;
+  document.getElementById('calc-psearch').value=name;
+  document.getElementById('calc-plist').classList.remove('open');
+  document.getElementById('calc-cat').value=cat;
+  calcUpdate();
+}
+function adjNights(d){calcState.nights=Math.min(14,Math.max(1,calcState.nights+d));const v=document.getElementById('nc-val');if(v)v.textContent=calcState.nights;calcUpdate();}
+function setRate(r){calcState.rate=r;document.querySelectorAll('.rate-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(r==='lo'?'off':r==='hi'?'peak':'stand')));calcUpdate();}
+function calcUpdate(){
+  const el=document.getElementById('calc-results');if(!el)return;
+  const {cat,nights,rate,propName}=calcState;
+  const ch=CHART[cat];if(!ch){el.innerHTML='<div style="padding:20px;color:var(--text3)">Select a valid category (1–8)</div>';return;}
+  const ratePerNight=ch[rate];
+  const paidNights=nights-Math.floor(nights/5);
+  const totalPts=paidNights*ratePerNight;
+  const ptVal=totalPts*PPT;
+  const cashTotal=CASH_EST[cat]*nights;
+  const savings=Math.max(0,cashTotal-ptVal);
+  const savPct=Math.round(savings/cashTotal*100);
+  const certElig=cat<=4;const free5th=nights>=5;
+  const rateName={lo:'Off-Peak',s:'Standard',hi:'Peak'}[rate];
+  el.innerHTML=`<div class="calc-res-head">
+    <div class="calc-res-title">${propName||'Category '+cat+' Property'}</div>
+    <div class="calc-res-prop">${rateName} rate · ${nights} night${nights>1?'s':''}</div>
+  </div>
+  <div class="calc-res-main">
+    <div class="calc-pts-big">${totalPts.toLocaleString()}</div>
+    <div class="calc-pts-sub">Hyatt points needed${free5th?` (${nights} nights, ${Math.floor(nights/5)} free — you pay ${paidNights})`:''}</div>
+    <div class="calc-divider"></div>
+    <div class="calc-row"><span class="calc-row-label">Hyatt points</span><span class="calc-row-val">${totalPts.toLocaleString()} pts</span></div>
+    <div class="calc-row"><span class="calc-row-label">UR points (1:1 from CSR)</span><span class="calc-row-val">${totalPts.toLocaleString()} pts</span></div>
+    <div class="calc-row"><span class="calc-row-label">Point value at 1.7¢/pt</span><span class="calc-row-val green">$${Math.round(ptVal).toLocaleString()}</span></div>
+    <div class="calc-row"><span class="calc-row-label">Est. cash rate</span><span class="calc-row-val amber">~$${cashTotal.toLocaleString()}</span></div>
+    <div class="calc-row"><span class="calc-row-label">Est. savings vs. cash</span><span class="calc-row-val green">~$${savings.toLocaleString()} (${savPct}%)</span></div>
+    <div class="calc-row"><span class="calc-row-label">Rate per night</span><span class="calc-row-val">${ratePerNight.toLocaleString()} pts</span></div>
+    ${free5th?`<div class="calc-note good">✓ 5th night free applied — ${Math.floor(nights/5)} free night${Math.floor(nights/5)>1?'s':''} in this booking</div>`:''}
+    ${certElig?`<div class="calc-note good">✓ Your Hyatt card free night certificate covers 1 night at this category</div>`:'<div class="calc-note">Free night certificate requires Category 1–4 (this is Cat ${cat})</div>'}
+  </div>`;
+}
+
+function renderWishlist(){
+  const el=document.getElementById('panel-wishlist');
+  const wlIds=Object.keys(TS.wishlist);
+  const wlProps=PROPS.filter(([id])=>TS.wishlist[id]);
+  let mode='browse';
+  const render=(m)=>{
+    mode=m;
+    const showProps=m==='wishlist'?wlProps:PROPS.filter(([id])=>!PS.visited[id]);
+    el.innerHTML=`<div class="panel">
+      <div class="panel-head"><span class="ph-name">Property Wishlist</span><span class="ph-fee">${wlIds.length} saved</span><span class="ph-tag">Properties to visit next</span></div>
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="wl-toggle">
+          <button class="wl-toggle-btn${m==='browse'?' active':''}" onclick="wlMode('browse')">Browse Unvisited</button>
+          <button class="wl-toggle-btn${m==='wishlist'?' active':''}" onclick="wlMode('wishlist')">My Wishlist (${wlIds.length})</button>
+        </div>
+      </div>
+      <div style="padding:14px 16px 18px">
+        ${!showProps.length?`<div class="pp-empty">${m==='wishlist'?'No properties wishlisted yet. Browse unvisited properties and click ♡ to save.':'All properties have been visited!'}</div>`:''}
+        <div class="pp-grid" id="wl-grid"></div>
+      </div>
+    </div>`;
+    const grid=el.querySelector('#wl-grid');
+    showProps.forEach(([id,name,brand,city,country,,cat])=>{
+      const wl=!!TS.wishlist[id];const bc=BC[brand]||BC['Other'];
+      const card=document.createElement('div');card.className='prop-card'+(wl?' wishlisted':'');
+      card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span><span class="prop-stamp">${wl?'❤️':''}</span></div>
+        <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
+        <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
+          <button class="prop-btn${wl?' wl':' wl-add'}" onclick="toggleWishlistOnly('${id}')">${wl?'❤️ Saved':'♡ Wishlist'}</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  };
+  window.wlMode=(m)=>render(m);
+  render('browse');
+}
+function toggleWishlistOnly(id){if(TS.wishlist[id])delete TS.wishlist[id];else TS.wishlist[id]=true;saveTravel();renderWishlist();}
+
+// ── RENDER DISPATCHER ──────────────────────────────────────────────────────
+function renderSection(section,tab){
+  if(section==='dashboard')renderDashboard();
+  else if(section==='cards')renderCards();
+  else if(section==='travel')renderTravel();
+  // passport renders separately via initPMap/renderPassport
+}
+
+// ── INITIALIZATION ─────────────────────────────────────────────────────────
+document.getElementById('nav-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+async function init(){
+  await Promise.all([load(),loadPassport(),loadTravel()]);
+  setSection('dashboard');
+}
+init();
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</body>
+</html>
