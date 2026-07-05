@@ -495,189 +495,192 @@ const TRAVELERS={will:{id:'will',name:'Will'},radha:{id:'radha',name:'Radha'}};
 // Every status starts unresearched; you fill this in as you check official sources.
 // This app never asserts what a visa rule IS — only tracks what you've verified and when.
 const VISA_COUNTRIES=[
-  // Originally curated set (Radha, Indian passport + US green card research)
-  ['ca','Canada'],['mx','Mexico'],['uk','United Kingdom'],['schengen','Schengen Area (EU) — grouped; see individual member countries below for country-specific notes'],
-  ['jp','Japan'],['kr','South Korea'],['cn','China'],['th','Thailand'],['vn','Vietnam'],
-  ['sg','Singapore'],['my','Malaysia'],['id','Indonesia'],['ae','UAE'],['qa','Qatar'],
-  ['au','Australia'],['nz','New Zealand'],
-  ['cr','Costa Rica'],['co','Colombia'],['br','Brazil'],['ar','Argentina'],['pe','Peru'],
-  ['do','Dominican Republic'],['jm','Jamaica'],['aw','Aruba / Dutch Caribbean'],
-  ['in','India (home country — re-entry to US is the relevant question, not a visa)'],
+  // Originally curated set (Radha, Indian passport + US green card research), now with region
+  ['ca','Canada','North America'],['mx','Mexico','North America'],['uk','United Kingdom','Europe'],
+  ['schengen','Schengen Area (EU) — grouped; see individual member countries below for country-specific notes','Europe'],
+  ['jp','Japan','Asia (East & Southeast)'],['kr','South Korea','Asia (East & Southeast)'],['cn','China','Asia (East & Southeast)'],
+  ['th','Thailand','Asia (East & Southeast)'],['vn','Vietnam','Asia (East & Southeast)'],
+  ['sg','Singapore','Asia (East & Southeast)'],['my','Malaysia','Asia (East & Southeast)'],['id','Indonesia','Asia (East & Southeast)'],
+  ['ae','UAE','Middle East'],['qa','Qatar','Middle East'],
+  ['au','Australia','Oceania'],['nz','New Zealand','Oceania'],
+  ['cr','Costa Rica','Central America'],['co','Colombia','South America'],['br','Brazil','South America'],['ar','Argentina','South America'],['pe','Peru','South America'],
+  ['do','Dominican Republic','Caribbean'],['jm','Jamaica','Caribbean'],['aw','Aruba / Dutch Caribbean','Caribbean'],
+  ['in','India (home country — re-entry to US is the relevant question, not a visa)','Asia (Central & South)'],
   // Expanded from uploaded spreadsheet (193-country H1B-leverage research) — Ease ratings only.
   // NOTE: this spreadsheet's own leverage logic assumes H1B status, not the green-card
   // scenario the rest of this tracker was built around — the Ease rating is still useful
   // as a rough reference, but double-check the underlying leverage type before relying on it.
-  ['united_states',"United States"],
-  ['belize',"Belize"],
-  ['el_salvador',"El Salvador"],
-  ['guatemala',"Guatemala"],
-  ['honduras',"Honduras"],
-  ['nicaragua',"Nicaragua"],
-  ['panama',"Panama"],
-  ['antigua_and_barbuda',"Antigua and Barbuda"],
-  ['bahamas',"Bahamas"],
-  ['barbados',"Barbados"],
-  ['cuba',"Cuba"],
-  ['dominica',"Dominica"],
-  ['grenada',"Grenada"],
-  ['haiti',"Haiti"],
-  ['st_kitts_and_nevis',"St. Kitts and Nevis"],
-  ['st_lucia',"St. Lucia"],
-  ['st_vincent_and_the_grenadines',"St. Vincent and the Grenadines"],
-  ['trinidad_and_tobago',"Trinidad and Tobago"],
-  ['bolivia',"Bolivia"],
-  ['chile',"Chile"],
-  ['ecuador',"Ecuador"],
-  ['guyana',"Guyana"],
-  ['paraguay',"Paraguay"],
-  ['suriname',"Suriname"],
-  ['uruguay',"Uruguay"],
-  ['venezuela',"Venezuela"],
-  ['albania',"Albania"],
-  ['andorra',"Andorra"],
-  ['austria',"Austria"],
-  ['belarus',"Belarus"],
-  ['belgium',"Belgium"],
-  ['bosnia_and_herzegovina',"Bosnia and Herzegovina"],
-  ['bulgaria',"Bulgaria"],
-  ['croatia',"Croatia"],
-  ['cyprus',"Cyprus"],
-  ['czech_republic',"Czech Republic"],
-  ['denmark',"Denmark"],
-  ['estonia',"Estonia"],
-  ['finland',"Finland"],
-  ['france',"France"],
-  ['germany',"Germany"],
-  ['greece',"Greece"],
-  ['hungary',"Hungary"],
-  ['iceland',"Iceland"],
-  ['ireland',"Ireland"],
-  ['italy',"Italy"],
-  ['kosovo',"Kosovo"],
-  ['latvia',"Latvia"],
-  ['liechtenstein',"Liechtenstein"],
-  ['lithuania',"Lithuania"],
-  ['luxembourg',"Luxembourg"],
-  ['malta',"Malta"],
-  ['moldova',"Moldova"],
-  ['monaco',"Monaco"],
-  ['montenegro',"Montenegro"],
-  ['netherlands',"Netherlands"],
-  ['north_macedonia',"North Macedonia"],
-  ['norway',"Norway"],
-  ['poland',"Poland"],
-  ['portugal',"Portugal"],
-  ['romania',"Romania"],
-  ['russia',"Russia"],
-  ['san_marino',"San Marino"],
-  ['serbia',"Serbia"],
-  ['slovakia',"Slovakia"],
-  ['slovenia',"Slovenia"],
-  ['spain',"Spain"],
-  ['sweden',"Sweden"],
-  ['switzerland',"Switzerland"],
-  ['ukraine',"Ukraine"],
-  ['vatican_city',"Vatican City"],
-  ['algeria',"Algeria"],
-  ['angola',"Angola"],
-  ['benin',"Benin"],
-  ['botswana',"Botswana"],
-  ['burkina_faso',"Burkina Faso"],
-  ['burundi',"Burundi"],
-  ['cabo_verde',"Cabo Verde"],
-  ['cameroon',"Cameroon"],
-  ['central_african_republic',"Central African Republic"],
-  ['chad',"Chad"],
-  ['comoros',"Comoros"],
-  ['congo_republic',"Congo (Republic)"],
-  ['congo_drc',"Congo (DRC)"],
-  ['djibouti',"Djibouti"],
-  ['egypt',"Egypt"],
-  ['equatorial_guinea',"Equatorial Guinea"],
-  ['eritrea',"Eritrea"],
-  ['eswatini',"Eswatini"],
-  ['ethiopia',"Ethiopia"],
-  ['gabon',"Gabon"],
-  ['gambia',"Gambia"],
-  ['ghana',"Ghana"],
-  ['guinea',"Guinea"],
-  ['guinea_bissau',"Guinea-Bissau"],
-  ['ivory_coast',"Ivory Coast"],
-  ['kenya',"Kenya"],
-  ['lesotho',"Lesotho"],
-  ['liberia',"Liberia"],
-  ['libya',"Libya"],
-  ['madagascar',"Madagascar"],
-  ['malawi',"Malawi"],
-  ['mali',"Mali"],
-  ['mauritania',"Mauritania"],
-  ['mauritius',"Mauritius"],
-  ['morocco',"Morocco"],
-  ['mozambique',"Mozambique"],
-  ['namibia',"Namibia"],
-  ['niger',"Niger"],
-  ['nigeria',"Nigeria"],
-  ['rwanda',"Rwanda"],
-  ['sao_tome_and_principe',"Sao Tome and Principe"],
-  ['senegal',"Senegal"],
-  ['seychelles',"Seychelles"],
-  ['sierra_leone',"Sierra Leone"],
-  ['somalia',"Somalia"],
-  ['south_africa',"South Africa"],
-  ['south_sudan',"South Sudan"],
-  ['sudan',"Sudan"],
-  ['tanzania',"Tanzania"],
-  ['togo',"Togo"],
-  ['tunisia',"Tunisia"],
-  ['uganda',"Uganda"],
-  ['zambia',"Zambia"],
-  ['zimbabwe',"Zimbabwe"],
-  ['bahrain',"Bahrain"],
-  ['iran',"Iran"],
-  ['iraq',"Iraq"],
-  ['israel',"Israel"],
-  ['jordan',"Jordan"],
-  ['kuwait',"Kuwait"],
-  ['lebanon',"Lebanon"],
-  ['oman',"Oman"],
-  ['palestine',"Palestine"],
-  ['saudi_arabia',"Saudi Arabia"],
-  ['syria',"Syria"],
-  ['turkey',"Turkey"],
-  ['yemen',"Yemen"],
-  ['afghanistan',"Afghanistan"],
-  ['bangladesh',"Bangladesh"],
-  ['bhutan',"Bhutan"],
-  ['kazakhstan',"Kazakhstan"],
-  ['kyrgyzstan',"Kyrgyzstan"],
-  ['maldives',"Maldives"],
-  ['nepal',"Nepal"],
-  ['pakistan',"Pakistan"],
-  ['sri_lanka',"Sri Lanka"],
-  ['tajikistan',"Tajikistan"],
-  ['turkmenistan',"Turkmenistan"],
-  ['uzbekistan',"Uzbekistan"],
-  ['brunei',"Brunei"],
-  ['cambodia',"Cambodia"],
-  ['east_timor_timor_leste',"East Timor (Timor-Leste)"],
-  ['laos',"Laos"],
-  ['mongolia',"Mongolia"],
-  ['myanmar',"Myanmar"],
-  ['north_korea',"North Korea"],
-  ['philippines',"Philippines"],
-  ['taiwan',"Taiwan"],
-  ['fiji',"Fiji"],
-  ['kiribati',"Kiribati"],
-  ['marshall_islands',"Marshall Islands"],
-  ['micronesia',"Micronesia"],
-  ['nauru',"Nauru"],
-  ['palau',"Palau"],
-  ['papua_new_guinea',"Papua New Guinea"],
-  ['samoa',"Samoa"],
-  ['solomon_islands',"Solomon Islands"],
-  ['tonga',"Tonga"],
-  ['tuvalu',"Tuvalu"],
-  ['vanuatu',"Vanuatu"],
+  ['united_states',"United States","North America"],
+  ['belize',"Belize","Central America"],
+  ['el_salvador',"El Salvador","Central America"],
+  ['guatemala',"Guatemala","Central America"],
+  ['honduras',"Honduras","Central America"],
+  ['nicaragua',"Nicaragua","Central America"],
+  ['panama',"Panama","Central America"],
+  ['antigua_and_barbuda',"Antigua and Barbuda","Caribbean"],
+  ['bahamas',"Bahamas","Caribbean"],
+  ['barbados',"Barbados","Caribbean"],
+  ['cuba',"Cuba","Caribbean"],
+  ['dominica',"Dominica","Caribbean"],
+  ['grenada',"Grenada","Caribbean"],
+  ['haiti',"Haiti","Caribbean"],
+  ['st_kitts_and_nevis',"St. Kitts and Nevis","Caribbean"],
+  ['st_lucia',"St. Lucia","Caribbean"],
+  ['st_vincent_and_the_grenadines',"St. Vincent and the Grenadines","Caribbean"],
+  ['trinidad_and_tobago',"Trinidad and Tobago","Caribbean"],
+  ['bolivia',"Bolivia","South America"],
+  ['chile',"Chile","South America"],
+  ['ecuador',"Ecuador","South America"],
+  ['guyana',"Guyana","South America"],
+  ['paraguay',"Paraguay","South America"],
+  ['suriname',"Suriname","South America"],
+  ['uruguay',"Uruguay","South America"],
+  ['venezuela',"Venezuela","South America"],
+  ['albania',"Albania","Europe"],
+  ['andorra',"Andorra","Europe"],
+  ['austria',"Austria","Europe"],
+  ['belarus',"Belarus","Europe"],
+  ['belgium',"Belgium","Europe"],
+  ['bosnia_and_herzegovina',"Bosnia and Herzegovina","Europe"],
+  ['bulgaria',"Bulgaria","Europe"],
+  ['croatia',"Croatia","Europe"],
+  ['cyprus',"Cyprus","Europe"],
+  ['czech_republic',"Czech Republic","Europe"],
+  ['denmark',"Denmark","Europe"],
+  ['estonia',"Estonia","Europe"],
+  ['finland',"Finland","Europe"],
+  ['france',"France","Europe"],
+  ['germany',"Germany","Europe"],
+  ['greece',"Greece","Europe"],
+  ['hungary',"Hungary","Europe"],
+  ['iceland',"Iceland","Europe"],
+  ['ireland',"Ireland","Europe"],
+  ['italy',"Italy","Europe"],
+  ['kosovo',"Kosovo","Europe"],
+  ['latvia',"Latvia","Europe"],
+  ['liechtenstein',"Liechtenstein","Europe"],
+  ['lithuania',"Lithuania","Europe"],
+  ['luxembourg',"Luxembourg","Europe"],
+  ['malta',"Malta","Europe"],
+  ['moldova',"Moldova","Europe"],
+  ['monaco',"Monaco","Europe"],
+  ['montenegro',"Montenegro","Europe"],
+  ['netherlands',"Netherlands","Europe"],
+  ['north_macedonia',"North Macedonia","Europe"],
+  ['norway',"Norway","Europe"],
+  ['poland',"Poland","Europe"],
+  ['portugal',"Portugal","Europe"],
+  ['romania',"Romania","Europe"],
+  ['russia',"Russia","Europe"],
+  ['san_marino',"San Marino","Europe"],
+  ['serbia',"Serbia","Europe"],
+  ['slovakia',"Slovakia","Europe"],
+  ['slovenia',"Slovenia","Europe"],
+  ['spain',"Spain","Europe"],
+  ['sweden',"Sweden","Europe"],
+  ['switzerland',"Switzerland","Europe"],
+  ['ukraine',"Ukraine","Europe"],
+  ['vatican_city',"Vatican City","Europe"],
+  ['algeria',"Algeria","Africa"],
+  ['angola',"Angola","Africa"],
+  ['benin',"Benin","Africa"],
+  ['botswana',"Botswana","Africa"],
+  ['burkina_faso',"Burkina Faso","Africa"],
+  ['burundi',"Burundi","Africa"],
+  ['cabo_verde',"Cabo Verde","Africa"],
+  ['cameroon',"Cameroon","Africa"],
+  ['central_african_republic',"Central African Republic","Africa"],
+  ['chad',"Chad","Africa"],
+  ['comoros',"Comoros","Africa"],
+  ['congo_republic',"Congo (Republic)","Africa"],
+  ['congo_drc',"Congo (DRC)","Africa"],
+  ['djibouti',"Djibouti","Africa"],
+  ['egypt',"Egypt","Africa"],
+  ['equatorial_guinea',"Equatorial Guinea","Africa"],
+  ['eritrea',"Eritrea","Africa"],
+  ['eswatini',"Eswatini","Africa"],
+  ['ethiopia',"Ethiopia","Africa"],
+  ['gabon',"Gabon","Africa"],
+  ['gambia',"Gambia","Africa"],
+  ['ghana',"Ghana","Africa"],
+  ['guinea',"Guinea","Africa"],
+  ['guinea_bissau',"Guinea-Bissau","Africa"],
+  ['ivory_coast',"Ivory Coast","Africa"],
+  ['kenya',"Kenya","Africa"],
+  ['lesotho',"Lesotho","Africa"],
+  ['liberia',"Liberia","Africa"],
+  ['libya',"Libya","Africa"],
+  ['madagascar',"Madagascar","Africa"],
+  ['malawi',"Malawi","Africa"],
+  ['mali',"Mali","Africa"],
+  ['mauritania',"Mauritania","Africa"],
+  ['mauritius',"Mauritius","Africa"],
+  ['morocco',"Morocco","Africa"],
+  ['mozambique',"Mozambique","Africa"],
+  ['namibia',"Namibia","Africa"],
+  ['niger',"Niger","Africa"],
+  ['nigeria',"Nigeria","Africa"],
+  ['rwanda',"Rwanda","Africa"],
+  ['sao_tome_and_principe',"Sao Tome and Principe","Africa"],
+  ['senegal',"Senegal","Africa"],
+  ['seychelles',"Seychelles","Africa"],
+  ['sierra_leone',"Sierra Leone","Africa"],
+  ['somalia',"Somalia","Africa"],
+  ['south_africa',"South Africa","Africa"],
+  ['south_sudan',"South Sudan","Africa"],
+  ['sudan',"Sudan","Africa"],
+  ['tanzania',"Tanzania","Africa"],
+  ['togo',"Togo","Africa"],
+  ['tunisia',"Tunisia","Africa"],
+  ['uganda',"Uganda","Africa"],
+  ['zambia',"Zambia","Africa"],
+  ['zimbabwe',"Zimbabwe","Africa"],
+  ['bahrain',"Bahrain","Middle East"],
+  ['iran',"Iran","Middle East"],
+  ['iraq',"Iraq","Middle East"],
+  ['israel',"Israel","Middle East"],
+  ['jordan',"Jordan","Middle East"],
+  ['kuwait',"Kuwait","Middle East"],
+  ['lebanon',"Lebanon","Middle East"],
+  ['oman',"Oman","Middle East"],
+  ['palestine',"Palestine","Middle East"],
+  ['saudi_arabia',"Saudi Arabia","Middle East"],
+  ['syria',"Syria","Middle East"],
+  ['turkey',"Turkey","Middle East"],
+  ['yemen',"Yemen","Middle East"],
+  ['afghanistan',"Afghanistan","Asia (Central & South)"],
+  ['bangladesh',"Bangladesh","Asia (Central & South)"],
+  ['bhutan',"Bhutan","Asia (Central & South)"],
+  ['kazakhstan',"Kazakhstan","Asia (Central & South)"],
+  ['kyrgyzstan',"Kyrgyzstan","Asia (Central & South)"],
+  ['maldives',"Maldives","Asia (Central & South)"],
+  ['nepal',"Nepal","Asia (Central & South)"],
+  ['pakistan',"Pakistan","Asia (Central & South)"],
+  ['sri_lanka',"Sri Lanka","Asia (Central & South)"],
+  ['tajikistan',"Tajikistan","Asia (Central & South)"],
+  ['turkmenistan',"Turkmenistan","Asia (Central & South)"],
+  ['uzbekistan',"Uzbekistan","Asia (Central & South)"],
+  ['brunei',"Brunei","Asia (East & Southeast)"],
+  ['cambodia',"Cambodia","Asia (East & Southeast)"],
+  ['east_timor_timor_leste',"East Timor (Timor-Leste)","Asia (East & Southeast)"],
+  ['laos',"Laos","Asia (East & Southeast)"],
+  ['mongolia',"Mongolia","Asia (East & Southeast)"],
+  ['myanmar',"Myanmar","Asia (East & Southeast)"],
+  ['north_korea',"North Korea","Asia (East & Southeast)"],
+  ['philippines',"Philippines","Asia (East & Southeast)"],
+  ['taiwan',"Taiwan","Asia (East & Southeast)"],
+  ['fiji',"Fiji","Oceania"],
+  ['kiribati',"Kiribati","Oceania"],
+  ['marshall_islands',"Marshall Islands","Oceania"],
+  ['micronesia',"Micronesia","Oceania"],
+  ['nauru',"Nauru","Oceania"],
+  ['palau',"Palau","Oceania"],
+  ['papua_new_guinea',"Papua New Guinea","Oceania"],
+  ['samoa',"Samoa","Oceania"],
+  ['solomon_islands',"Solomon Islands","Oceania"],
+  ['tonga',"Tonga","Oceania"],
+  ['tuvalu',"Tuvalu","Oceania"],
+  ['vanuatu',"Vanuatu","Oceania"],
 ];
 const VISA_STATUS_OPTS=[
   ['unresearched','Not researched yet'],
@@ -2528,11 +2531,11 @@ function affordHTML(totalPts){
 function getCountryData(id){
   return VS.countries[id]||{status:'unresearched',leadTimeWeeks:null,notes:'',sourceUrl:'',verifiedDate:null,expiryDate:null};
 }
-let visaFilterText='';
+const VISA_REGIONS=['North America','Central America','Caribbean','South America','Europe','Africa','Middle East','Asia (Central & South)','Asia (East & Southeast)','Oceania'];
+let visaFilter={region:'all',status:'all',ease:'all',search:''};
 function renderVisa(){
   const el=document.getElementById('panel-visa');
   const userVerified=Object.values(VS.countries).filter(c=>c.verifiedDate).length;
-  const seededCount=Object.values(VS.countries).filter(c=>c.seeded).length;
   const easeCount=Object.keys(EASE_IMPORT).length;
   el.innerHTML=`<div class="panel">
     <div class="panel-head"><span class="ph-name">Visa Status — Radha</span><span class="ph-tag">${userVerified}/${VISA_COUNTRIES.length} verified by you</span></div>
@@ -2549,68 +2552,110 @@ function renderVisa(){
       <textarea id="us-status-note" rows="3" style="width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:8px" placeholder="e.g. visa stamping / re-entry considerations to confirm with an immigration attorney before international travel">${VS.usStatusNote||''}</textarea>
     </div>
     <div class="grp-head" style="display:flex;justify-content:space-between;align-items:center">
-      <span>Countries — Click to Expand</span>
+      <span>Countries</span>
       <span style="font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:none;letter-spacing:0;font-size:9.5px">${easeCount} with imported Ease ratings</span>
     </div>
-    <div style="padding:10px 20px;border-bottom:1px solid var(--border-l)">
-      <input id="visa-search" type="text" placeholder="Search ${VISA_COUNTRIES.length} countries…" value="${visaFilterText}" style="width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:6px 10px">
+    <div class="pp-filters" style="border-radius:0;border-top:none;border-left:none;border-right:none;box-shadow:none;margin-bottom:0">
+      <div class="pp-pills" id="visa-region-pills"></div>
+      <div class="pp-frow">
+        <select id="visa-status-filter"><option value="all">All Statuses</option>${VISA_STATUS_OPTS.map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+        <select id="visa-ease-filter"><option value="all">All Ease Ratings</option><option value="H">Easy (H)</option><option value="M">Medium (M)</option><option value="L">Hard (L)</option><option value="none">No Ease Rating</option></select>
+        <input id="visa-search" type="text" placeholder="Search ${VISA_COUNTRIES.length} countries…" value="${visaFilter.search}">
+      </div>
     </div>
     <div id="visa-country-list"></div>
   </div>`;
   document.getElementById('pp-exp-will').onchange=e=>{VS.passportExpiry.will=e.target.value||null;saveVisa();};
   document.getElementById('pp-exp-radha').onchange=e=>{VS.passportExpiry.radha=e.target.value||null;saveVisa();};
   document.getElementById('us-status-note').onchange=e=>{VS.usStatusNote=e.target.value;saveVisa();};
-  let st;document.getElementById('visa-search').oninput=e=>{clearTimeout(st);const v=e.target.value;st=setTimeout(()=>{visaFilterText=v;renderVisaCountryList();},150);};
+  const pillsEl=document.getElementById('visa-region-pills');
+  ['all',...VISA_REGIONS].forEach(r=>{
+    const p=document.createElement('div');p.className='pp-pill'+(visaFilter.region===r?' active':'');p.textContent=r==='all'?'All Regions':r;
+    p.onclick=()=>{visaFilter.region=r;document.querySelectorAll('#visa-region-pills .pp-pill').forEach(x=>x.classList.toggle('active',x===p));renderVisaCountryList();};
+    pillsEl.appendChild(p);
+  });
+  document.getElementById('visa-status-filter').value=visaFilter.status;
+  document.getElementById('visa-status-filter').onchange=e=>{visaFilter.status=e.target.value;renderVisaCountryList();};
+  document.getElementById('visa-ease-filter').value=visaFilter.ease;
+  document.getElementById('visa-ease-filter').onchange=e=>{visaFilter.ease=e.target.value;renderVisaCountryList();};
+  let st;document.getElementById('visa-search').oninput=e=>{clearTimeout(st);const v=e.target.value;st=setTimeout(()=>{visaFilter.search=v;renderVisaCountryList();},150);};
   renderVisaCountryList();
 }
 function renderVisaCountryList(){
   const listEl=document.getElementById('visa-country-list');
   if(!listEl)return;
-  const q=visaFilterText.trim().toLowerCase();
-  const filtered=q?VISA_COUNTRIES.filter(([,name])=>name.toLowerCase().includes(q)):VISA_COUNTRIES;
+  const q=visaFilter.search.trim().toLowerCase();
+  const filtered=VISA_COUNTRIES.filter(([id,name,region])=>{
+    if(visaFilter.region!=='all'&&region!==visaFilter.region)return false;
+    if(q&&!name.toLowerCase().includes(q))return false;
+    const c=getCountryData(id);
+    if(visaFilter.status!=='all'&&c.status!==visaFilter.status)return false;
+    const ease=EASE_IMPORT[id]||null;
+    if(visaFilter.ease==='none'&&ease)return false;
+    if(visaFilter.ease!=='all'&&visaFilter.ease!=='none'&&ease!==visaFilter.ease)return false;
+    return true;
+  });
   listEl.innerHTML='';
-  if(!filtered.length){listEl.innerHTML='<div class="pp-empty">No countries match your search.</div>';return;}
+  if(!filtered.length){listEl.innerHTML='<div class="pp-empty">No countries match your filters.</div>';return;}
   const statusColor={unresearched:'var(--text3)','visa-free':'var(--green)',voa:'var(--blue)',evisa:'var(--blue)',advance:'var(--amber)','have-valid':'var(--green)'};
   const easeColor={H:'var(--green)',M:'var(--amber)',L:'var(--red)'};
   const easeLabel={H:'Easy',M:'Medium',L:'Hard'};
-  filtered.forEach(([id,name])=>{
-    const c=getCountryData(id);
-    const ease=EASE_IMPORT[id];
-    const details=document.createElement('details');
-    const statusLabel=(VISA_STATUS_OPTS.find(([k])=>k===c.status)||['',c.status])[1];
-    details.innerHTML=`<summary class="grp-head" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff;border-top:none;gap:10px">
-        <span style="flex:1;min-width:0">${name}${c.seeded?' <span style="font-size:8.5px;font-weight:700;color:var(--amber);background:var(--amber-t);padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle">PRE-FILLED</span>':''}</span>
-        <span style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-          ${ease?`<span title="Ease imported from your spreadsheet (H1B-based)" style="font-size:8.5px;font-weight:700;color:#fff;background:${easeColor[ease]};padding:1px 6px;border-radius:3px">${easeLabel[ease]}</span>`:''}
-          <span style="color:${statusColor[c.status]||'var(--text3)'};font-weight:700;font-size:11px">${statusLabel}</span>
-        </span>
-      </summary>
-      <div style="padding:12px 20px;border-bottom:1px solid var(--border-l)">
-        ${ease?`<div style="font-size:11px;color:var(--text2);background:#f5f7fb;border-radius:4px;padding:6px 10px;margin-bottom:10px">Ease rating <strong>${easeLabel[ease]} (${ease})</strong> imported from your uploaded spreadsheet — based on H1B leverage research, not the green-card scenario this tracker otherwise assumes. Treat as a rough signal only.</div>`:''}
-        <div class="tf-grid three">
-          <div class="tf-field"><label>Status</label>
-            <select id="vc-status-${id}">${VISA_STATUS_OPTS.map(([k,v])=>`<option value="${k}"${c.status===k?' selected':''}>${v}</option>`).join('')}</select>
+  // Group by region when no specific region is selected; otherwise show a flat list.
+  const groups=new Map();
+  filtered.forEach(entry=>{
+    const region=visaFilter.region==='all'?entry[2]:'__flat__';
+    if(!groups.has(region))groups.set(region,[]);
+    groups.get(region).push(entry);
+  });
+  const orderedRegionKeys=visaFilter.region==='all'?VISA_REGIONS.filter(r=>groups.has(r)):['__flat__'];
+  orderedRegionKeys.forEach(region=>{
+    const items=groups.get(region);
+    if(!items||!items.length)return;
+    if(region!=='__flat__'){
+      const header=document.createElement('div');
+      header.style.cssText='padding:6px 20px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);background:#eef1f7;border-bottom:1px solid var(--border-l);border-top:1px solid var(--border)';
+      header.textContent=`${region} · ${items.length}`;
+      listEl.appendChild(header);
+    }
+    items.forEach(([id,name])=>{
+      const c=getCountryData(id);
+      const ease=EASE_IMPORT[id];
+      const details=document.createElement('details');
+      const statusLabel=(VISA_STATUS_OPTS.find(([k])=>k===c.status)||['',c.status])[1];
+      details.innerHTML=`<summary class="grp-head" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff;border-top:none;gap:10px">
+          <span style="flex:1;min-width:0">${name}${c.seeded?' <span style="font-size:8.5px;font-weight:700;color:var(--amber);background:var(--amber-t);padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle">PRE-FILLED</span>':''}</span>
+          <span style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            ${ease?`<span title="Ease imported from your spreadsheet (H1B-based)" style="font-size:8.5px;font-weight:700;color:#fff;background:${easeColor[ease]};padding:1px 6px;border-radius:3px">${easeLabel[ease]}</span>`:''}
+            <span style="color:${statusColor[c.status]||'var(--text3)'};font-weight:700;font-size:11px">${statusLabel}</span>
+          </span>
+        </summary>
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border-l)">
+          ${ease?`<div style="font-size:11px;color:var(--text2);background:#f5f7fb;border-radius:4px;padding:6px 10px;margin-bottom:10px">Ease rating <strong>${easeLabel[ease]} (${ease})</strong> imported from your uploaded spreadsheet — based on H1B leverage research, not the green-card scenario this tracker otherwise assumes. Treat as a rough signal only.</div>`:''}
+          <div class="tf-grid three">
+            <div class="tf-field"><label>Status</label>
+              <select id="vc-status-${id}">${VISA_STATUS_OPTS.map(([k,v])=>`<option value="${k}"${c.status===k?' selected':''}>${v}</option>`).join('')}</select>
+            </div>
+            <div class="tf-field" id="vc-lead-wrap-${id}" style="display:${c.status==='advance'?'flex':'none'}">
+              <label>Typical Lead Time (weeks)</label><input type="number" id="vc-lead-${id}" min="0" value="${c.leadTimeWeeks||''}" placeholder="6">
+            </div>
+            <div class="tf-field" id="vc-exp-wrap-${id}" style="display:${c.status==='have-valid'?'flex':'none'}">
+              <label>Visa Expiry Date</label><input type="date" id="vc-exp-${id}" value="${c.expiryDate||''}">
+            </div>
           </div>
-          <div class="tf-field" id="vc-lead-wrap-${id}" style="display:${c.status==='advance'?'flex':'none'}">
-            <label>Typical Lead Time (weeks)</label><input type="number" id="vc-lead-${id}" min="0" value="${c.leadTimeWeeks||''}" placeholder="6">
+          <div class="tf-field"><label>Source URL (official site you checked)</label><input id="vc-src-${id}" value="${c.sourceUrl||''}" placeholder="https://..."></div>
+          <div class="tf-field"><label>Notes</label><textarea id="vc-notes-${id}" rows="3" style="width:100%">${c.notes||''}</textarea></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span style="font-size:10.5px;color:${c.seeded?'var(--amber)':'var(--text3)'}">${c.verifiedDate?'✓ Verified by you '+fmtDY(c.verifiedDate):c.seeded?'⚠ Pre-filled research — not yet verified by you':'Not yet verified'}</span>
+            <button class="tf-save" onclick="saveVisaCountry('${id}')">Mark Verified &amp; Save</button>
           </div>
-          <div class="tf-field" id="vc-exp-wrap-${id}" style="display:${c.status==='have-valid'?'flex':'none'}">
-            <label>Visa Expiry Date</label><input type="date" id="vc-exp-${id}" value="${c.expiryDate||''}">
-          </div>
-        </div>
-        <div class="tf-field"><label>Source URL (official site you checked)</label><input id="vc-src-${id}" value="${c.sourceUrl||''}" placeholder="https://..."></div>
-        <div class="tf-field"><label>Notes</label><textarea id="vc-notes-${id}" rows="3" style="width:100%">${c.notes||''}</textarea></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-          <span style="font-size:10.5px;color:${c.seeded?'var(--amber)':'var(--text3)'}">${c.verifiedDate?'✓ Verified by you '+fmtDY(c.verifiedDate):c.seeded?'⚠ Pre-filled research — not yet verified by you':'Not yet verified'}</span>
-          <button class="tf-save" onclick="saveVisaCountry('${id}')">Mark Verified &amp; Save</button>
-        </div>
-      </div>`;
-    listEl.appendChild(details);
-    const statusSel=details.querySelector(`#vc-status-${id}`);
-    statusSel.onchange=()=>{
-      details.querySelector(`#vc-lead-wrap-${id}`).style.display=statusSel.value==='advance'?'flex':'none';
-      details.querySelector(`#vc-exp-wrap-${id}`).style.display=statusSel.value==='have-valid'?'flex':'none';
-    };
+        </div>`;
+      listEl.appendChild(details);
+      const statusSel=details.querySelector(`#vc-status-${id}`);
+      statusSel.onchange=()=>{
+        details.querySelector(`#vc-lead-wrap-${id}`).style.display=statusSel.value==='advance'?'flex':'none';
+        details.querySelector(`#vc-exp-wrap-${id}`).style.display=statusSel.value==='have-valid'?'flex':'none';
+      };
+    });
   });
 }
 function saveVisaCountry(id){
