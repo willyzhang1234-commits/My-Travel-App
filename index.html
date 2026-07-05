@@ -54,6 +54,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .ph-fee{font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.5;}
 .ph-tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;background:rgba(255,255,255,.12);padding:2px 8px;border-radius:3px;opacity:.85;}
 .grp-head{background:#f5f7fb;padding:5px 20px;font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border-l);border-top:1px solid var(--border-l);}
+details>.grp-head{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;}
+details>.grp-head::after{content:'▸';font-size:10px;color:var(--text3);transition:transform .12s;}
+details[open]>.grp-head::after{transform:rotate(90deg);}
+details summary{list-style:none;}
+details summary::-webkit-details-marker{display:none;}
 .og-item{display:flex;gap:10px;padding:7px 20px;border-bottom:1px solid var(--border-l);}
 .og-item:last-child{border-bottom:none;}
 .og-bullet{color:var(--text3);font-size:11px;margin-top:2px;flex-shrink:0;}
@@ -210,6 +215,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .achv-card.just-unlocked{animation:pop-in .4s ease forwards;}
 
 /* ── PASSPORT MAP & GRID ── */
+.pp-summary-collapsed{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:11px 18px;margin-bottom:10px;box-shadow:var(--sh);display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .12s;}
+.pp-summary-collapsed:hover{border-color:var(--navy2);}
+.pp-summary-detail{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:10px;box-shadow:var(--sh);overflow:hidden;}
+.pp-detail-close{padding:8px 18px;background:#f5f7fb;border-bottom:1px solid var(--border);font-size:10.5px;color:var(--blue);cursor:pointer;font-weight:600;text-align:right;}
 .pp-stats-bar{background:var(--white);border:1px solid var(--border);border-radius:6px;padding:13px 20px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;box-shadow:var(--sh);}
 .pp-stat{display:flex;align-items:baseline;gap:6px;}
 .pp-stat-v{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--navy);}
@@ -257,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .dash-hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;}
 .dash-hero-sub{font-size:12px;opacity:.5;margin-top:2px;}
 .dash-hero-date{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.4;}
-.dash-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.dash-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .dash-kpi{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:14px 16px;cursor:pointer;transition:background .15s;}
 .dash-kpi:hover{background:rgba(255,255,255,.1);}
 .dk-section{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
@@ -434,36 +443,15 @@ footer{text-align:center;color:var(--text3);font-size:9.5px;margin-top:20px;font
   <section class="sec" id="sec-cards">
     <div class="summary-bar" id="cards-summary"></div>
     <div class="sub-panel" id="panel-overview"></div>
-    <div class="sub-panel" id="panel-csr"></div>
-    <div class="sub-panel" id="panel-hyatt-card"></div>
-    <div class="sub-panel" id="panel-fu"></div>
+    <div class="sub-panel" id="panel-will"></div>
+    <div class="sub-panel" id="panel-radha"></div>
     <div class="sub-panel" id="panel-roi"></div>
   </section>
 
   <!-- PASSPORT -->
   <section class="sec" id="sec-passport">
-    <div class="pp-stats-bar">
-      <div class="pp-stat"><span class="pp-stat-v" id="pp-v">0</span><span class="pp-stat-l">&nbsp;visited</span></div>
-      <div class="pp-stat-div"></div>
-      <div class="pp-stat"><span class="pp-stat-v" id="pp-tot">0</span><span class="pp-stat-l">&nbsp;properties</span></div>
-      <div class="pp-stat-div"></div>
-      <div class="pp-stat"><span class="pp-stat-v" id="pp-reg">—</span><span class="pp-stat-l">&nbsp;regions</span></div>
-      <div class="pp-stat-div"></div>
-      <div class="pp-stat"><span class="pp-stat-v" id="pp-ctry">—</span><span class="pp-stat-l">&nbsp;countries</span></div>
-      <div class="pp-stat-div"></div>
-      <div class="pp-stat"><span class="pp-stat-v" id="pp-top" style="font-size:13px">—</span><span class="pp-stat-l">&nbsp;top brand</span></div>
-      <div class="pp-bar-wrap"><div class="pp-bar-track"><div id="pp-bar" class="pp-bar-fill" style="width:0%"></div></div>
-        <span id="pp-pct" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">0%</span></div>
-    </div>
-    <div class="pp-rank-bar" id="pp-rank-bar"></div>
-    <div class="pp-section-panel">
-      <div class="pp-section-head"><span>Achievements</span><span id="pp-achv-ct">0/16 unlocked</span></div>
-      <div id="pp-achv-grid" class="achv-grid"></div>
-    </div>
-    <div class="pp-section-panel">
-      <div class="pp-section-head"><span>Active Challenges</span><span>Progress toward collection goals</span></div>
-      <div id="pp-challenges"></div>
-    </div>
+    <div class="pp-summary-collapsed" id="pp-summary-collapsed" onclick="togglePPDetail()"></div>
+    <div class="pp-summary-detail" id="pp-summary-detail" style="display:none"></div>
     <div class="pp-filters">
       <div class="pp-pills" id="pp-pills"></div>
       <div class="pp-frow">
@@ -484,21 +472,489 @@ footer{text-align:center;color:var(--text3);font-size:9.5px;margin-top:20px;font
   <!-- TRAVEL PLANNING -->
   <section class="sec" id="sec-travel">
     <div class="sub-panel" id="panel-trips"></div>
+    <div class="sub-panel" id="panel-visa"></div>
     <div class="sub-panel" id="panel-calculator"></div>
-    <div class="sub-panel" id="panel-wishlist"></div>
+    <div class="sub-panel" id="panel-collection"></div>
   </section>
 
 </div>
+<datalist id="hyatt-prop-list"></datalist>
 <div class="flash" id="flash">Saved</div>
 
 <script>
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const now=new Date(),CY=now.getFullYear(),CM=now.getMonth();
-const KEY='benefits-v4',PKEY='passport-v1',TKEY='travel-v2';
+const KEY='benefits-v4',PKEY='passport-v1',TKEY='travel-v2',RKEY='radha-cards-v1',VKEY='visa-v1';
+const SCHEMA_VERSION=2; // bump this + add a migration below whenever a field's meaning changes
+
+const TRAVELERS={will:{id:'will',name:'Will'},radha:{id:'radha',name:'Radha'}};
+
+// Curated countries/regions people actually travel to — grouped as travel decision
+// units (e.g. "Schengen Area" as one entry, not 29 separate countries).
+// Every status starts unresearched; you fill this in as you check official sources.
+// This app never asserts what a visa rule IS — only tracks what you've verified and when.
+const VISA_COUNTRIES=[
+  // Originally curated set (Radha, Indian passport + US green card research)
+  ['ca','Canada'],['mx','Mexico'],['uk','United Kingdom'],['schengen','Schengen Area (EU) — grouped; see individual member countries below for country-specific notes'],
+  ['jp','Japan'],['kr','South Korea'],['cn','China'],['th','Thailand'],['vn','Vietnam'],
+  ['sg','Singapore'],['my','Malaysia'],['id','Indonesia'],['ae','UAE'],['qa','Qatar'],
+  ['au','Australia'],['nz','New Zealand'],
+  ['cr','Costa Rica'],['co','Colombia'],['br','Brazil'],['ar','Argentina'],['pe','Peru'],
+  ['do','Dominican Republic'],['jm','Jamaica'],['aw','Aruba / Dutch Caribbean'],
+  ['in','India (home country — re-entry to US is the relevant question, not a visa)'],
+  // Expanded from uploaded spreadsheet (193-country H1B-leverage research) — Ease ratings only.
+  // NOTE: this spreadsheet's own leverage logic assumes H1B status, not the green-card
+  // scenario the rest of this tracker was built around — the Ease rating is still useful
+  // as a rough reference, but double-check the underlying leverage type before relying on it.
+  ['united_states',"United States"],
+  ['belize',"Belize"],
+  ['el_salvador',"El Salvador"],
+  ['guatemala',"Guatemala"],
+  ['honduras',"Honduras"],
+  ['nicaragua',"Nicaragua"],
+  ['panama',"Panama"],
+  ['antigua_and_barbuda',"Antigua and Barbuda"],
+  ['bahamas',"Bahamas"],
+  ['barbados',"Barbados"],
+  ['cuba',"Cuba"],
+  ['dominica',"Dominica"],
+  ['grenada',"Grenada"],
+  ['haiti',"Haiti"],
+  ['st_kitts_and_nevis',"St. Kitts and Nevis"],
+  ['st_lucia',"St. Lucia"],
+  ['st_vincent_and_the_grenadines',"St. Vincent and the Grenadines"],
+  ['trinidad_and_tobago',"Trinidad and Tobago"],
+  ['bolivia',"Bolivia"],
+  ['chile',"Chile"],
+  ['ecuador',"Ecuador"],
+  ['guyana',"Guyana"],
+  ['paraguay',"Paraguay"],
+  ['suriname',"Suriname"],
+  ['uruguay',"Uruguay"],
+  ['venezuela',"Venezuela"],
+  ['albania',"Albania"],
+  ['andorra',"Andorra"],
+  ['austria',"Austria"],
+  ['belarus',"Belarus"],
+  ['belgium',"Belgium"],
+  ['bosnia_and_herzegovina',"Bosnia and Herzegovina"],
+  ['bulgaria',"Bulgaria"],
+  ['croatia',"Croatia"],
+  ['cyprus',"Cyprus"],
+  ['czech_republic',"Czech Republic"],
+  ['denmark',"Denmark"],
+  ['estonia',"Estonia"],
+  ['finland',"Finland"],
+  ['france',"France"],
+  ['germany',"Germany"],
+  ['greece',"Greece"],
+  ['hungary',"Hungary"],
+  ['iceland',"Iceland"],
+  ['ireland',"Ireland"],
+  ['italy',"Italy"],
+  ['kosovo',"Kosovo"],
+  ['latvia',"Latvia"],
+  ['liechtenstein',"Liechtenstein"],
+  ['lithuania',"Lithuania"],
+  ['luxembourg',"Luxembourg"],
+  ['malta',"Malta"],
+  ['moldova',"Moldova"],
+  ['monaco',"Monaco"],
+  ['montenegro',"Montenegro"],
+  ['netherlands',"Netherlands"],
+  ['north_macedonia',"North Macedonia"],
+  ['norway',"Norway"],
+  ['poland',"Poland"],
+  ['portugal',"Portugal"],
+  ['romania',"Romania"],
+  ['russia',"Russia"],
+  ['san_marino',"San Marino"],
+  ['serbia',"Serbia"],
+  ['slovakia',"Slovakia"],
+  ['slovenia',"Slovenia"],
+  ['spain',"Spain"],
+  ['sweden',"Sweden"],
+  ['switzerland',"Switzerland"],
+  ['ukraine',"Ukraine"],
+  ['vatican_city',"Vatican City"],
+  ['algeria',"Algeria"],
+  ['angola',"Angola"],
+  ['benin',"Benin"],
+  ['botswana',"Botswana"],
+  ['burkina_faso',"Burkina Faso"],
+  ['burundi',"Burundi"],
+  ['cabo_verde',"Cabo Verde"],
+  ['cameroon',"Cameroon"],
+  ['central_african_republic',"Central African Republic"],
+  ['chad',"Chad"],
+  ['comoros',"Comoros"],
+  ['congo_republic',"Congo (Republic)"],
+  ['congo_drc',"Congo (DRC)"],
+  ['djibouti',"Djibouti"],
+  ['egypt',"Egypt"],
+  ['equatorial_guinea',"Equatorial Guinea"],
+  ['eritrea',"Eritrea"],
+  ['eswatini',"Eswatini"],
+  ['ethiopia',"Ethiopia"],
+  ['gabon',"Gabon"],
+  ['gambia',"Gambia"],
+  ['ghana',"Ghana"],
+  ['guinea',"Guinea"],
+  ['guinea_bissau',"Guinea-Bissau"],
+  ['ivory_coast',"Ivory Coast"],
+  ['kenya',"Kenya"],
+  ['lesotho',"Lesotho"],
+  ['liberia',"Liberia"],
+  ['libya',"Libya"],
+  ['madagascar',"Madagascar"],
+  ['malawi',"Malawi"],
+  ['mali',"Mali"],
+  ['mauritania',"Mauritania"],
+  ['mauritius',"Mauritius"],
+  ['morocco',"Morocco"],
+  ['mozambique',"Mozambique"],
+  ['namibia',"Namibia"],
+  ['niger',"Niger"],
+  ['nigeria',"Nigeria"],
+  ['rwanda',"Rwanda"],
+  ['sao_tome_and_principe',"Sao Tome and Principe"],
+  ['senegal',"Senegal"],
+  ['seychelles',"Seychelles"],
+  ['sierra_leone',"Sierra Leone"],
+  ['somalia',"Somalia"],
+  ['south_africa',"South Africa"],
+  ['south_sudan',"South Sudan"],
+  ['sudan',"Sudan"],
+  ['tanzania',"Tanzania"],
+  ['togo',"Togo"],
+  ['tunisia',"Tunisia"],
+  ['uganda',"Uganda"],
+  ['zambia',"Zambia"],
+  ['zimbabwe',"Zimbabwe"],
+  ['bahrain',"Bahrain"],
+  ['iran',"Iran"],
+  ['iraq',"Iraq"],
+  ['israel',"Israel"],
+  ['jordan',"Jordan"],
+  ['kuwait',"Kuwait"],
+  ['lebanon',"Lebanon"],
+  ['oman',"Oman"],
+  ['palestine',"Palestine"],
+  ['saudi_arabia',"Saudi Arabia"],
+  ['syria',"Syria"],
+  ['turkey',"Turkey"],
+  ['yemen',"Yemen"],
+  ['afghanistan',"Afghanistan"],
+  ['bangladesh',"Bangladesh"],
+  ['bhutan',"Bhutan"],
+  ['kazakhstan',"Kazakhstan"],
+  ['kyrgyzstan',"Kyrgyzstan"],
+  ['maldives',"Maldives"],
+  ['nepal',"Nepal"],
+  ['pakistan',"Pakistan"],
+  ['sri_lanka',"Sri Lanka"],
+  ['tajikistan',"Tajikistan"],
+  ['turkmenistan',"Turkmenistan"],
+  ['uzbekistan',"Uzbekistan"],
+  ['brunei',"Brunei"],
+  ['cambodia',"Cambodia"],
+  ['east_timor_timor_leste',"East Timor (Timor-Leste)"],
+  ['laos',"Laos"],
+  ['mongolia',"Mongolia"],
+  ['myanmar',"Myanmar"],
+  ['north_korea',"North Korea"],
+  ['philippines',"Philippines"],
+  ['taiwan',"Taiwan"],
+  ['fiji',"Fiji"],
+  ['kiribati',"Kiribati"],
+  ['marshall_islands',"Marshall Islands"],
+  ['micronesia',"Micronesia"],
+  ['nauru',"Nauru"],
+  ['palau',"Palau"],
+  ['papua_new_guinea',"Papua New Guinea"],
+  ['samoa',"Samoa"],
+  ['solomon_islands',"Solomon Islands"],
+  ['tonga',"Tonga"],
+  ['tuvalu',"Tuvalu"],
+  ['vanuatu',"Vanuatu"],
+];
+const VISA_STATUS_OPTS=[
+  ['unresearched','Not researched yet'],
+  ['visa-free','Visa-free'],
+  ['voa','Visa on arrival'],
+  ['evisa','E-visa'],
+  ['advance','Requires advance visa'],
+  ['have-valid','Have a valid visa'],
+];
+
+// ── EASE RATINGS — imported from uploaded spreadsheet (Column H, H/M/L scale) ──
+// Based on that spreadsheet's own H1B-leverage research, a DIFFERENT immigration
+// status than the green-card scenario the rest of this tracker assumes for Radha.
+// Kept as an independent reference field rather than merged into the status/notes
+// fields above, since the two sources use different underlying assumptions.
+const EASE_IMPORT_DATE='2026-07-05';
+const EASE_IMPORT={
+  ca:'H',
+  mx:'H',
+  belize:'H',
+  cr:'H',
+  el_salvador:'H',
+  guatemala:'H',
+  honduras:'H',
+  nicaragua:'M',
+  panama:'H',
+  antigua_and_barbuda:'H',
+  bahamas:'H',
+  barbados:'H',
+  cuba:'L',
+  dominica:'H',
+  do:'H',
+  grenada:'H',
+  haiti:'H',
+  jm:'H',
+  st_kitts_and_nevis:'H',
+  st_lucia:'H',
+  st_vincent_and_the_grenadines:'H',
+  trinidad_and_tobago:'H',
+  ar:'L',
+  bolivia:'L',
+  br:'H',
+  chile:'M',
+  co:'H',
+  ecuador:'L',
+  guyana:'L',
+  paraguay:'L',
+  pe:'H',
+  suriname:'L',
+  uruguay:'L',
+  venezuela:'L',
+  albania:'H',
+  andorra:'L',
+  austria:'L',
+  belarus:'H',
+  belgium:'L',
+  bosnia_and_herzegovina:'H',
+  bulgaria:'L',
+  croatia:'L',
+  cyprus:'H',
+  czech_republic:'L',
+  denmark:'L',
+  estonia:'L',
+  finland:'L',
+  france:'L',
+  germany:'L',
+  greece:'L',
+  hungary:'L',
+  iceland:'L',
+  ireland:'L',
+  italy:'L',
+  kosovo:'H',
+  latvia:'L',
+  liechtenstein:'L',
+  lithuania:'L',
+  luxembourg:'L',
+  malta:'L',
+  moldova:'H',
+  monaco:'L',
+  montenegro:'H',
+  netherlands:'L',
+  north_macedonia:'H',
+  norway:'L',
+  poland:'L',
+  portugal:'L',
+  romania:'L',
+  russia:'H',
+  san_marino:'L',
+  serbia:'H',
+  slovakia:'L',
+  slovenia:'L',
+  spain:'L',
+  sweden:'L',
+  switzerland:'L',
+  ukraine:'L',
+  uk:'M',
+  vatican_city:'L',
+  algeria:'L',
+  angola:'H',
+  benin:'H',
+  botswana:'M',
+  burkina_faso:'L',
+  burundi:'M',
+  cabo_verde:'H',
+  cameroon:'M',
+  central_african_republic:'L',
+  chad:'L',
+  comoros:'H',
+  congo_republic:'M',
+  congo_drc:'L',
+  djibouti:'H',
+  egypt:'H',
+  equatorial_guinea:'L',
+  eritrea:'L',
+  eswatini:'M',
+  ethiopia:'H',
+  gabon:'M',
+  gambia:'M',
+  ghana:'M',
+  guinea:'M',
+  guinea_bissau:'M',
+  ivory_coast:'M',
+  kenya:'H',
+  liberia:'M',
+  libya:'L',
+  madagascar:'H',
+  malawi:'H',
+  mali:'L',
+  mauritania:'L',
+  mauritius:'H',
+  morocco:'H',
+  mozambique:'H',
+  namibia:'M',
+  niger:'L',
+  nigeria:'M',
+  rwanda:'H',
+  sao_tome_and_principe:'H',
+  senegal:'M',
+  seychelles:'H',
+  sierra_leone:'M',
+  somalia:'L',
+  south_africa:'H',
+  south_sudan:'L',
+  sudan:'L',
+  tanzania:'H',
+  togo:'H',
+  tunisia:'L',
+  uganda:'H',
+  zambia:'H',
+  zimbabwe:'H',
+  bahrain:'H',
+  iran:'M',
+  iraq:'M',
+  israel:'L',
+  jordan:'M',
+  kuwait:'M',
+  lebanon:'L',
+  oman:'H',
+  palestine:'L',
+  qa:'H',
+  saudi_arabia:'H',
+  syria:'L',
+  turkey:'H',
+  ae:'H',
+  yemen:'L',
+  afghanistan:'L',
+  bangladesh:'M',
+  bhutan:'H',
+  kazakhstan:'H',
+  kyrgyzstan:'H',
+  maldives:'H',
+  nepal:'H',
+  pakistan:'L',
+  sri_lanka:'H',
+  tajikistan:'H',
+  turkmenistan:'L',
+  uzbekistan:'H',
+  brunei:'H',
+  cambodia:'H',
+  cn:'M',
+  east_timor_timor_leste:'H',
+  id:'H',
+  jp:'H',
+  laos:'H',
+  my:'H',
+  mongolia:'H',
+  myanmar:'H',
+  north_korea:'L',
+  philippines:'H',
+  sg:'H',
+  kr:'M',
+  taiwan:'M',
+  th:'H',
+  vn:'H',
+  au:'M',
+  fiji:'H',
+  kiribati:'H',
+  marshall_islands:'H',
+  micronesia:'H',
+  nauru:'M',
+  nz:'M',
+  palau:'H',
+  papua_new_guinea:'H',
+  samoa:'H',
+  solomon_islands:'H',
+  tonga:'H',
+  tuvalu:'H',
+  vanuatu:'H',
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SEED VISA DATA — Radha holds an Indian passport + US green card (permanent
+// resident). Researched via web search July 2026, cross-referencing multiple
+// sources (government sites where possible, travel-guide aggregators
+// otherwise). This is a STARTING POINT, not a verified answer — every entry
+// is marked seeded:true so the UI shows "pre-filled, please verify" rather
+// than pretending you already checked it. Visa rules change frequently and
+// several answers here came from non-government sources; some conflicted
+// with each other and are flagged in the notes rather than guessed at.
+// Never treat this as authoritative for an actual booking — confirm against
+// an official embassy/consulate/government site first, especially since a
+// green card's effect on visa requirements is a less common travel scenario
+// than the "US visa holder" cascade most travel guides document.
+// ═══════════════════════════════════════════════════════════════════════════
+const SEED_VISA_DATA={
+  ca:{status:'visa-free',notes:"Multiple sources indicate a valid US green card + Indian passport allows entry to Canada without a separate Canadian visa (show both documents at the border/check-in). Some accounts suggest air travelers may still need to confirm eTA-equivalent status with the airline. Verify on the IRCC 'entry requirements by country' tool before booking.",sourceUrl:'https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/entry-requirements-country.html'},
+  mx:{status:'visa-free',notes:'Valid US green card allows visa-free entry to Mexico for up to 180 days. You still need a Mexican FMM tourist card, usually issued at the airport or border (often bundled into airfare). Consistently confirmed across multiple sources.',sourceUrl:'https://www.gob.mx/inm'},
+  uk:{status:'advance',leadTimeWeeks:6,notes:'A US green card does NOT exempt Indian citizens from needing a UK Standard Visitor visa — it must be applied for in advance. No green-card-based shortcut found for the UK.',sourceUrl:'https://www.gov.uk/standard-visitor-visa'},
+  schengen:{status:'advance',leadTimeWeeks:8,notes:"A US green card does not exempt Indian citizens from the Schengen short-stay (Type C) visa. Apply through the consulate of your main destination country. Build in extra time — appointment backlogs are common, especially in peak season. Note: the EU's new ETIAS system is expected to launch late 2026 but applies only to visa-EXEMPT nationalities, which doesn't include India regardless of green card status.",sourceUrl:'https://www.schengenvisainfo.com'},
+  jp:{status:'unresearched',notes:"Sources conflict: one 2026 green-card travel guide lists Japan as visa-free for green card holders, but Japan's Ministry of Foreign Affairs visa-exemption page does not list a green-card-based exemption for Indian nationals specifically (their listed exemptions are narrower, e.g. ePassport-based for a few other nationalities). Left unresearched rather than guessing — confirm directly with the Japanese Embassy/Consulate before booking.",sourceUrl:'https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html'},
+  kr:{status:'unresearched',notes:'One source suggests a US green card allows visa-free transit through South Korea only when traveling to/from the US to a third country on a connecting itinerary — not applicable for a standalone visit. For a direct trip to Korea, Indian citizens likely need a visa or K-ETA. Left unresearched since a standalone-visit answer wasn\'t clearly confirmed — verify current K-ETA eligibility for Indian passport holders.',sourceUrl:''},
+  cn:{status:'advance',leadTimeWeeks:4,notes:"China requires a visa for Indian passport holders; a US green card does not appear to exempt this. China has a unilateral 30-day visa-free policy for nationals of roughly 45 countries (extended through Dec 31, 2026 per reporting), but India was not confirmed to be on that list.",sourceUrl:''},
+  th:{status:'visa-free',notes:'Indian citizens get visa-free entry to Thailand for up to 60 days under a bilateral exemption (extended in 2025) — this applies to the Indian passport directly, independent of US status.',sourceUrl:''},
+  vn:{status:'advance',leadTimeWeeks:1,notes:'Indian citizens require a visa for Vietnam regardless of US status. A 90-day e-visa can be applied for online (processing ~3–7 business days) — build in a buffer before travel.',sourceUrl:'https://evisa.xuatnhapcanh.gov.vn'},
+  sg:{status:'unresearched',notes:"Indian citizens generally need a Singapore visa for a standalone visit. Indian/Chinese green-card holders specifically qualify for a 96-hour Visa-Free Transit Facility (VFTF) — but ONLY when transiting to/from a third country via Singapore on the same itinerary (e.g. US–Singapore–Bali), not for a dedicated Singapore trip. Confirm current requirements on Singapore ICA's site for your specific itinerary.",sourceUrl:'https://www.ica.gov.sg'},
+  my:{status:'visa-free',notes:'Malaysia has extended visa-free entry (30 days) to Indian passport holders via a bilateral arrangement, reportedly valid at least through December 2026 — independent of US status. Since this is a temporary extension, re-verify closer to any 2027+ travel date.',sourceUrl:''},
+  id:{status:'voa',notes:'Indonesia offers visa-on-arrival to Indian citizens (~30 days, ~USD 35), regardless of US status.',sourceUrl:''},
+  ae:{status:'voa',notes:'Indian citizens holding a valid US green card (or a valid US/UK/Schengen visa) are reported eligible for UAE visa-on-arrival (around 14 days, extendable). Confirm current fee and duration at time of travel — this benefit is well-documented but terms shift periodically.',sourceUrl:''},
+  qa:{status:'unresearched',notes:"Qatar offers a visa waiver (30 days) for Qatar Airways passengers doing a Doha stopover, extended to Indian passport holders with valid US status — but this specifically applies to Qatar Airways transit, not general entry. Left unresearched for a standalone Qatar visit — confirm current e-visa/VOA rules directly.",sourceUrl:''},
+  au:{status:'advance',leadTimeWeeks:4,notes:'Indian citizens need an Australian visitor visa (subclass 600) — available as an e-visa applied for online. A green card doesn\'t change this requirement.',sourceUrl:'https://immi.homeaffairs.gov.au'},
+  nz:{status:'advance',leadTimeWeeks:6,notes:'Indian citizens need a New Zealand Visitor Visa (the NZeTA alone only applies to visa-waiver nationalities, which India is not on). Apply well in advance.',sourceUrl:'https://www.immigration.govt.nz'},
+  cr:{status:'visa-free',notes:'Up to 30 days visa-free for Indian citizens holding a valid US visa OR green card, per Costa Rican immigration sources. Passport should have 6 months validity; some sources suggest the green card should also have meaningful validity remaining beyond the trip.',sourceUrl:''},
+  co:{status:'visa-free',notes:"Reported that Colombia grants visa-free entry to holders of a valid US green card who are nationals of a specific short list of countries that includes India (along with China, Vietnam, Thailand, and a few others). This came from a single forum-style source rather than an official one — worth extra confirmation given how specific and unusual the provision is.",sourceUrl:''},
+  br:{status:'advance',leadTimeWeeks:2,notes:'Indian citizens require a Brazilian e-visa, applied for online in advance — a green card does not exempt this.',sourceUrl:''},
+  ar:{status:'unresearched',notes:"Argentina's AVE visa-waiver program (for holders of US/Schengen/UK visas) was reported to specifically EXCLUDE Indian passport holders even when using a qualifying US visa. Whether a green card (as opposed to a visa) changes this wasn't clearly confirmed — left unresearched rather than guessing. Confirm directly with the Argentine consulate.",sourceUrl:''},
+  pe:{status:'visa-free',notes:'Peru reportedly grants visa-free entry (up to 180 days/year) to Indian citizens specifically holding a valid US green card — this exemption is limited to Indian and Chinese nationals per the sources found. Green card should have meaningful validity remaining.',sourceUrl:''},
+  do:{status:'unresearched',notes:'Conflicting/unclear information found on how a US green card affects Dominican Republic entry requirements for Indian citizens. Left unresearched — confirm with the DR consulate or your airline before booking.',sourceUrl:''},
+  jm:{status:'unresearched',notes:'No clear, reliable information found this session on Jamaica entry requirements for an Indian passport + US green card combination. Confirm directly with the Jamaican consulate or your airline.',sourceUrl:''},
+  aw:{status:'visa-free',notes:'Aruba (Dutch Caribbean) appears on multiple "visa-free for US green card holders" lists, independent of nationality-specific caveats seen elsewhere in this list.',sourceUrl:''},
+};
+
+// Migrations run in order when loaded data's schemaVersion is older than SCHEMA_VERSION.
+// Each migration receives the raw object for one store and returns the upgraded object.
+const MIGRATIONS={
+  benefits:[/* e.g. v0→v1: (d)=>{...; return d;} */],
+  passport:[
+    // v0→v1: visited[id] used to store `true`; now stores an ISO date string.
+    // No data change needed — visitDateOf() already treats `true` as "no date recorded"
+    // and every visited-check uses truthy comparison, so old `true` values keep working.
+    (d)=>d,
+  ],
+  travel:[],
+  radha:[],
+  visa:[],
+};
+function migrate(kind,data){
+  if(!data)return data;
+  let fromV=data.schemaVersion||0;
+  const list=MIGRATIONS[kind]||[];
+  for(let v=fromV;v<SCHEMA_VERSION;v++){if(list[v])data=list[v](data);}
+  data.schemaVersion=SCHEMA_VERSION;
+  return data;
+}
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let S={
+  schemaVersion:SCHEMA_VERSION,
   resAnniv:null,hyattAnniv:null,travelCredit:null,
   editBook1:null,editBook2:null,selectHotel:null,
   diningH1:{},diningH2:{},stubhubH1:{},stubhubH2:{},
@@ -506,27 +962,51 @@ let S={
   globalEntry:null,
   appleActivated:false,ihgActivated:false,dashpassActivated:false,marriottRegistered:false,
   hyattFreeNight:null,hyattSpend:0,hyattSpendYear:CY,
+  hyattPtsBalance:0,urPtsBalance:0,ptsUpdated:null,
 };
-let PS={visited:{}};
-let TS={trips:[],wishlist:{}};
+let PS={schemaVersion:SCHEMA_VERSION,visited:{}};
+let TS={schemaVersion:SCHEMA_VERSION,trips:[],wishlist:{},redemptions:[]};
+// Radha's five cards. Benefit structures verified via web search July 2026 —
+// issuers change these regularly, so double-check before relying on exact amounts.
+let RS={
+  schemaVersion:SCHEMA_VERSION,
+  // Capital One Venture X — $395/yr
+  vxAnniv:null,vxTravelCredit:null,vxGlobalEntry:null,
+  // Chase Sapphire Preferred — $95/yr (post-June 2026 refresh)
+  cspAnniv:null,cspHotelCredit:null,cspGlobalEntry:null,cspAppleActivated:false,cspDashpassActivated:false,
+  // World of Hyatt Credit Card — $95/yr (mirrors Will's card)
+  rhyAnniv:null,rhyFreeNight:null,rhySpend:0,rhySpendYear:CY,
+  // Amex Gold — $325/yr
+  goldDining:{},goldUber:{},goldDunkin:{},goldResyH1:{},goldResyH2:{},
+  goldHertzEnrolled:false,goldUberOneClaimed:false,
+  // Citi / AAdvantage Executive World Elite — $595/yr
+  citiGlobalEntry:null,citiAvisBudget:null,citiLyft:{},citiGrubhub:{},
+};
+// Visa research + passport/document expiries, shared across the household.
+let VS={
+  schemaVersion:SCHEMA_VERSION,
+  countries:{}, // countryId -> {status, leadTimeWeeks, notes, sourceUrl, verifiedDate, expiryDate}
+  passportExpiry:{will:null,radha:null},
+  usStatusNote:'', // freeform — status-specific re-entry considerations belong here, not hardcoded
+};
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 let activeSection='dashboard',activeTab='';
 const SECTION_TABS={
   dashboard:[],
-  cards:['overview','csr','hyatt-card','fu','roi'],
+  cards:['overview','will','radha','roi'],
   passport:[],
-  travel:['trips','calculator','wishlist'],
+  travel:['trips','visa','calculator','collection'],
 };
 const TAB_META={
-  overview:{name:'Overview',sub:'Decision queue'},
-  csr:{name:'Sapphire Reserve',sub:'$795 / yr'},
-  'hyatt-card':{name:'World of Hyatt',sub:'$95 / yr'},
-  fu:{name:'Freedom Unlimited',sub:'$0 / yr'},
-  roi:{name:'ROI Analysis',sub:'Fee vs. value'},
+  overview:{name:'Overview',sub:'Household decision queue'},
+  will:{name:"Will's Cards",sub:'3 cards'},
+  radha:{name:"Radha's Cards",sub:'5 cards'},
+  roi:{name:'ROI Analysis',sub:'Fee vs. value, both'},
   trips:{name:'Trips',sub:'Your travel plans'},
-  calculator:{name:'Points Calculator',sub:'Hyatt award chart'},
-  wishlist:{name:'Wishlist',sub:'Dream properties'},
+  visa:{name:'Visa Status',sub:"Radha's travel documents"},
+  calculator:{name:'Points Calculator',sub:'Cost it out or find what fits'},
+  collection:{name:'Collection',sub:'Wishlist & best redemptions'},
 };
 
 function setSection(section,tab){
@@ -554,6 +1034,7 @@ function setTab(tab){
   activeTab=tab;
   document.querySelectorAll('.stab').forEach(st=>st.classList.toggle('active',st.dataset.tab===tab));
   showTab(tab,activeSection);
+  renderSection(activeSection,tab);
 }
 function showTab(tab,section){
   document.querySelectorAll('#sec-'+section+' .sub-panel').forEach(p=>{
@@ -563,23 +1044,130 @@ function showTab(tab,section){
 document.querySelectorAll('.sec-btn').forEach(b=>b.onclick=()=>setSection(b.dataset.section));
 
 // ── STORAGE ────────────────────────────────────────────────────────────────
+// Two independent local stores (localStorage + IndexedDB) are kept in sync.
+// They fail under different conditions (quota limits, private browsing rules,
+// browser cleanup policies), so having both meaningfully lowers the odds of
+// silent data loss. window.storage (Claude artifact host) is a third, when present.
+let idbReady=null;
+function openIDB(){
+  if(idbReady)return idbReady;
+  idbReady=new Promise((resolve)=>{
+    if(!window.indexedDB){resolve(null);return;}
+    const req=indexedDB.open('travel-hq-db',1);
+    req.onupgradeneeded=()=>{req.result.createObjectStore('kv');};
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>resolve(null);
+  });
+  return idbReady;
+}
+async function idbGet(key){
+  try{
+    const db=await openIDB();if(!db)return null;
+    return await new Promise(res=>{
+      const tx=db.transaction('kv','readonly').objectStore('kv').get(key);
+      tx.onsuccess=()=>res(tx.result||null);tx.onerror=()=>res(null);
+    });
+  }catch(e){return null;}
+}
+async function idbSet(key,val){
+  try{
+    const db=await openIDB();if(!db)return;
+    await new Promise(res=>{
+      const tx=db.transaction('kv','readwrite').objectStore('kv').put(val,key);
+      tx.onsuccess=()=>res();tx.onerror=()=>res();
+    });
+  }catch(e){}
+}
 async function hybridGet(key){
   try{if(typeof window.storage!=='undefined'){const r=await window.storage.get(key);if(r?.value)return JSON.parse(r.value);}}catch(e){}
   try{const l=localStorage.getItem(key);if(l)return JSON.parse(l);}catch(e){}
+  const idbVal=await idbGet(key);
+  if(idbVal)return typeof idbVal==='string'?JSON.parse(idbVal):idbVal;
   return null;
 }
 async function hybridSet(key,data){
   const j=JSON.stringify(data);
   try{if(typeof window.storage!=='undefined')await window.storage.set(key,j);}catch(e){}
   try{localStorage.setItem(key,j);}catch(e){}
+  idbSet(key,j);
 }
-async function load(){const d=await hybridGet(KEY);if(d)S=Object.assign({},S,d);}
-async function loadPassport(){const d=await hybridGet(PKEY);if(d)PS=Object.assign({},PS,d);}
-async function loadTravel(){const d=await hybridGet(TKEY);if(d)TS=Object.assign({},TS,d);}
-async function save(){await hybridSet(KEY,S);flash();}
-async function savePassport(){await hybridSet(PKEY,PS);flash();}
-async function saveTravel(){await hybridSet(TKEY,TS);flash();}
+async function load(){const d=migrate('benefits',await hybridGet(KEY));if(d)S=Object.assign({},S,d);}
+async function loadPassport(){const d=migrate('passport',await hybridGet(PKEY));if(d)PS=Object.assign({},PS,d);}
+async function loadTravel(){const d=migrate('travel',await hybridGet(TKEY));if(d)TS=Object.assign({},TS,d);}
+async function loadRadha(){const d=migrate('radha',await hybridGet(RKEY));if(d)RS=Object.assign({},RS,d);}
+async function loadVisa(){
+  const d=migrate('visa',await hybridGet(VKEY));
+  if(d)VS=Object.assign({},VS,d,{countries:Object.assign({},VS.countries,d.countries||{}),passportExpiry:Object.assign({},VS.passportExpiry,d.passportExpiry||{})});
+  // Apply seed research only to countries the user hasn't touched yet — never overwrites saved edits.
+  Object.entries(SEED_VISA_DATA).forEach(([id,seed])=>{
+    if(!VS.countries[id]){
+      VS.countries[id]={status:seed.status,leadTimeWeeks:seed.leadTimeWeeks||null,notes:seed.notes||'',sourceUrl:seed.sourceUrl||'',verifiedDate:null,expiryDate:null,seeded:true,seededOn:'2026-07-04'};
+    }
+  });
+}
+async function save(){await hybridSet(KEY,S);flash();noteChange();}
+async function savePassport(){await hybridSet(PKEY,PS);flash();noteChange();}
+async function saveTravel(){await hybridSet(TKEY,TS);flash();noteChange();}
+async function saveRadha(){await hybridSet(RKEY,RS);flash();noteChange();}
+async function saveVisa(){await hybridSet(VKEY,VS);flash();noteChange();}
 function flash(){const f=document.getElementById('flash');f.classList.add('show');setTimeout(()=>f.classList.remove('show'),1300);}
+
+// ── BACKUP REMINDER ─────────────────────────────────────────────────────────
+// Tracks unsaved-since-last-export activity so the dashboard can nudge you.
+const LAST_EXPORT_KEY='travel-hq-last-export';
+const CHANGE_COUNT_KEY='travel-hq-changes-since-export';
+function noteChange(){
+  try{
+    const n=parseInt(localStorage.getItem(CHANGE_COUNT_KEY)||'0')+1;
+    localStorage.setItem(CHANGE_COUNT_KEY,String(n));
+  }catch(e){}
+}
+function getLastExport(){try{return localStorage.getItem(LAST_EXPORT_KEY);}catch(e){return null;}}
+function markExported(){try{localStorage.setItem(LAST_EXPORT_KEY,iso());localStorage.setItem(CHANGE_COUNT_KEY,'0');}catch(e){}}
+function backupStatus(){
+  const last=getLastExport();
+  const changes=parseInt((()=>{try{return localStorage.getItem(CHANGE_COUNT_KEY)||'0';}catch(e){return'0';}})());
+  if(!last)return{level:changes>10?'warn':'info',text:changes>0?'Never exported — back up your data':'No backup yet — export anytime from the buttons above'};
+  const days=Math.floor((now-new Date(last+'T12:00:00'))/86400000);
+  if(days>=30||changes>=40)return{level:'warn',text:`Last backup ${days}d ago (${changes} changes since) — consider exporting`};
+  if(days>=14||changes>=15)return{level:'info',text:`Last backup ${days}d ago (${changes} changes since)`};
+  return{level:'ok',text:`Backed up ${days===0?'today':days+'d ago'}`};
+}
+
+// ── EXPORT / IMPORT ─────────────────────────────────────────────────────────
+function exportData(){
+  const bundle={exportedAt:new Date().toISOString(),version:SCHEMA_VERSION,benefits:S,passport:PS,travel:TS,radha:RS,visa:VS};
+  const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`travel-hq-backup-${iso()}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  markExported();
+  flash();
+  renderDashboard();
+}
+function importData(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.benefits&&!data.passport&&!data.travel&&!data.radha&&!data.visa){alert('This file doesn\'t look like a Travel HQ backup.');return;}
+      if(!confirm('This will overwrite your current data with the backup file. Continue?'))return;
+      if(data.benefits)S=Object.assign({},S,migrate('benefits',data.benefits));
+      if(data.passport)PS=Object.assign({},PS,migrate('passport',data.passport));
+      if(data.travel)TS=Object.assign({},TS,migrate('travel',data.travel));
+      if(data.radha)RS=Object.assign({},RS,migrate('radha',data.radha));
+      if(data.visa)VS=Object.assign({},VS,migrate('visa',data.visa));
+      await Promise.all([save(),savePassport(),saveTravel(),saveRadha(),saveVisa()]);
+      markExported();
+      alert('Import complete.');
+      setSection('dashboard');
+    }catch(err){alert('Could not read that file — make sure it\'s a Travel HQ export.');}
+  };
+  reader.readAsText(file);
+}
 
 // ── DATE HELPERS ──────────────────────────────────────────────────────────
 function iso(){return now.toISOString().slice(0,10);}
@@ -637,11 +1225,34 @@ function calcVal(){
   const captured=tDone+editDone+selectDone+d1+d2+s1+s2+dd+ly+pe+(S.appleActivated?288:0)+hyFN+hy2;
   return{total,captured,remaining:total-captured,pct:Math.round(captured/total*100)};
 }
+// Radha's household cards — same "captured vs available" model as calcVal(), scaled to
+// her five cards' actual credit structures (Venture X, CSP, Hyatt, Amex Gold, Citi AA Exec).
+function calcValRadha(){
+  const vxT=RS.vxAnniv&&annivSt(RS.vxAnniv,RS.vxTravelCredit).cls==='st-used'?300:0;
+  const vxGE=fourYrSt(RS.vxGlobalEntry).cls==='st-used'?120:0; // only counts once actually claimed
+  const cspH=RS.cspAnniv&&annivSt(RS.cspAnniv,RS.cspHotelCredit).cls==='st-used'?100:0;
+  const cspGE=fourYrSt(RS.cspGlobalEntry).cls==='st-used'?120:0;
+  const cspApple=RS.cspAppleActivated?156:0;
+  const rhyFN=RS.rhyAnniv&&annivSt(RS.rhyAnniv,RS.rhyFreeNight).cls==='st-used'?250:0;
+  const rhy2=RS.rhySpend>=15000?250:0;
+  let gDine=0,gUber=0,gDunkin=0;
+  for(let m=0;m<=CM;m++){if(mUsed(RS.goldDining,CY,m))gDine+=10;if(mUsed(RS.goldUber,CY,m))gUber+=10;if(mUsed(RS.goldDunkin,CY,m))gDunkin+=7;}
+  const gResy1=Math.round(countSemi(RS.goldResyH1,1)/6*50),gResy2=Math.round(countSemi(RS.goldResyH2,2)/6*50);
+  const gUberOne=RS.goldUberOneClaimed?96:0;
+  const citiGE=fourYrSt(RS.citiGlobalEntry).cls==='st-used'?120:0;
+  const citiAB=calYrSt(RS.citiAvisBudget).cls==='st-used'?120:0;
+  let cLyft=0,cGrub=0;
+  for(let m=0;m<=CM;m++){if(mUsed(RS.citiLyft,CY,m))cLyft+=10;if(mUsed(RS.citiGrubhub,CY,m))cGrub+=10;}
+  // Totals reflect max annual capturable value per card (fee-relevant credits only, not lounge-membership-equivalent value)
+  const total=(300+100)+(100+120+156)+(250+250)+(120+120+100+84+96)+(120+120+120);
+  const captured=(vxT+vxGE)+(cspH+cspGE+cspApple)+(rhyFN+rhy2)+(gDine+gUber+gDunkin+gResy1+gResy2+gUberOne)+(citiGE+citiAB+cLyft+cGrub);
+  return{total,captured,remaining:total-captured,pct:Math.round(captured/total*100)};
+}
 
 // ── DECISION QUEUE ─────────────────────────────────────────────────────────
 function buildDQ(){
   const items=[];
-  const add=(tier,dot,text,note,val,vc)=>items.push({tier,dot,text,note,val,vc});
+  const add=(tier,dot,text,note,val,vc,owner)=>items.push({tier,dot,text,note,val,vc,owner:owner||'will'});
   const h1End=new Date(CY,5,30);
   if(now<=h1End){
     const ri=daysUntil(h1End.toISOString().slice(0,10));
@@ -671,7 +1282,32 @@ function buildDQ(){
   }
   if(S.hyattAnniv&&annivSt(S.hyattAnniv,S.hyattFreeNight).cls==='st-avail')add('yr','c-blue','Hyatt free night available','Category 1–4. Valid 12 months from anniversary.','~$250','blue');
   const v=calcVal();
-  if(v.captured>0)add('done','c-gray',`$${v.captured.toLocaleString()} captured this cycle (${v.pct}%)`,'Benefits claimed or activated','','gray');
+  if(v.captured>0)add('done','c-gray',`$${v.captured.toLocaleString()} captured this cycle (${v.pct}%)`,'Will — benefits claimed or activated','','gray');
+
+  // ── Radha's cards ──
+  if(!RS.vxAnniv||!RS.cspAnniv||!RS.rhyAnniv)add('imm','c-red',"Radha's card anniversaries not set","Venture X / CSP / Hyatt dates needed to track resets",'Required','red','radha');
+  if(!RS.cspAppleActivated)add('mo','c-amber','Radha: Activate Apple TV on CSP','Free 1-year subscription · activate by Dec 31, 2026','$156/yr','amber','radha');
+  if(!RS.cspDashpassActivated)add('mo','c-amber','Radha: Activate DashPass on CSP','Complimentary through 12/31/27, plus $10/mo promo','Value','amber','radha');
+  if(!RS.goldHertzEnrolled)add('mo','c-amber','Radha: Enroll in Hertz Five Star (Amex Gold)','One-time enrollment, no cost','Status','amber','radha');
+  const uberOneWindow=now>=new Date(2026,3,30)&&now<=new Date(2026,9,30);
+  if(uberOneWindow&&!RS.goldUberOneClaimed)add('mo','c-amber','Radha: Uber One credit via Amex Gold (limited window)','Pay for annual Uber One with Gold card · through Oct 30, 2026','up to $96','amber','radha');
+  if(!mUsed(RS.goldDining,CY,CM))add('mo','c-amber',`Radha: Amex Gold dining credit — ${MONTHS[CM]}`,'$10 at Grubhub/Cheesecake Factory/Five Guys/BWW/Wonder. Enrollment required.','$10','amber','radha');
+  if(!mUsed(RS.goldUber,CY,CM))add('mo','c-amber',`Radha: Amex Gold Uber Cash — ${MONTHS[CM]}`,'$10 Uber Cash, add card in Uber app.','$10','amber','radha');
+  if(!mUsed(RS.goldDunkin,CY,CM))add('mo','c-amber',`Radha: Amex Gold Dunkin' credit — ${MONTHS[CM]}`,'Up to $7/month. Enrollment required.','$7','amber','radha');
+  if(!mUsed(RS.citiLyft,CY,CM))add('mo','c-amber',`Radha: Citi AA Exec Lyft credit — ${MONTHS[CM]}`,'$10 after 3 eligible rides this month.','$10','amber','radha');
+  if(!mUsed(RS.citiGrubhub,CY,CM))add('mo','c-amber',`Radha: Citi AA Exec Grubhub credit — ${MONTHS[CM]}`,'Up to $10 per billing statement.','$10','amber','radha');
+  if(RS.vxAnniv&&annivSt(RS.vxAnniv,RS.vxTravelCredit).cls==='st-avail')add('yr','c-blue','Radha: Venture X $300 travel credit available','Book via Capital One Travel portal.','$300','blue','radha');
+  if(RS.cspAnniv&&annivSt(RS.cspAnniv,RS.cspHotelCredit).cls==='st-avail')add('yr','c-blue','Radha: CSP $100 hotel credit available','Book via Chase Travel portal — no minimum stay.','$100','blue','radha');
+  if(fourYrSt(RS.vxGlobalEntry).cls==='st-avail')add('yr','c-blue','Radha: Global Entry credit available (Venture X)','$120 application fee reimbursement, 4-year cycle.','$120','blue','radha');
+  if(fourYrSt(RS.cspGlobalEntry).cls==='st-avail')add('yr','c-blue','Radha: Global Entry/TSA/NEXUS credit available (CSP)','Only claim once total — pick one eligible card.','$120','blue','radha');
+  if(fourYrSt(RS.citiGlobalEntry).cls==='st-avail')add('yr','c-blue','Radha: Global Entry credit available (Citi AA Exec)','Only claim once total — pick one eligible card.','$120','blue','radha');
+  if(calYrSt(RS.citiAvisBudget).cls!=='st-used')add('yr','c-blue','Radha: Avis/Budget rental credit available (Citi AA Exec)','Up to $120/yr on prepaid rentals via avis.com/budget.com.','$120','blue','radha');
+  const gR1=countSemi(RS.goldResyH1,1),gR2=countSemi(RS.goldResyH2,2);
+  if(now<=new Date(CY,5,30)&&gR1<6)add('yr','c-blue','Radha: Amex Gold Resy credit H1 open','$50 Jan–Jun at Resy restaurants. Enrollment required.','$50','blue','radha');
+  if(now>new Date(CY,5,30)&&gR2<6)add('yr','c-blue','Radha: Amex Gold Resy credit H2 open','$50 Jul–Dec at Resy restaurants.','$50','blue','radha');
+  if(RS.rhyAnniv&&annivSt(RS.rhyAnniv,RS.rhyFreeNight).cls==='st-avail')add('yr','c-blue',"Radha: Hyatt free night available",'Category 1–4. Valid 12 months from anniversary.','~$250','blue','radha');
+  const rv=calcValRadha();
+  if(rv.captured>0)add('done','c-gray',`$${rv.captured.toLocaleString()} captured this cycle (${rv.pct}%)`,'Radha — benefits claimed or activated','','gray','radha');
   return items;
 }
 
@@ -690,10 +1326,12 @@ function btRow(name,sub,amt,reset,st,key){
     <div class="bt-cell">${togBtn(st,key)}</div>
   </div>`;
 }
-function wireTogBtns(el){
-  el.querySelectorAll('.act-btn[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;S[k]=S[k]?null:iso();save();renderSection('cards',activeTab);});
+function wireTogBtns(el,stateRoot,saveFn){
+  stateRoot=stateRoot||S;saveFn=saveFn||save;
+  el.querySelectorAll('.act-btn[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;stateRoot[k]=stateRoot[k]?null:iso();saveFn();renderSection('cards',activeTab);});
 }
-function buildSemiTracker(container,items){
+function buildSemiTracker(container,items,stateRoot,saveFn){
+  stateRoot=stateRoot||S;saveFn=saveFn||save;
   items.forEach(([name,win,sub,obj,key,half])=>{
     const[ms,me]=half===1?[0,5]:[6,11];
     const wClosed=half===1?now>new Date(CY,5,30):now>new Date(CY,11,31);
@@ -720,12 +1358,13 @@ function buildSemiTracker(container,items){
       if(isUsed)cell.classList.add('used');
       if(m===CM&&!wClosed&&!wFuture)cell.classList.add('current');
       cell.innerHTML=`<div class="m-box"><span class="m-chk">✓</span></div><div class="m-lbl">${MONTHS[m]}</div>`;
-      if(!wFuture)cell.onclick=()=>{const mk=mkKey(CY,m);if(S[key][mk])delete S[key][mk];else S[key][mk]=true;save();renderSection('cards',activeTab);};
+      if(!wFuture)cell.onclick=()=>{const mk=mkKey(CY,m);if(stateRoot[key][mk])delete stateRoot[key][mk];else stateRoot[key][mk]=true;saveFn();renderSection('cards',activeTab);};
       dotsEl.appendChild(cell);
     }
   });
 }
-function buildMonthTracker(container,items){
+function buildMonthTracker(container,items,stateRoot,saveFn){
+  stateRoot=stateRoot||S;saveFn=saveFn||save;
   items.forEach(([name,sub,amt,obj,key])=>{
     const usedCount=Object.keys(obj).filter(k=>k.startsWith(String(CY))).length;
     const sec=document.createElement('div');sec.className='mt-section';
@@ -738,10 +1377,10 @@ function buildMonthTracker(container,items){
     const dotsEl=sec.querySelector(`#dots-${key}`);
     for(let m=0;m<12;m++){
       const cell=document.createElement('div');cell.className='m-cell';
-      const isFut=m>CM,isUsed=mUsed(S[key],CY,m),isCur=m===CM;
+      const isFut=m>CM,isUsed=mUsed(stateRoot[key],CY,m),isCur=m===CM;
       if(isFut)cell.classList.add('future');if(isUsed)cell.classList.add('used');if(isCur)cell.classList.add('current');
       cell.innerHTML=`<div class="m-box"><span class="m-chk">✓</span></div><div class="m-lbl">${MONTHS[m]}</div>`;
-      if(!isFut)cell.onclick=()=>{const mk=mkKey(CY,m);if(S[key][mk])delete S[key][mk];else S[key][mk]=true;save();renderSection('cards',activeTab);};
+      if(!isFut)cell.onclick=()=>{const mk=mkKey(CY,m);if(stateRoot[key][mk])delete stateRoot[key][mk];else stateRoot[key][mk]=true;saveFn();renderSection('cards',activeTab);};
       dotsEl.appendChild(cell);
     }
   });
@@ -749,27 +1388,30 @@ function buildMonthTracker(container,items){
 
 // ── RENDER CREDIT CARDS ────────────────────────────────────────────────────
 function renderCards(){
-  const v=calcVal();
+  const v=calcVal(),rv=calcValRadha();
+  const hv={total:v.total+rv.total,captured:v.captured+rv.captured,remaining:v.remaining+rv.remaining};
+  hv.pct=Math.round(hv.captured/hv.total*100);
   const csEl=document.getElementById('cards-summary');
   csEl.innerHTML=`
-    <div class="sb-item"><span class="sb-val">$${v.total.toLocaleString()}</span><span class="sb-label">&nbsp;Annual Value</span></div>
-    <div class="sb-item"><span class="sb-val" style="color:#6ee7b7">$${v.captured.toLocaleString()}</span><span class="sb-label">&nbsp;Captured</span></div>
-    <div class="sb-item"><span class="sb-val" style="color:#fcd34d">$${v.remaining.toLocaleString()}</span><span class="sb-label">&nbsp;Available</span></div>
-    <div class="sb-bar-wrap"><div class="sb-track"><div class="sb-fill" style="width:${v.pct}%"></div></div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.6">${v.pct}% captured</span></div>`;
+    <div class="sb-item"><span class="sb-val">$${hv.total.toLocaleString()}</span><span class="sb-label">&nbsp;Household Annual Value</span></div>
+    <div class="sb-item"><span class="sb-val" style="color:#6ee7b7">$${hv.captured.toLocaleString()}</span><span class="sb-label">&nbsp;Captured</span></div>
+    <div class="sb-item"><span class="sb-val" style="color:#fcd34d">$${hv.remaining.toLocaleString()}</span><span class="sb-label">&nbsp;Available</span></div>
+    <div class="sb-bar-wrap"><div class="sb-track"><div class="sb-fill" style="width:${hv.pct}%"></div></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.6">${hv.pct}% captured</span></div>`;
 
-  // Overview
+  // Overview — combined household decision queue
   const ov=document.getElementById('panel-overview');
   const items=buildDQ();const tiers={imm:[],mo:[],yr:[],done:[]};
   items.forEach(i=>tiers[i.tier]?.push(i));
+  const ownerBadge=o=>`<span style="font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:3px;margin-right:6px;background:${o==='will'?'#e8effe':'#fce8f3'};color:${o==='will'?'var(--blue)':'#a83e73'}">${o==='will'?'W':'R'}</span>`;
   let dqHTML=`<div class="kpi-grid">
-    <div class="kpi"><div class="kpi-v" style="color:var(--navy)">$${v.total.toLocaleString()}</div><div class="kpi-l">Annual Value</div><div class="kpi-s">All benefits, 3 cards</div></div>
-    <div class="kpi"><div class="kpi-v" style="color:var(--green)">$${v.captured.toLocaleString()}</div><div class="kpi-l">Captured YTD</div><div class="kpi-s">${v.pct}% of total<div class="kpi-bar"><div class="kpi-bar-fill" style="width:${v.pct}%;background:var(--green)"></div></div></div></div>
-    <div class="kpi"><div class="kpi-v" style="color:var(--amber)">$${v.remaining.toLocaleString()}</div><div class="kpi-l">Still Available</div><div class="kpi-s">Unclaimed or pending</div></div>
-    <div class="kpi"><div class="kpi-v" style="color:var(--navy2)">3</div><div class="kpi-l">Active Cards</div><div class="kpi-s">CSR · Hyatt · Freedom Unlim</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--navy)">$${hv.total.toLocaleString()}</div><div class="kpi-l">Household Annual Value</div><div class="kpi-s">All benefits, 8 cards</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--green)">$${hv.captured.toLocaleString()}</div><div class="kpi-l">Captured YTD</div><div class="kpi-s">${hv.pct}% of total<div class="kpi-bar"><div class="kpi-bar-fill" style="width:${hv.pct}%;background:var(--green)"></div></div></div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--amber)">$${hv.remaining.toLocaleString()}</div><div class="kpi-l">Still Available</div><div class="kpi-s">Unclaimed or pending</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--navy2)">8</div><div class="kpi-l">Active Cards</div><div class="kpi-s">3 Will · 5 Radha</div></div>
   </div>
   <div class="dq"><div class="dq-head"><span class="dq-title">Decision Queue</span><span class="dq-ct">${items.length} items · sorted by urgency</span></div>`;
-  const rt=(arr,cls,lbl)=>{if(!arr.length)return'';return`<div class="dq-tier ${cls}"><div class="dq-tier-lbl">${lbl}</div>${arr.map(i=>`<div class="dq-item"><div class="dq-dot ${i.dot}"></div><div class="dq-text">${i.text}<span class="dq-note">${i.note}</span></div><div class="dq-val ${i.vc}">${i.val}</div></div>`).join('')}</div>`;};
+  const rt=(arr,cls,lbl)=>{if(!arr.length)return'';return`<div class="dq-tier ${cls}"><div class="dq-tier-lbl">${lbl}</div>${arr.map(i=>`<div class="dq-item"><div class="dq-dot ${i.dot}"></div><div class="dq-text">${ownerBadge(i.owner)}${i.text}<span class="dq-note">${i.note}</span></div><div class="dq-val ${i.vc}">${i.val}</div></div>`).join('')}</div>`;};
   dqHTML+=rt(tiers.imm,'tier-imm','● Immediate — Action Required');
   dqHTML+=rt(tiers.mo,'tier-mo','● This Month');
   dqHTML+=rt(tiers.yr,'tier-yr','● Before Year-End');
@@ -777,27 +1419,41 @@ function renderCards(){
   dqHTML+='</div>';
   ov.innerHTML=dqHTML;
 
+  // Will's cards — skeleton with one collapsible wrapper per card
+  document.getElementById('panel-will').innerHTML=`
+    <details open id="d-will-csr"><summary class="ph-name-summary" style="cursor:pointer;background:var(--navy);color:#fff;padding:11px 20px;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;list-style:none">▸ Chase Sapphire Reserve — $795/yr</summary><div id="will-csr-body"></div></details>
+    <details id="d-will-hyatt" style="margin-top:12px"><summary class="ph-name-summary" style="cursor:pointer;background:var(--navy);color:#fff;padding:11px 20px;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;list-style:none">▸ World of Hyatt Credit Card — $95/yr</summary><div id="will-hyatt-body"></div></details>
+    <details id="d-will-fu" style="margin-top:12px"><summary class="ph-name-summary" style="cursor:pointer;background:var(--navy);color:#fff;padding:11px 20px;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;list-style:none">▸ Chase Freedom Unlimited — $0/yr</summary><div id="will-fu-body"></div></details>`;
+
   // CSR
-  const csrEl=document.getElementById('panel-csr');
+  const csrEl=document.getElementById('will-csr-body');
   const tcSt=annivSt(S.resAnniv,S.travelCredit),e1St=calYrSt(S.editBook1),e2St=calYrSt(S.editBook2);
   const selSt=CY===2026?calYrSt(S.selectHotel):{cls:'st-used',txt:'2026 only'};
   const geSt=fourYrSt(S.globalEntry);
   const colsHeader=`<div class="bt-cols bt-header"><div class="bt-cell">Benefit</div><div class="bt-cell">Value</div><div class="bt-cell">Cadence</div><div class="bt-cell">Status</div><div class="bt-cell">Action</div></div>`;
+  const needsAttn={
+    annual: tcSt.cls!=='st-used',
+    calYr: e1St.cls!=='st-used'||e2St.cls!=='st-used'||selSt.cls!=='st-used',
+    semi: (now<=new Date(CY,5,30)&&(countSemiProp(S.diningH1,1)<6||countSemiProp(S.stubhubH1,1)<6))||(now>new Date(CY,5,30)&&(countSemiProp(S.diningH2,2)<6||countSemiProp(S.stubhubH2,2)<6)),
+    fourYr: geSt.cls==='st-avail',
+    monthly: !mUsed(S.doordash,CY,CM)||!mUsed(S.lyft,CY,CM)||!mUsed(S.peloton,CY,CM),
+    activations: !S.appleActivated||!S.ihgActivated||!S.dashpassActivated,
+  };
   csrEl.innerHTML=`
     <div class="panel"><div class="panel-head"><span class="ph-name">Chase Sapphire Reserve</span><span class="ph-fee">$795 / yr</span><span class="ph-tag">Net fee after credits: ~$0–$125</span></div>
     <div class="anniv-row"><label>Card anniversary</label><input type="date" id="res-anniv" value="${S.resAnniv||''}"></div>
-    <div class="grp-head">Annual — Travel Credit</div>${colsHeader}
-    ${btRow('$300 Travel Credit','Auto-applies to travel purchases. No enrollment. No points on credited portion.','$300','Anniversary year',tcSt,'travelCredit')}
-    <div class="grp-head">Calendar Year — Hotel Credits</div>${colsHeader}
+    <details${needsAttn.annual?' open':''}><summary class="grp-head">Annual — Travel Credit</summary>${colsHeader}
+    ${btRow('$300 Travel Credit','Auto-applies to travel purchases. No enrollment. No points on credited portion.','$300','Anniversary year',tcSt,'travelCredit')}</details>
+    <details${needsAttn.calYr?' open':''}><summary class="grp-head">Calendar Year — Hotel Credits</summary>${colsHeader}
     ${btRow('The Edit — Booking 1','2-night prepaid via Chase Travel. Breakfast for 2, $100 property credit, upgrade if avail. Can book for 2027 stays.','$250','Jan 1 – Dec 31',e1St,'editBook1')}
     ${btRow('The Edit — Booking 2','Same rules. Cannot combine with Booking 1 on same stay.','$250','Jan 1 – Dec 31',e2St,'editBook2')}
-    ${btRow('2026 Select Hotel Credit ★','IHG, Montage, Pendry, Omni, Virgin, Minor, Pan Pacific — 2-night min. Stackable with Edit.','$250','2026 only',selSt,'selectHotel')}
-    <div class="grp-head">Semi-Annual — Click months you used the credit</div><div id="csr-semi"></div>
-    <div class="grp-head">Every 4 Years</div>${colsHeader}
-    ${btRow('Global Entry / TSA PreCheck','$120 on application fee — pay with CSR. GE includes TSA PreCheck.','$120','4-year cycle',geSt,'globalEntry')}
-    <div class="grp-head">Monthly — Click a month to toggle</div><div id="csr-monthly"></div>
-    <div class="grp-head">One-Time Activation — Check when complete</div><div id="csr-activations"></div>
-    <div class="grp-head">Ongoing — Always On</div><div id="csr-ongoing"></div></div>`;
+    ${btRow('2026 Select Hotel Credit ★','IHG, Montage, Pendry, Omni, Virgin, Minor, Pan Pacific — 2-night min. Stackable with Edit.','$250','2026 only',selSt,'selectHotel')}</details>
+    <details${needsAttn.semi?' open':''}><summary class="grp-head">Semi-Annual — Click months you used the credit</summary><div id="csr-semi"></div></details>
+    <details${needsAttn.fourYr?' open':''}><summary class="grp-head">Every 4 Years</summary>${colsHeader}
+    ${btRow('Global Entry / TSA PreCheck','$120 on application fee — pay with CSR. GE includes TSA PreCheck.','$120','4-year cycle',geSt,'globalEntry')}</details>
+    <details${needsAttn.monthly?' open':''}><summary class="grp-head">Monthly — Click a month to toggle</summary><div id="csr-monthly"></div></details>
+    <details${needsAttn.activations?' open':''}><summary class="grp-head">One-Time Activation — Check when complete</summary><div id="csr-activations"></div></details>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="csr-ongoing"></div></details></div>`;
   document.getElementById('res-anniv').onchange=e=>{S.resAnniv=e.target.value||null;save();renderSection('cards',activeTab);};
   wireTogBtns(csrEl);
   buildSemiTracker(csrEl.querySelector('#csr-semi'),[
@@ -834,7 +1490,7 @@ function renderCards(){
   ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;ogC.appendChild(r);});
 
   // Hyatt Card
-  const hyEl=document.getElementById('panel-hyatt-card');
+  const hyEl=document.getElementById('will-hyatt-body');
   const fnSt=annivSt(S.hyattAnniv,S.hyattFreeNight);
   const pct2=Math.min(100,Math.round((S.hyattSpend||0)/15000*100));
   const rem2=Math.max(0,15000-(S.hyattSpend||0));
@@ -851,8 +1507,8 @@ function renderCards(){
       <div class="prog-irow"><input type="number" id="hyatt-spend" value="${S.hyattSpend||''}" placeholder="0"><span>total Hyatt card spend in ${CY}</span></div>
       <div class="prog-note" style="color:${earned?'var(--green)':'var(--text3)'}">${earned?'✓ 2nd free night earned — redeem at hyatt.com':'$'+rem2.toLocaleString()+' remaining to unlock 2nd Category 1–4 free night'}</div>
     </div>
-    <div class="grp-head">Ongoing — Always On</div>
-    <div id="hyatt-card-og"></div></div>`;
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary>
+    <div id="hyatt-card-og"></div></details></div>`;
   document.getElementById('hyatt-anniv').onchange=e=>{S.hyattAnniv=e.target.value||null;save();renderSection('cards',activeTab);};
   document.getElementById('hyatt-spend').onchange=e=>{S.hyattSpend=Math.max(0,parseInt(e.target.value)||0);S.hyattSpendYear=CY;save();renderSection('cards',activeTab);};
   wireTogBtns(hyEl);
@@ -865,7 +1521,7 @@ function renderCards(){
   ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;ogH.appendChild(r);});
 
   // Freedom Unlimited
-  document.getElementById('panel-fu').innerHTML=`<div class="panel">
+  document.getElementById('will-fu-body').innerHTML=`<div class="panel">
     <div class="panel-head"><span class="ph-name">Chase Freedom Unlimited</span><span class="ph-fee">$0 / yr</span><span class="ph-tag">Earning reference</span></div>
     <div class="grp-head">Earning Rates — Points Pool with Sapphire Reserve</div>
     ${[['Chase Travel (via portal)','5%','8x effective when booking via Chase Travel with CSR'],
@@ -880,27 +1536,196 @@ function renderCards(){
       <span class="og-text"><strong>Key mechanic:</strong> Freedom Unlimited earns UR points that pool with CSR — fully transferable 1:1 to World of Hyatt, turning 1.5% cash back into ~3% Hyatt redemption value.</span></div>
   </div>`;
 
+  // ── Radha's cards — skeleton with one collapsible wrapper per card ──
+  const rNeedsAttn={
+    vx: (!RS.vxAnniv)||annivSt(RS.vxAnniv,RS.vxTravelCredit).cls!=='st-used'||fourYrSt(RS.vxGlobalEntry).cls==='st-avail',
+    csp: (!RS.cspAnniv)||annivSt(RS.cspAnniv,RS.cspHotelCredit).cls!=='st-used'||fourYrSt(RS.cspGlobalEntry).cls==='st-avail'||!RS.cspAppleActivated||!RS.cspDashpassActivated,
+    rhy: (!RS.rhyAnniv)||annivSt(RS.rhyAnniv,RS.rhyFreeNight).cls!=='st-used',
+    gold: !mUsed(RS.goldDining,CY,CM)||!mUsed(RS.goldUber,CY,CM)||!mUsed(RS.goldDunkin,CY,CM)||!RS.goldHertzEnrolled,
+    citi: fourYrSt(RS.citiGlobalEntry).cls==='st-avail'||calYrSt(RS.citiAvisBudget).cls!=='st-used'||!mUsed(RS.citiLyft,CY,CM)||!mUsed(RS.citiGrubhub,CY,CM),
+  };
+  const cardHead=(id,label,fee)=>`<details${rNeedsAttn[id]?' open':''} id="d-radha-${id}" style="margin-top:${id==='vx'?'0':'12px'}"><summary class="ph-name-summary" style="cursor:pointer;background:var(--navy);color:#fff;padding:11px 20px;border-radius:6px 6px 0 0;font-size:13px;font-weight:600;list-style:none">▸ ${label} — ${fee}</summary><div id="radha-${id}-body"></div></details>`;
+  document.getElementById('panel-radha').innerHTML=
+    cardHead('vx','Capital One Venture X','$395/yr')+
+    cardHead('csp','Chase Sapphire Preferred','$95/yr')+
+    cardHead('rhy','World of Hyatt Credit Card','$95/yr')+
+    cardHead('gold','American Express Gold','$325/yr')+
+    cardHead('citi','Citi / AAdvantage Executive World Elite','$595/yr');
+
+  // Venture X
+  const vxSt=annivSt(RS.vxAnniv,RS.vxTravelCredit),vxGeSt=fourYrSt(RS.vxGlobalEntry);
+  const vxEl=document.getElementById('radha-vx-body');
+  vxEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Capital One Venture X</span><span class="ph-fee">$395 / yr</span><span class="ph-tag">10x hotels/cars, 5x flights via Cap One Travel</span></div>
+    <div class="anniv-row"><label>Card anniversary</label><input type="date" id="vx-anniv" value="${RS.vxAnniv||''}"></div>
+    <details${vxSt.cls!=='st-used'?' open':''}><summary class="grp-head">Annual — Travel Credit</summary>${colsHeader}
+    ${btRow('$300 Capital One Travel Credit','Book via Capital One Travel portal (flights, hotels, cars). Resets on account anniversary.','$300','Anniversary year',vxSt,'vxTravelCredit')}</details>
+    <details><summary class="grp-head">Annual — Automatic (no action needed)</summary>${colsHeader}
+    ${btRow('10,000 Anniversary Miles','Auto-credited on each account anniversary. ~$100 value at 1¢/mile.','~$100','Anniversary year',{cls:'st-avail',txt:'Automatic — no tracking needed'},'')}</details>
+    <details${vxGeSt.cls==='st-avail'?' open':''}><summary class="grp-head">Every 4 Years</summary>${colsHeader}
+    ${btRow('Global Entry / TSA PreCheck','$120 application fee credit.','$120','4-year cycle',vxGeSt,'vxGlobalEntry')}</details>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="vx-ongoing"></div></details></div>`;
+  document.getElementById('vx-anniv').onchange=e=>{RS.vxAnniv=e.target.value||null;saveRadha();renderSection('cards',activeTab);};
+  wireTogBtns(vxEl,RS,saveRadha);
+  const vxOg=vxEl.querySelector('#vx-ongoing');
+  [['Priority Pass + Capital One Lounge access','Unlimited for primary cardholder; guests free only after $75K/yr spend.'],
+   ['Primary rental car insurance',''],['Trip delay reimbursement','Up to $500/ticket, 6+ hour delays.'],
+   ['No foreign transaction fees',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;vxOg.appendChild(r);});
+
+  // Chase Sapphire Preferred
+  const cspSt=annivSt(RS.cspAnniv,RS.cspHotelCredit),cspGeSt=fourYrSt(RS.cspGlobalEntry);
+  const cspEl=document.getElementById('radha-csp-body');
+  cspEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Chase Sapphire Preferred</span><span class="ph-fee">$95 / yr</span><span class="ph-tag">Refreshed June 2026 — UR→Hyatt now 4:3</span></div>
+    <div class="anniv-row"><label>Card anniversary</label><input type="date" id="csp-anniv" value="${RS.cspAnniv||''}"></div>
+    <details${cspSt.cls!=='st-used'?' open':''}><summary class="grp-head">Annual — Hotel Credit</summary>${colsHeader}
+    ${btRow('$100 Chase Travel Hotel Credit','Doubled from $50 in the June 2026 refresh. No minimum stay, book via Chase Travel.','$100','Anniversary year',cspSt,'cspHotelCredit')}</details>
+    <details${cspGeSt.cls==='st-avail'?' open':''}><summary class="grp-head">Every 4 Years</summary>${colsHeader}
+    ${btRow('Global Entry / TSA PreCheck / NEXUS','New benefit added June 2026. Only claim once per 4-yr cycle across all your eligible cards.','$120','4-year cycle',cspGeSt,'cspGlobalEntry')}</details>
+    <details${!RS.cspAppleActivated||!RS.cspDashpassActivated?' open':''}><summary class="grp-head">One-Time Activation</summary><div id="csp-activations"></div></details>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="csp-ongoing"></div></details></div>`;
+  document.getElementById('csp-anniv').onchange=e=>{RS.cspAnniv=e.target.value||null;saveRadha();renderSection('cards',activeTab);};
+  wireTogBtns(cspEl,RS,saveRadha);
+  const cspAct=cspEl.querySelector('#csp-activations');
+  [['Apple TV Subscription','1 year free — activate by Dec 31, 2026.','$156/yr','cspAppleActivated'],
+   ['DashPass Membership','Complimentary through Dec 31, 2027, plus $10/mo promo credit.','Value','cspDashpassActivated'],
+  ].forEach(([title,sub,right,key])=>{
+    const d=document.createElement('div');d.className='chk-item';
+    d.innerHTML=`<div class="chk-box${RS[key]?' done':''}"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="chk-info"><div class="chk-title">${title}</div><div class="chk-sub">${sub}</div></div><div class="chk-right">${right}</div>`;
+    d.querySelector('.chk-box').onclick=()=>{RS[key]=!RS[key];saveRadha();renderSection('cards',activeTab);};
+    cspAct.appendChild(d);
+  });
+  const cspOg=cspEl.querySelector('#csp-ongoing');
+  [['3x on dining, streaming, online groceries',''],['3x on gas, EV charging, vacation rentals (Airbnb/Vrbo)','New June 2026'],
+   ['5x on Chase Travel purchases',''],['Trip cancellation/interruption, primary rental car, baggage delay, emergency evacuation coverage','New: emergency evacuation added June 2026'],
+   ['UR → World of Hyatt at 4:3','Down from 1:1 as of Oct 1, 2026 (Jun 15, 2026 for new cardholders)'],
+   ['No foreign transaction fees',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;cspOg.appendChild(r);});
+
+  // Radha's World of Hyatt Card (mirrors Will's)
+  const rhyFnSt=annivSt(RS.rhyAnniv,RS.rhyFreeNight);
+  const rhyPct=Math.min(100,Math.round((RS.rhySpend||0)/15000*100));
+  const rhyRem=Math.max(0,15000-(RS.rhySpend||0));
+  const rhyEarned=(RS.rhySpend||0)>=15000;
+  const rhyEl=document.getElementById('radha-rhy-body');
+  rhyEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">World of Hyatt Credit Card</span><span class="ph-fee">$95 / yr</span></div>
+    <div class="anniv-row"><label>Card anniversary</label><input type="date" id="rhy-anniv" value="${RS.rhyAnniv||''}"></div>
+    <details${rhyFnSt.cls!=='st-used'?' open':''}><summary class="grp-head">Anniversary — Free Night Award</summary>${colsHeader}
+    ${btRow('Category 1–4 Free Night Award','Issued on card anniversary. Valid 12 months.','~$250','Anniversary year',rhyFnSt,'rhyFreeNight')}</details>
+    <div class="grp-head">Calendar Year — $15,000 Spend → 2nd Free Night</div>
+    <div class="prog-section">
+      <div class="prog-hrow"><span class="prog-label">Spend Progress (${CY})</span><span class="prog-pct">${rhyPct}% · $${(RS.rhySpend||0).toLocaleString()} of $15,000</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${rhyPct}%"></div></div>
+      <div class="prog-irow"><input type="number" id="rhy-spend" value="${RS.rhySpend||''}" placeholder="0"><span>total Hyatt card spend in ${CY}</span></div>
+      <div class="prog-note" style="color:${rhyEarned?'var(--green)':'var(--text3)'}">${rhyEarned?'✓ 2nd free night earned':'$'+rhyRem.toLocaleString()+' remaining to unlock 2nd free night'}</div>
+    </div>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="rhy-ongoing"></div></details></div>`;
+  document.getElementById('rhy-anniv').onchange=e=>{RS.rhyAnniv=e.target.value||null;saveRadha();renderSection('cards',activeTab);};
+  document.getElementById('rhy-spend').onchange=e=>{RS.rhySpend=Math.max(0,parseInt(e.target.value)||0);RS.rhySpendYear=CY;saveRadha();renderSection('cards',activeTab);};
+  wireTogBtns(rhyEl,RS,saveRadha);
+  const rhyOg=rhyEl.querySelector('#rhy-ongoing');
+  [['Automatic Discoverist elite status',''],['5 qualifying night credits per anniversary year',''],
+   ['9x total points at Hyatt stays',''],['2x on dining, airline, transit, rideshare, gym',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;rhyOg.appendChild(r);});
+
+  // Amex Gold
+  const goldEl=document.getElementById('radha-gold-body');
+  goldEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">American Express Gold</span><span class="ph-fee">$325 / yr</span><span class="ph-tag">4x dining & US supermarkets</span></div>
+    <details open><summary class="grp-head">Monthly — Click a month to toggle (enrollment required for each)</summary><div id="gold-monthly"></div></details>
+    <details${(countSemi(RS.goldResyH1,1)<6&&now<=new Date(CY,5,30))||(countSemi(RS.goldResyH2,2)<6&&now>new Date(CY,5,30))?' open':''}><summary class="grp-head">Semi-Annual — Resy Credit</summary><div id="gold-semi"></div></details>
+    <details${!RS.goldHertzEnrolled?' open':''}><summary class="grp-head">One-Time Activation</summary><div id="gold-activations"></div></details>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="gold-ongoing"></div></details></div>`;
+  buildMonthTracker(goldEl.querySelector('#gold-monthly'),[
+    ['Dining Credit','$10/mo at Grubhub, Cheesecake Factory, Five Guys, BWW, Wonder. Enrollment required.','$10',RS.goldDining,'goldDining'],
+    ['Uber Cash','$10/mo — add card in Uber app.','$10',RS.goldUber,'goldUber'],
+    ["Dunkin' Credit",'Up to $7/mo at US Dunkin\'. Enrollment required.','$7',RS.goldDunkin,'goldDunkin'],
+  ],RS,saveRadha);
+  buildSemiTracker(goldEl.querySelector('#gold-semi'),[
+    ['Resy Credit','Jan – Jun','$50 at 10,000+ qualifying US Resy restaurants. Enrollment required.',RS.goldResyH1,'goldResyH1',1],
+    ['Resy Credit','Jul – Dec','Same rules.',RS.goldResyH2,'goldResyH2',2],
+  ],RS,saveRadha);
+  const goldAct=goldEl.querySelector('#gold-activations');
+  const uberOneOpen=now>=new Date(2026,3,30)&&now<=new Date(2026,9,30);
+  [['Hertz Five Star Status','Free enrollment — skip counter, upgrades where available.','Status','goldHertzEnrolled',false],
+   ...(uberOneOpen?[['Uber One Membership Credit ★ Limited Window','Pay for annual Uber One with Gold card. Through Oct 30, 2026.','up to $96','goldUberOneClaimed',true]]:[]),
+  ].forEach(([title,sub,right,key,urgent])=>{
+    const d=document.createElement('div');d.className='chk-item';
+    d.innerHTML=`<div class="chk-box${RS[key]?' done':''}"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="chk-info"><div class="chk-title">${title}</div><div class="chk-sub${urgent?' urgent':''}">${sub}</div></div><div class="chk-right">${right}</div>`;
+    d.querySelector('.chk-box').onclick=()=>{RS[key]=!RS[key];saveRadha();renderSection('cards',activeTab);};
+    goldAct.appendChild(d);
+  });
+  const goldOg=goldEl.querySelector('#gold-ongoing');
+  [['4x points at US restaurants','Up to $50,000/yr, then 1x'],['4x points at US supermarkets','Up to $25,000/yr, then 1x'],
+   ['$100 Hotel Collection credit','Per booking, 2-night min, via Amex Travel — not an annual recurring credit'],
+   ['No foreign transaction fees',''],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;goldOg.appendChild(r);});
+
+  // Citi AAdvantage Executive World Elite
+  const citiGeSt=fourYrSt(RS.citiGlobalEntry),citiAbSt=calYrSt(RS.citiAvisBudget);
+  const citiEl=document.getElementById('radha-citi-body');
+  citiEl.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Citi / AAdvantage Executive World Elite</span><span class="ph-fee">$595 / yr</span><span class="ph-tag">Admirals Club membership included</span></div>
+    <details${citiGeSt.cls==='st-avail'?' open':''}><summary class="grp-head">Every 4 Years</summary>${colsHeader}
+    ${btRow('Global Entry / TSA PreCheck','Only claim once per 4-yr cycle across all your eligible cards.','$120','4-year cycle',citiGeSt,'citiGlobalEntry')}</details>
+    <details${citiAbSt.cls!=='st-used'?' open':''}><summary class="grp-head">Calendar Year — Car Rental Credit</summary>${colsHeader}
+    ${btRow('Avis/Budget Rental Credit','Up to $120/yr on prepaid rentals booked directly via avis.com or budget.com.','$120','Jan 1 – Dec 31',citiAbSt,'citiAvisBudget')}</details>
+    <details${!mUsed(RS.citiLyft,CY,CM)||!mUsed(RS.citiGrubhub,CY,CM)?' open':''}><summary class="grp-head">Monthly — Click a month to toggle</summary><div id="citi-monthly"></div></details>
+    <details><summary class="grp-head">Ongoing — Always On (reference)</summary><div id="citi-ongoing"></div></details></div>`;
+  wireTogBtns(citiEl,RS,saveRadha);
+  buildMonthTracker(citiEl.querySelector('#citi-monthly'),[
+    ['Lyft Credit','$10 after 3 eligible rides in a calendar month.','$10',RS.citiLyft,'citiLyft'],
+    ['Grubhub Credit','Up to $10 per billing statement.','$10',RS.citiGrubhub,'citiGrubhub'],
+  ],RS,saveRadha);
+  const citiOg=citiEl.querySelector('#citi-ongoing');
+  [['Complimentary Admirals Club membership','Value ~$700–850/yr. You + up to 2 guests/immediate family with same-day boarding pass.'],
+   ['Priority check-in, screening, boarding on American',''],
+   ['First checked bag free — domestic AA, you + up to 8 companions',''],
+   ['Loyalty Points boost toward AA elite status','10K bonus at 50K Loyalty Points, another 10K at 90K in a status year'],
+  ].forEach(([t,n])=>{const r=document.createElement('div');r.className='og-item';r.innerHTML=`<span class="og-bullet">—</span><span class="og-text">${t}${n?`<span class="og-note">${n}</span>`:''}</span>`;citiOg.appendChild(r);});
+
   // ROI
   document.getElementById('panel-roi').innerHTML=`<div class="panel">
-    <div class="panel-head"><span class="ph-name">Annual Fee vs. Benefits Value</span><span class="ph-fee">Estimated at full utilization</span></div>
+    <div class="panel-head"><span class="ph-name">Annual Fee vs. Benefits Value — Household</span><span class="ph-fee">Estimated at full utilization</span></div>
     <div class="roi-head"><div class="roi-cell">Card</div><div class="roi-cell">Annual Fee</div><div class="roi-cell">Benefits Value</div><div class="roi-cell">Net Value</div><div class="roi-cell">Multiple</div></div>
-    ${[['Chase Sapphire Reserve','$795','$2,478','$1,683','3.1×'],
-       ['World of Hyatt','$95','$445','$350','4.7×'],
-       ['Chase Freedom Unlimited','$0','— (earner)','—','—'],
-       ['Portfolio Total','$890','$2,923+','$2,033+','3.3×'],
-      ].map(([card,fee,val,net,mult],i)=>`<div class="roi-row" style="${i===3?'background:#f5f7fb;font-weight:600':''}">
+    ${[['Chase Sapphire Reserve (Will)','$795','$2,478','$1,683','3.1×'],
+       ['World of Hyatt (Will)','$95','$445','$350','4.7×'],
+       ['Chase Freedom Unlimited (Will)','$0','— (earner)','—','—'],
+       ['Capital One Venture X (Radha)','$395','$520','$125','1.3×'],
+       ['Chase Sapphire Preferred (Radha)','$95','$376','$281','4.0×'],
+       ['World of Hyatt (Radha)','$95','$445','$350','4.7×'],
+       ['American Express Gold (Radha)','$325','$520','$195','1.6×'],
+       ['Citi / AAdvantage Executive (Radha)','$595','$360 + Admirals Club (~$850)','$615+','2.0×+'],
+       ['Household Total','$2,395','$5,144+ (+ Admirals Club)','$3,599+','2.5×+'],
+      ].map(([card,fee,val,net,mult],i)=>`<div class="roi-row" style="${i===8?'background:#f5f7fb;font-weight:600':''}">
         <div class="roi-cell">${card}</div><div class="roi-cell">${fee}</div>
         <div class="roi-cell pos">${val}</div><div class="roi-cell pos">${net}</div>
         <div class="roi-cell" style="color:var(--navy2);font-weight:600">${mult}</div>
       </div>`).join('')}
     <div class="og-item" style="border-top:1px solid var(--border-l)"><span class="og-bullet">†</span>
-      <span class="og-text" style="font-size:11px;color:var(--text3)">CSR: $300 travel + $500 Edit + $250 select hotel + $300 dining + $300 StubHub + $300 DoorDash + $120 Lyft + $120 Peloton + $288 Apple + $120 GE (amortized). Actual varies by usage.</span></div>
+      <span class="og-text" style="font-size:11px;color:var(--text3)">CSR: $300 travel + $500 Edit + $250 select hotel + $300 dining + $300 StubHub + $300 DoorDash + $120 Lyft + $120 Peloton + $288 Apple + $120 GE (amortized). Venture X: $300 travel + $100 anniversary miles + $120 GE (amortized). CSP: $100 hotel + $120 GE (amortized) + $156 Apple TV. Amex Gold: $120 dining + $120 Uber + $84 Dunkin + $100 Resy + $96 Uber One (one-time). Citi AA Exec: $120 GE (amortized) + $120 Avis/Budget + $120 Lyft/Grubhub combined; Admirals Club membership (~$700–850 value) not counted in the dollar total since it's access, not a credit. Actual varies by usage — last verified July 2026.</span></div>
   </div>`;
 }
 
 // ── DASHBOARD ──────────────────────────────────────────────────────────────
+function backupBannerHTML(){
+  const b=backupStatus();
+  const colors={ok:{bg:'var(--green-t)',fg:'var(--green)'},info:{bg:'var(--blue-t)',fg:'var(--blue)'},warn:{bg:'var(--amber-t)',fg:'var(--amber)'}};
+  const c=colors[b.level];
+  if(b.level==='ok')return''; // don't nag when things are fine
+  return`<div style="background:${c.bg};color:${c.fg};border-radius:6px;padding:8px 16px;margin-bottom:14px;font-size:11.5px;font-weight:500;display:flex;align-items:center;justify-content:space-between">
+    <span>💾 ${b.text}</span>
+    <span style="cursor:pointer;text-decoration:underline;font-weight:600" onclick="exportData()">Export now</span>
+  </div>`;
+}
 function renderDashboard(){
-  const v=calcVal();
+  const wv=calcVal(),rv=calcValRadha();
+  const v={total:wv.total+rv.total,captured:wv.captured+rv.captured,remaining:wv.remaining+rv.remaining};
+  v.pct=Math.round(v.captured/v.total*100);
   const vc=Object.keys(PS.visited).length;
   const rank=getRank(vc);
   const achvDone=ACHV.filter(a=>a.check(PS.visited)).length;
@@ -915,19 +1740,31 @@ function renderDashboard(){
     <div class="dash-hero">
       <div class="dash-hero-top">
         <div><div class="dash-hero-title">Travel HQ</div><div class="dash-hero-sub">Your points, stays, and trips in one place</div></div>
-        <div class="dash-hero-date">${now.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
+        <div style="text-align:right">
+          <div class="dash-hero-date">${now.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
+          <div style="margin-top:8px;display:flex;gap:6px;justify-content:flex-end">
+            <button onclick="exportData()" style="font-size:10.5px;padding:4px 10px;border-radius:4px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:'Inter',sans-serif">↓ Export</button>
+            <button onclick="document.getElementById('import-file').click()" style="font-size:10.5px;padding:4px 10px;border-radius:4px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:'Inter',sans-serif">↑ Import</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this.files[0])">
+          </div>
+        </div>
       </div>
       <div class="dash-kpi-row">
         <div class="dash-kpi" onclick="setSection('cards','overview')">
-          <div class="dk-section">Credit Cards</div>
+          <div class="dk-section">Credit Cards (Household)</div>
           <div class="dk-val">$${v.captured.toLocaleString()}</div>
-          <div class="dk-sub">captured · $${v.remaining.toLocaleString()} still available</div>
+          <div class="dk-sub">captured · $${v.remaining.toLocaleString()} still available · 8 cards</div>
           <div class="dk-bar"><div class="dk-bar-fill" style="width:${v.pct}%"></div></div>
         </div>
         <div class="dash-kpi" onclick="setSection('passport')">
           <div class="dk-section">Hotel Passport</div>
           <div class="dk-val">${vc} <span style="font-size:14px;opacity:.7">visited</span></div>
           <div class="dk-sub">${rank.icon} ${rank.name} · ${achvDone}/16 achievements</div>
+        </div>
+        <div class="dash-kpi" onclick="setSection('travel','visa')">
+          <div class="dk-section">Visa Status</div>
+          <div class="dk-val">${Object.values(VS.countries).filter(c=>c.verifiedDate).length}<span style="font-size:14px;opacity:.7">/${VISA_COUNTRIES.length}</span></div>
+          <div class="dk-sub">verified by you for Radha</div>
         </div>
         <div class="dash-kpi" onclick="setSection('travel','trips')">
           <div class="dk-section">Travel Planning</div>
@@ -936,6 +1773,7 @@ function renderDashboard(){
         </div>
       </div>
     </div>
+    ${backupBannerHTML()}
     <div class="dash-grid">
       <div class="dash-col">
         <div class="dash-card">
@@ -947,15 +1785,9 @@ function renderDashboard(){
           </div>`).join(''):'<div class="dash-empty">All actions complete. 🎉</div>'}
         </div>
         <div class="dash-card">
-          <div class="dash-card-head"><span class="dch-title">Upcoming Trips</span><span class="dch-link" onclick="setSection('travel','trips')">Manage →</span></div>
-          ${upcoming.length?upcoming.slice(0,4).map(t=>`<div class="dash-trip-row">
-            <div style="flex:1"><div class="dash-trip-dest">${t.destination}</div>
-              <div class="dash-trip-sub">${fmtDY(t.startDate)}${t.endDate?' – '+fmtDY(t.endDate):''} ${t.hotelName?'· '+t.hotelName:''}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <span class="dash-trip-tag tag-${t.status}">${t.status}</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${daysUntil(t.startDate)}d away</span>
-            </div>
-          </div>`).join(''):'<div class="dash-empty">No upcoming trips. <span class="dch-link" onclick="setSection(\'travel\',\'trips\')">Add one →</span></div>'}
+          <div class="dash-card-head"><span class="dch-title">Upcoming Deadlines</span><span class="dch-link" onclick="dashToggleCalendar()" id="dash-cal-toggle">Full calendar ▾</span></div>
+          <div id="dash-deadlines-list"></div>
+          <div id="dash-calendar-inline" style="display:none;border-top:1px solid var(--border-l)"></div>
         </div>
       </div>
       <div class="dash-col">
@@ -989,8 +1821,8 @@ function renderDashboard(){
         <div class="dash-card">
           <div class="dash-card-head"><span class="dch-title">Quick Actions</span></div>
           ${[
-            {label:'Calculate award points',sub:'Hyatt award chart calculator',action:`setSection('travel','calculator')`,icon:'🧮'},
-            {label:'View wishlist',sub:`${wishCount} properties saved`,action:`setSection('travel','wishlist')`,icon:'❤️'},
+            {label:'Calculate award points',sub:'Cost it out, or see what fits your balance',action:`setSection('travel','calculator')`,icon:'🧮'},
+            {label:'Wishlist & best redemptions',sub:`${wishCount} properties saved`,action:`setSection('travel','collection')`,icon:'❤️'},
             {label:'Add a trip',sub:'Plan upcoming travel',action:`setSection('travel','trips')`,icon:'✈️'},
           ].map(q=>`<div class="dash-trip-row" style="cursor:pointer" onclick="${q.action}">
             <span style="font-size:20px;flex-shrink:0">${q.icon}</span>
@@ -999,7 +1831,30 @@ function renderDashboard(){
         </div>
       </div>
     </div>
-    <footer style="margin-top:20px">Travel HQ · State saved automatically · Data is for personal planning use only</footer>`;
+    <footer style="margin-top:20px">Travel HQ · State saved automatically · Award chart &amp; benefit terms last verified Jul 2026 — Hyatt categories and Chase benefits change periodically, so double-check before booking · Export your data regularly from the buttons above</footer>`;
+  renderDashDeadlines();
+}
+function renderDashDeadlines(){
+  const listEl=document.getElementById('dash-deadlines-list');
+  if(!listEl)return;
+  const events=collectDeadlines().filter(e=>e.date>=iso());
+  const next5=events.slice(0,5);
+  listEl.innerHTML=!next5.length?'<div class="dash-empty">Nothing on the horizon — you\'re all caught up.</div>':
+    next5.map(e=>{const du=daysUntil(e.date);
+      return`<div class="dash-action-row"><div class="dash-action-dot c-${e.urgency}"></div>
+        <div class="dash-action-text">${e.icon} ${e.label}</div>
+        <div class="dash-action-val" style="color:var(--${e.urgency})">${du===0?'Today':du+'d'}</div></div>`;
+    }).join('');
+}
+let dashCalOpen=false;
+function dashToggleCalendar(){
+  dashCalOpen=!dashCalOpen;
+  const el=document.getElementById('dash-calendar-inline');
+  const toggle=document.getElementById('dash-cal-toggle');
+  if(!el)return;
+  el.style.display=dashCalOpen?'block':'none';
+  toggle.textContent=dashCalOpen?'Hide calendar ▴':'Full calendar ▾';
+  if(dashCalOpen)el.innerHTML=miniCalendarHTML();
 }
 
 // ── PASSPORT DATA & GAMIFICATION ───────────────────────────────────────────
@@ -1043,7 +1898,21 @@ const CHALLENGES=[
   {id:'mea4',name:'Middle East & Africa Explorer',desc:'Visit 4 MEA properties',ids:null,target:4,tally:v=>PROPS.filter(p=>p[5]==='mea'&&v[p[0]]).length},
 ];
 
-// [id, name, brand, city, country, region, cat, lat, lng]
+// ═══════════════════════════════════════════════════════════════════════════
+// EDITABLE DATA — HYATT PROPERTY DATABASE
+// This is the part most likely to need updating (Hyatt recategorizes
+// properties roughly every March, and new properties open throughout the
+// year). Everything below is pure data — no logic — so it's safe to add,
+// remove, or edit rows without touching anything else in the file.
+//
+// Format per row: [id, name, brand, city, country, region, category, lat, lng]
+//   - id: short unique lowercase key, no spaces (used to link trips/achievements)
+//   - region: one of na / ca / eu / mea / as / pa (see PREG above for labels)
+//   - category: 1–8, Hyatt's award category (drives points cost — verify
+//     against hyatt.com before trusting a number here for an actual booking)
+//
+// Last verified against Hyatt's public property list: July 2026.
+// ═══════════════════════════════════════════════════════════════════════════
 const PROPS=[
   ['phny','Park Hyatt New York','Park Hyatt','New York','USA','na',8,40.761,-73.978],
   ['phchi','Park Hyatt Chicago','Park Hyatt','Chicago','USA','na',7,41.896,-87.626],
@@ -1217,25 +2086,52 @@ function fireConfetti(){
 }
 function toggleVisit(id){
   const prev=new Set(ACHV.filter(a=>a.check(PS.visited)).map(a=>a.id));
-  if(PS.visited[id])delete PS.visited[id];else PS.visited[id]=true;
+  if(PS.visited[id])delete PS.visited[id];else PS.visited[id]=iso();
   if(ACHV.some(a=>a.check(PS.visited)&&!prev.has(a.id)))setTimeout(fireConfetti,80);
   savePassport();renderPassport();
 }
+function setVisitDate(id,dateStr){
+  if(!dateStr)return;
+  PS.visited[id]=dateStr;
+  savePassport();renderPassport();
+}
+function visitDateOf(id){
+  const v=PS.visited[id];
+  if(!v||v===true)return null;
+  return v;
+}
+let pFiltersReady=false;
 function initPMap(){
-  if(pMap||!document.getElementById('pp-map'))return;
-  pMap=L.map('pp-map',{scrollWheelZoom:false}).setView([25,15],2);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:18}).addTo(pMap);
-  const regPills=document.getElementById('pp-pills');
-  Object.entries(PREG).forEach(([k,v])=>{
-    const p=document.createElement('div');p.className='pp-pill'+(k==='all'?' active':'');p.textContent=v;
-    p.onclick=()=>{pF.region=k;document.querySelectorAll('.pp-pill').forEach(x=>x.classList.toggle('active',x===p));renderPassport();};
-    regPills.appendChild(p);
-  });
-  const brandSel=document.getElementById('pp-brand');
-  PBRANDS.forEach(b=>{const o=document.createElement('option');o.value=b==='All Brands'?'all':b;o.textContent=b;brandSel.appendChild(o);});
-  brandSel.onchange=e=>{pF.brand=e.target.value;renderPassport();};
-  document.getElementById('pp-status').onchange=e=>{pF.status=e.target.value;renderPassport();};
-  let st;document.getElementById('pp-search').oninput=e=>{clearTimeout(st);st=setTimeout(()=>{pF.search=e.target.value.trim();renderPassport();},200);};
+  if(!document.getElementById('pp-map'))return;
+  // Filters and pills work regardless of whether the map (external CDN) loaded.
+  if(!pFiltersReady){
+    pFiltersReady=true;
+    const regPills=document.getElementById('pp-pills');
+    Object.entries(PREG).forEach(([k,v])=>{
+      const p=document.createElement('div');p.className='pp-pill'+(k==='all'?' active':'');p.textContent=v;
+      p.onclick=()=>{pF.region=k;document.querySelectorAll('.pp-pill').forEach(x=>x.classList.toggle('active',x===p));renderPassport();};
+      regPills.appendChild(p);
+    });
+    const brandSel=document.getElementById('pp-brand');
+    PBRANDS.forEach(b=>{const o=document.createElement('option');o.value=b==='All Brands'?'all':b;o.textContent=b;brandSel.appendChild(o);});
+    brandSel.onchange=e=>{pF.brand=e.target.value;renderPassport();};
+    document.getElementById('pp-status').onchange=e=>{pF.status=e.target.value;renderPassport();};
+    let st;document.getElementById('pp-search').oninput=e=>{clearTimeout(st);st=setTimeout(()=>{pF.search=e.target.value.trim();renderPassport();},200);};
+  }
+  if(pMap)return; // map already initialized
+  if(typeof L==='undefined'){
+    const mapEl=document.getElementById('pp-map');
+    if(mapEl)mapEl.innerHTML=`<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;background:#f5f7fb;text-align:center;padding:20px">
+      Map couldn't load (offline or the map library didn't reach this device).<br>The property grid and filters below still work fully.</div>`;
+    return;
+  }
+  try{
+    pMap=L.map('pp-map',{scrollWheelZoom:false}).setView([25,15],2);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:18}).addTo(pMap);
+  }catch(err){
+    console.error('[Travel HQ] Map failed to initialize:',err);
+    pMap=null;
+  }
 }
 function updatePMarkers(){
   if(!pMap)return;
@@ -1257,48 +2153,71 @@ function updatePMarkers(){
     m.addTo(pMap);pMarkers.push(m);
   });
 }
-function renderPassport(){
+function renderPassport(){safeRender('passport',renderPassportInner);}
+function renderPassportInner(){
   const vc=Object.keys(PS.visited).length,tot=PROPS.length;
   const byReg={};PROPS.forEach(([id,,,,,region])=>{if(!byReg[region])byReg[region]={t:0,v:0};byReg[region].t++;if(PS.visited[id])byReg[region].v++;});
   const regsVis=Object.values(byReg).filter(r=>r.v>0).length;
   const ctries=new Set(PROPS.filter(([id])=>PS.visited[id]).map(p=>p[4])).size;
   const brandCts={};PROPS.forEach(([id,,brand])=>{if(PS.visited[id])brandCts[brand]=(brandCts[brand]||0)+1;});
   const top=Object.entries(brandCts).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('pp-v').textContent=vc;document.getElementById('pp-tot').textContent=tot;
-  document.getElementById('pp-reg').textContent=regsVis+'/6';document.getElementById('pp-ctry').textContent=ctries||'—';
-  document.getElementById('pp-top').textContent=top?top[0]+' ('+top[1]+')':'—';
-  document.getElementById('pp-bar').style.width=Math.round(vc/tot*100)+'%';
-  document.getElementById('pp-pct').textContent=Math.round(vc/tot*100)+'%';
   const rank=getRank(vc);const nextRank=RANKS[RANKS.indexOf(rank)+1];
   const rPct=nextRank?Math.round((vc-rank.min)/(nextRank.min-rank.min)*100):100;
-  const rb=document.getElementById('pp-rank-bar');
-  if(rb)rb.innerHTML=`<div class="rank-badge"><div class="rank-icon" style="background:${rank.color}20;border:2px solid ${rank.color}30">${rank.icon}</div>
-    <div class="rank-info"><div class="rank-name" style="color:${rank.color}">${rank.name}</div>
-      <div class="rank-sub">${nextRank?`${vc-rank.min}/${nextRank.min-rank.min} toward ${nextRank.name}`:'Max rank — Grand Master'}</div></div></div>
-    <div class="rank-progress"><div class="rank-prg-label"><span style="color:${rank.color};font-weight:600">${rank.name}</span><span>${nextRank?nextRank.name+' at '+nextRank.min:'👑 Grand Master'}</span></div>
-      <div class="rank-prg-track"><div class="rank-prg-fill" style="width:${rPct}%;background:${rank.color}"></div></div></div>`;
-  const ag=document.getElementById('pp-achv-grid');
-  if(ag){
-    const unlocked=ACHV.filter(a=>a.check(PS.visited)).length;
-    document.getElementById('pp-achv-ct').textContent=unlocked+'/'+ACHV.length+' unlocked';
-    ag.innerHTML='';
-    ACHV.forEach(a=>{const ok=a.check(PS.visited);const card=document.createElement('div');card.className='achv-card '+(ok?'unlocked':'locked');
-      card.innerHTML=`<div class="achv-icon">${a.icon}</div><div class="achv-name">${a.name}</div><div class="achv-desc">${a.desc}</div>${ok?'<div class="achv-stamp">✓ Earned</div>':''}`;ag.appendChild(card);});
-  }
-  const ch=document.getElementById('pp-challenges');
-  if(ch){ch.innerHTML='';CHALLENGES.forEach(c=>{const done=c.ids?c.ids.filter(id=>PS.visited[id]).length:(c.tally?c.tally(PS.visited):0);const total=c.ids?c.ids.length:c.target;const complete=done>=total;const cp=Math.round(done/total*100);
-    const row=document.createElement('div');row.className='chal-row';
-    row.innerHTML=`<div class="chal-info"><div class="chal-name">${complete?'✓ ':''}<strong>${c.name}</strong></div><div class="chal-desc">${c.desc}</div></div>
-      <div class="chal-prg">${complete?'<div class="chal-done">Complete!</div>':`<div class="chal-prg-row"><span>${done}/${total}</span><span>${cp}%</span></div><div class="chal-prg-track"><div class="chal-prg-fill" style="width:${cp}%;background:${cp===100?'var(--green)':'var(--blue)'}"></div></div>`}</div>`;
-    ch.appendChild(row);});}
+  const unlockedAchvs=ACHV.filter(a=>a.check(PS.visited));
+  const challengeProgress=CHALLENGES.map(c=>{
+    const done=c.ids?c.ids.filter(id=>PS.visited[id]).length:(c.tally?c.tally(PS.visited):0);
+    const total=c.ids?c.ids.length:c.target;
+    return{...c,done,total,complete:done>=total,pct:Math.round(done/total*100)};
+  });
+  const nearChallenges=challengeProgress.filter(c=>!c.complete&&c.pct>=50).length;
+
+  // Collapsed summary — always visible, one line of the essentials
+  const collapsed=document.getElementById('pp-summary-collapsed');
+  if(collapsed)collapsed.innerHTML=`
+    <div class="rank-icon" style="background:${rank.color}20;border:2px solid ${rank.color}30;width:32px;height:32px;font-size:14px">${rank.icon}</div>
+    <div style="flex-shrink:0"><div style="font-size:12.5px;font-weight:700;color:${rank.color}">${rank.name}</div>
+      <div style="font-size:9.5px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${vc}/${tot} visited</div></div>
+    <div class="pp-bar-wrap"><div class="pp-bar-track"><div class="pp-bar-fill" style="width:${Math.round(vc/tot*100)}%"></div></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)">${Math.round(vc/tot*100)}%</span></div>
+    <div style="flex-shrink:0;font-size:11px;color:var(--text2)">🏆 ${unlockedAchvs.length}/${ACHV.length}${nearChallenges?` · ${nearChallenges} challenge${nearChallenges>1?'s':''} near complete`:''}</div>
+    <div style="flex-shrink:0;font-size:10.5px;color:var(--blue);font-weight:600">Details ▾</div>`;
+
+  // Expandable detail — full stats, rank progress, achievements, challenges
+  const detail=document.getElementById('pp-summary-detail');
+  if(detail)detail.innerHTML=`
+    <div class="pp-detail-close" onclick="togglePPDetail()">Collapse ▴</div>
+    <div style="padding:14px 18px;border-bottom:1px solid var(--border-l);display:flex;flex-wrap:wrap;gap:18px">
+      <div class="pp-stat"><span class="pp-stat-v">${vc}</span><span class="pp-stat-l">&nbsp;visited</span></div>
+      <div class="pp-stat"><span class="pp-stat-v">${tot}</span><span class="pp-stat-l">&nbsp;properties</span></div>
+      <div class="pp-stat"><span class="pp-stat-v">${regsVis}/6</span><span class="pp-stat-l">&nbsp;regions</span></div>
+      <div class="pp-stat"><span class="pp-stat-v">${ctries||'—'}</span><span class="pp-stat-l">&nbsp;countries</span></div>
+      <div class="pp-stat"><span class="pp-stat-v" style="font-size:13px">${top?top[0]+' ('+top[1]+')':'—'}</span><span class="pp-stat-l">&nbsp;top brand</span></div>
+    </div>
+    <div style="padding:12px 18px;border-bottom:1px solid var(--border-l)">
+      <div class="rank-progress"><div class="rank-prg-label"><span style="color:${rank.color};font-weight:600">${rank.name}</span><span>${nextRank?nextRank.name+' at '+nextRank.min:'👑 Grand Master'}</span></div>
+        <div class="rank-prg-track"><div class="rank-prg-fill" style="width:${rPct}%;background:${rank.color}"></div></div></div>
+    </div>
+    <div class="pp-section-head"><span>Achievements</span><span>${unlockedAchvs.length}/${ACHV.length} unlocked</span></div>
+    <div class="achv-grid">${ACHV.map(a=>{const ok=a.check(PS.visited);
+      return`<div class="achv-card ${ok?'unlocked':'locked'}"><div class="achv-icon">${a.icon}</div><div class="achv-name">${a.name}</div><div class="achv-desc">${a.desc}</div>${ok?'<div class="achv-stamp">✓ Earned</div>':''}</div>`;}).join('')}</div>
+    <div class="pp-section-head"><span>Active Challenges</span><span>Progress toward collection goals</span></div>
+    ${challengeProgress.map(c=>`<div class="chal-row">
+      <div class="chal-info"><div class="chal-name">${c.complete?'✓ ':''}<strong>${c.name}</strong></div><div class="chal-desc">${c.desc}</div></div>
+      <div class="chal-prg">${c.complete?'<div class="chal-done">Complete!</div>':`<div class="chal-prg-row"><span>${c.done}/${c.total}</span><span>${c.pct}%</span></div><div class="chal-prg-track"><div class="chal-prg-fill" style="width:${c.pct}%;background:${c.pct===100?'var(--green)':'var(--blue)'}"></div></div>`}</div>
+    </div>`).join('')}`;
+
   const fp=fpProps();document.getElementById('pp-count').textContent='Showing '+fp.length+' of '+tot+' properties';
   const grid=document.getElementById('pp-grid');grid.innerHTML='';
   if(!fp.length){grid.innerHTML='<div class="pp-empty">No properties match filters.</div>';}
   else fp.forEach(([id,name,brand,city,country,region,cat])=>{
     const vis=!!PS.visited[id];const wl=!!TS.wishlist[id];const bc=BC[brand]||BC['Other'];
+    const vDate=visitDateOf(id);
     const card=document.createElement('div');card.className='prop-card'+(vis?' visited':wl?' wishlisted':'');
     card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span><span class="prop-stamp">${vis?'✓':wl?'❤️':''}</span></div>
       <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
+      ${vis?`<div style="margin-bottom:6px">
+        <input type="date" value="${vDate||''}" onchange="setVisitDate('${id}',this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;border:1px solid var(--border-l);border-radius:3px;padding:2px 5px;color:var(--text3);width:100%">
+      </div>`:''}
       <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
         <div class="prop-actions">
           <button class="prop-btn${vis?' done':''}" onclick="toggleVisit('${id}')">${vis?'Visited':'Visit'}</button>
@@ -1307,12 +2226,28 @@ function renderPassport(){
     grid.appendChild(card);});
   updatePMarkers();
 }
+let ppDetailOpen=false;
+function togglePPDetail(){
+  ppDetailOpen=!ppDetailOpen;
+  document.getElementById('pp-summary-detail').style.display=ppDetailOpen?'block':'none';
+  document.getElementById('pp-summary-collapsed').style.display=ppDetailOpen?'none':'flex';
+}
 function toggleWishlist(id){
   if(TS.wishlist[id])delete TS.wishlist[id];else TS.wishlist[id]=true;
   saveTravel();renderPassport();
 }
 
 // ── TRAVEL PLANNING ────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// EDITABLE DATA — HYATT AWARD CHART & CASH ESTIMATES
+// CHART: points required per category (s=Standard, lo=Off-Peak, hi=Peak).
+// CASH_EST: rough per-night cash rate used only for the calculator's "savings
+// vs. cash" comparison — not tied to any live pricing feed.
+// PPT: assumed value of 1 Hyatt/UR point in dollars, used the same way.
+// Hyatt updates award charts periodically — verify at hyatt.com before
+// treating these numbers as authoritative for a real booking decision.
+// Last verified: July 2026.
+// ═══════════════════════════════════════════════════════════════════════════
 const CHART={1:{s:3500,lo:2000,hi:5000},2:{s:8000,lo:5500,hi:9000},3:{s:12000,lo:10000,hi:14000},4:{s:15000,lo:12000,hi:17000},5:{s:20000,lo:17000,hi:22000},6:{s:25000,lo:22000,hi:28000},7:{s:30000,lo:27000,hi:33000},8:{s:40000,lo:37000,hi:44000}};
 const CASH_EST={1:120,2:200,3:300,4:400,5:525,6:700,7:950,8:1400};
 const PPT=0.017;
@@ -1321,8 +2256,9 @@ let showTripForm=false,editTripId=null;
 
 function renderTravel(){
   if(activeTab==='trips')renderTrips();
+  else if(activeTab==='visa')renderVisa();
   else if(activeTab==='calculator')renderCalc();
-  else if(activeTab==='wishlist')renderWishlist();
+  else if(activeTab==='collection')renderCollection();
 }
 
 function renderTrips(){
@@ -1341,10 +2277,16 @@ function renderTrips(){
         <div class="tf-grid">
           <div class="tf-field"><label>Trip Name</label><input id="tf-name" placeholder="Tokyo Winter 2027"></div>
           <div class="tf-field"><label>Destination</label><input id="tf-dest" placeholder="Tokyo, Japan"></div>
+          <div class="tf-field"><label>Visa Country <span style="font-weight:400;color:var(--text3)">(optional — links to Visa Status)</span></label>
+            <select id="tf-viscountry"><option value="">— None / not applicable —</option>${VISA_COUNTRIES.map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select>
+          </div>
           <div class="tf-field"><label>Start Date</label><input type="date" id="tf-start"></div>
           <div class="tf-field"><label>End Date</label><input type="date" id="tf-end"></div>
           <div class="tf-field"><label>Status</label><select id="tf-status"><option value="planning">Planning</option><option value="booked">Booked</option><option value="completed">Completed</option></select></div>
-          <div class="tf-field"><label>Hotel</label><input id="tf-hotel" placeholder="Park Hyatt Tokyo"></div>
+          <div class="tf-field"><label>Hotel <span style="font-weight:400;color:var(--text3)">(matches Passport list if it's a Hyatt property)</span></label>
+            <input id="tf-hotel" list="hyatt-prop-list" placeholder="Park Hyatt Tokyo" oninput="tripHotelHint(this.value)">
+            <div id="tf-hotel-hint" style="font-size:10.5px;color:var(--text3);margin-top:3px"></div>
+          </div>
         </div>
         <div class="tf-grid" style="grid-template-columns:1fr">
           <div class="tf-field"><label>Flight Info</label><input id="tf-flight" placeholder="UA 837 SFO→NRT"></div>
@@ -1357,11 +2299,42 @@ function renderTrips(){
     ${upcoming.length?'<div class="trips-section-head">Upcoming & In Planning</div>'+upcoming.map(t=>tripRowHTML(t,today)).join(''):''}
     ${done.length?'<div class="trips-section-head">Completed</div>'+done.map(t=>tripRowHTML(t,today)).join(''):''}
   </div>`;
-  if(editTripId){const t=TS.trips.find(x=>x.id===editTripId);if(t){['name','dest','start','end','status','hotel','flight','notes'].forEach(f=>{const el2=document.getElementById('tf-'+f);if(el2)el2.value=t[f]||'';});}}
+  if(editTripId){const t=TS.trips.find(x=>x.id===editTripId);if(t){
+    const fmap={name:'name',dest:'destination',viscountry:'visCountry',start:'startDate',end:'endDate',status:'status',hotel:'hotelName',flight:'flightInfo',notes:'notes'};
+    Object.entries(fmap).forEach(([f,prop])=>{const el2=document.getElementById('tf-'+f);if(el2)el2.value=t[prop]||'';});
+  }}
 }
 function tripRowHTML(t,today){
   const du=daysUntil(t.startDate);
   const cd=t.startDate>=today&&t.status!=='completed'?`${du>0?du+'d away':'Today!'}`:t.status==='completed'?`Completed ${fmtD(t.endDate||t.startDate)}`:'';
+  const match=tripPropMatch(t);
+  let propTag='';
+  if(match){
+    const[id,name,brand,,,,cat]=match;
+    const vis=!!PS.visited[id],wl=!!TS.wishlist[id];
+    const ch=CHART[cat];
+    const combined=(S.hyattPtsBalance||0)+(S.urPtsBalance||0);
+    const afford=combined>=ch.s?`✓ affordable at current balance`:`short ~${(ch.s-combined).toLocaleString()} pts`;
+    propTag=`<div class="trip-notes" style="font-style:normal;color:var(--navy2)">🏨 Cat ${cat} Hyatt property · ~${ch.s.toLocaleString()} pts/night standard · ${afford}${wl?' · ❤️ wishlisted':''}${vis?' · ✓ previously visited':''}</div>`;
+  }
+  let visaTag='';
+  if(t.visCountry&&VS.countries[t.visCountry]){
+    const vc=VS.countries[t.visCountry];
+    const countryName=(VISA_COUNTRIES.find(c=>c[0]===t.visCountry)||[,t.visCountry])[1];
+    const seededNote=vc.seeded&&!vc.verifiedDate?' <strong>(pre-filled research — not yet verified by you)</strong>':'';
+    if(vc.status==='advance'){
+      const leadWeeks=vc.leadTimeWeeks||0;
+      const weeksUntil=du/7;
+      const tight=leadWeeks>0&&weeksUntil<leadWeeks&&t.status!=='completed';
+      visaTag=`<div class="trip-notes" style="font-style:normal;color:${tight?'var(--red)':'var(--amber)'}">🛂 ${countryName} requires an advance visa for Radha${leadWeeks?` (~${leadWeeks}wk typical lead time)`:''}${tight?' — ⚠ may be tight given trip timing':''}${seededNote} · <span style="cursor:pointer;text-decoration:underline" onclick="setSection('travel','visa')">View Visa Status →</span></div>`;
+    }else if(vc.status==='have-valid'&&vc.expiryDate){
+      visaTag=`<div class="trip-notes" style="font-style:normal;color:var(--green)">🛂 ${countryName}: valid visa on file through ${fmtDY(vc.expiryDate)}</div>`;
+    }else if(vc.status==='unresearched'){
+      visaTag=`<div class="trip-notes" style="font-style:normal;color:var(--text3)">🛂 ${countryName} visa status not yet researched — <span style="cursor:pointer;text-decoration:underline" onclick="setSection('travel','visa')">check Visa Status →</span></div>`;
+    }else if(vc.seeded&&!vc.verifiedDate){
+      visaTag=`<div class="trip-notes" style="font-style:normal;color:var(--amber)">🛂 ${countryName}: pre-filled as "${(VISA_STATUS_OPTS.find(([k])=>k===vc.status)||['',vc.status])[1]}" — not yet verified by you · <span style="cursor:pointer;text-decoration:underline" onclick="setSection('travel','visa')">Verify →</span></div>`;
+    }
+  }
   return`<div class="trip-row"><div class="trip-left">
     <div class="trip-dest">${t.destination||'Untitled Trip'}${t.name?` <span style="font-size:11px;color:var(--text3);font-weight:400">· ${t.name}</span>`:''}</div>
     <div class="trip-meta">
@@ -1369,6 +2342,8 @@ function tripRowHTML(t,today){
       ${t.hotelName?`<span class="trip-hotel">🏨 ${t.hotelName}</span>`:''}
       ${t.flightInfo?`<span class="trip-flight">✈️ ${t.flightInfo}</span>`:''}
     </div>
+    ${propTag}
+    ${visaTag}
     ${t.notes?`<div class="trip-notes">${t.notes}</div>`:''}
   </div>
   <div class="trip-right">
@@ -1381,20 +2356,70 @@ function tripRowHTML(t,today){
   </div></div>`;
 }
 function openTripForm(){showTripForm=true;editTripId=null;renderTrips();}
+function tripHotelHint(val){
+  const el=document.getElementById('tf-hotel-hint');if(!el)return;
+  const match=PROPS.find(([,name])=>name.toLowerCase()===val.toLowerCase());
+  if(!match){el.textContent='';return;}
+  const[id,name,brand,,,region,cat]=match;
+  const vis=!!PS.visited[id],wl=!!TS.wishlist[id];
+  const ch=CHART[cat];
+  el.textContent=`Cat ${cat} · ~${ch.s.toLocaleString()} pts standard rate${vis?' · Already visited':wl?' · On your wishlist':''}`;
+}
+function tripPropMatch(t){
+  if(!t.hotelName)return null;
+  return PROPS.find(([,name])=>name.toLowerCase()===t.hotelName.toLowerCase())||null;
+}
 function cancelTripForm(){showTripForm=false;editTripId=null;renderTrips();}
 function editTrip(id){editTripId=id;showTripForm=true;renderTrips();}
 function saveTrip(){
   const get=id=>document.getElementById(id)?.value.trim()||'';
-  const trip={id:editTripId||'trip-'+Date.now(),name:get('tf-name'),destination:get('tf-dest'),startDate:get('tf-start'),endDate:get('tf-end'),status:get('tf-status')||'planning',hotelName:get('tf-hotel'),flightInfo:get('tf-flight'),notes:get('tf-notes')};
+  const trip={id:editTripId||'trip-'+Date.now(),name:get('tf-name'),destination:get('tf-dest'),visCountry:get('tf-viscountry'),startDate:get('tf-start'),endDate:get('tf-end'),status:get('tf-status')||'planning',hotelName:get('tf-hotel'),flightInfo:get('tf-flight'),notes:get('tf-notes')};
   if(!trip.destination){alert('Please enter a destination.');return;}
   if(editTripId){const idx=TS.trips.findIndex(t=>t.id===editTripId);if(idx>=0)TS.trips[idx]=trip;}else{TS.trips.push(trip);}
   showTripForm=false;editTripId=null;saveTravel();renderTrips();
 }
 function deleteTrip(id){if(!confirm('Delete this trip?'))return;TS.trips=TS.trips.filter(t=>t.id!==id);saveTravel();renderTrips();}
 
+let calcTabMode='price';
 function renderCalc(){
   const el=document.getElementById('panel-calculator');
-  el.innerHTML=`<div class="calc-layout">
+  el.innerHTML=`<div class="panel">
+    <div class="panel-head" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span class="ph-name">Points Calculator</span>
+      <div class="rate-toggles" style="width:280px">
+        <button class="rate-btn${calcTabMode==='price'?' active':''}" onclick="setCalcMode('price')">Price a Stay</button>
+        <button class="rate-btn${calcTabMode==='afford'?' active':''}" onclick="setCalcMode('afford')">What Can I Afford?</button>
+      </div>
+    </div>
+    <div id="calc-mode-body"></div>
+  </div>`;
+  renderCalcModeBody();
+}
+function setCalcMode(m){calcTabMode=m;renderCalcModeBody();}
+function renderCalcModeBody(){
+  const body=document.getElementById('calc-mode-body');
+  if(!body)return;
+  if(calcTabMode==='price'){body.innerHTML=priceCalcHTML();calcUpdate();}
+  else{body.innerHTML=affordCalcHTML();affordUpdate();}
+}
+function balanceInputsHTML(){
+  return`<div class="calc-inputs">
+      <div class="grp-head" style="margin:0">Your Points Balance</div>
+      <div class="calc-field">
+        <label>Hyatt Points</label>
+        <input class="calc-prop-search" id="bal-hyatt" type="number" min="0" value="${S.hyattPtsBalance||''}" placeholder="0" oninput="updateBalance('hyattPtsBalance',this.value)">
+      </div>
+      <div class="calc-field">
+        <label>Chase Ultimate Rewards</label>
+        <input class="calc-prop-search" id="bal-ur" type="number" min="0" value="${S.urPtsBalance||''}" placeholder="0" oninput="updateBalance('urPtsBalance',this.value)">
+      </div>
+      <div class="calc-field" style="font-size:10.5px;color:var(--text3)">
+        ${S.ptsUpdated?'Last updated '+fmtDY(S.ptsUpdated):'Enter your current balances — used by both modes above'}
+      </div>
+    </div>`;
+}
+function priceCalcHTML(){
+  return`<div class="calc-layout">
     <div class="calc-inputs">
       <div class="grp-head" style="margin:0">Inputs</div>
       <div class="calc-field"><label>Search Property</label>
@@ -1422,9 +2447,13 @@ function renderCalc(){
         </div>
       </div>
     </div>
+    <div style="margin-top:12px">${balanceInputsHTML()}</div>
     <div class="calc-results" id="calc-results"></div>
   </div>`;
-  calcUpdate();
+}
+function updateBalance(key,val){
+  S[key]=Math.max(0,parseInt(val)||0);S.ptsUpdated=iso();save();
+  if(calcTabMode==='price')calcUpdate();else affordUpdate();
 }
 function filterCalcProps(q){
   const list=document.getElementById('calc-plist');if(!list)return;
@@ -1444,7 +2473,7 @@ function selectCalcProp(id,name,cat){
   calcUpdate();
 }
 function adjNights(d){calcState.nights=Math.min(14,Math.max(1,calcState.nights+d));const v=document.getElementById('nc-val');if(v)v.textContent=calcState.nights;calcUpdate();}
-function setRate(r){calcState.rate=r;document.querySelectorAll('.rate-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(r==='lo'?'off':r==='hi'?'peak':'stand')));calcUpdate();}
+function setRate(r){calcState.rate=r;document.querySelectorAll('#calc-mode-body .rate-btn').forEach(b=>{if(['Off-Peak','Standard','Peak'].includes(b.textContent))b.classList.toggle('active',b.textContent.toLowerCase().includes(r==='lo'?'off':r==='hi'?'peak':'stand'));});calcUpdate();}
 function calcUpdate(){
   const el=document.getElementById('calc-results');if(!el)return;
   const {cat,nights,rate,propName}=calcState;
@@ -1474,59 +2503,462 @@ function calcUpdate(){
     <div class="calc-row"><span class="calc-row-label">Rate per night</span><span class="calc-row-val">${ratePerNight.toLocaleString()} pts</span></div>
     ${free5th?`<div class="calc-note good">✓ 5th night free applied — ${Math.floor(nights/5)} free night${Math.floor(nights/5)>1?'s':''} in this booking</div>`:''}
     ${certElig?`<div class="calc-note good">✓ Your Hyatt card free night certificate covers 1 night at this category</div>`:'<div class="calc-note">Free night certificate requires Category 1–4 (this is Cat ${cat})</div>'}
+    ${affordHTML(totalPts)}
+    ${propName?`<button class="tf-save" style="margin-top:12px;width:100%" onclick="logFromCalc('${propName.replace(/'/g,"\\'")}',${cat},${nights},${totalPts},${cashTotal})">🏆 Log this as a redemption</button>`:''}
   </div>`;
 }
+function logFromCalc(propName,cat,nights,points,cashValue){
+  TS.redemptions.push({id:'red-'+Date.now(),propName,date:iso(),nights,points,cashValue,notes:''});
+  saveTravel();
+  setSection('travel','collection');
+  setCollectionMode('hof');
+}
+function affordHTML(totalPts){
+  const hy=S.hyattPtsBalance||0,ur=S.urPtsBalance||0;
+  if(!hy&&!ur)return'';
+  const combined=hy+ur;
+  const short=totalPts-combined;
+  if(combined>=totalPts){
+    return`<div class="calc-note good">✓ Affordable now — ${combined.toLocaleString()} points on hand covers this stay (${(combined-totalPts).toLocaleString()} pts left over)</div>`;
+  }
+  return`<div class="calc-note" style="background:var(--amber-t);color:var(--amber)">You're short ${short.toLocaleString()} points (have ${combined.toLocaleString()} of ${totalPts.toLocaleString()} needed, including transferable UR)</div>`;
+}
 
-function renderWishlist(){
-  const el=document.getElementById('panel-wishlist');
+// ── VISA STATUS ────────────────────────────────────────────────────────────
+function getCountryData(id){
+  return VS.countries[id]||{status:'unresearched',leadTimeWeeks:null,notes:'',sourceUrl:'',verifiedDate:null,expiryDate:null};
+}
+let visaFilterText='';
+function renderVisa(){
+  const el=document.getElementById('panel-visa');
+  const userVerified=Object.values(VS.countries).filter(c=>c.verifiedDate).length;
+  const seededCount=Object.values(VS.countries).filter(c=>c.seeded).length;
+  const easeCount=Object.keys(EASE_IMPORT).length;
+  el.innerHTML=`<div class="panel">
+    <div class="panel-head"><span class="ph-name">Visa Status — Radha</span><span class="ph-tag">${userVerified}/${VISA_COUNTRIES.length} verified by you</span></div>
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border-l);font-size:11.5px;color:var(--text2);line-height:1.6;background:#f8f9fc">
+      The first 25 entries below are pre-filled from research done in July 2026 (Indian passport + US green card) — <strong>treat these as a starting point, not a confirmed answer.</strong> The remaining ~168 countries carry only an <strong>Ease rating</strong> (H/M/L) imported from a spreadsheet you uploaded on ${fmtDY(EASE_IMPORT_DATE)} — that spreadsheet's own research assumes <strong>H1B status</strong>, a different immigration scenario than the green card the rest of this tracker uses, so treat the Ease badge as a rough signal, not a confirmed visa status. Click any country, confirm against an official source, then hit Save to mark it verified.
+    </div>
+    <div class="grp-head">Passport &amp; Document Expiries</div>
+    <div style="padding:12px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px;border-bottom:1px solid var(--border-l)">
+      <div class="tf-field"><label>Will's Passport Expiry</label><input type="date" id="pp-exp-will" value="${VS.passportExpiry.will||''}"></div>
+      <div class="tf-field"><label>Radha's Passport Expiry</label><input type="date" id="pp-exp-radha" value="${VS.passportExpiry.radha||''}"></div>
+    </div>
+    <div class="grp-head">US Immigration Status Notes (freeform)</div>
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border-l)">
+      <textarea id="us-status-note" rows="3" style="width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:8px" placeholder="e.g. visa stamping / re-entry considerations to confirm with an immigration attorney before international travel">${VS.usStatusNote||''}</textarea>
+    </div>
+    <div class="grp-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Countries — Click to Expand</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:none;letter-spacing:0;font-size:9.5px">${easeCount} with imported Ease ratings</span>
+    </div>
+    <div style="padding:10px 20px;border-bottom:1px solid var(--border-l)">
+      <input id="visa-search" type="text" placeholder="Search ${VISA_COUNTRIES.length} countries…" value="${visaFilterText}" style="width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1px solid var(--border);border-radius:4px;padding:6px 10px">
+    </div>
+    <div id="visa-country-list"></div>
+  </div>`;
+  document.getElementById('pp-exp-will').onchange=e=>{VS.passportExpiry.will=e.target.value||null;saveVisa();};
+  document.getElementById('pp-exp-radha').onchange=e=>{VS.passportExpiry.radha=e.target.value||null;saveVisa();};
+  document.getElementById('us-status-note').onchange=e=>{VS.usStatusNote=e.target.value;saveVisa();};
+  let st;document.getElementById('visa-search').oninput=e=>{clearTimeout(st);const v=e.target.value;st=setTimeout(()=>{visaFilterText=v;renderVisaCountryList();},150);};
+  renderVisaCountryList();
+}
+function renderVisaCountryList(){
+  const listEl=document.getElementById('visa-country-list');
+  if(!listEl)return;
+  const q=visaFilterText.trim().toLowerCase();
+  const filtered=q?VISA_COUNTRIES.filter(([,name])=>name.toLowerCase().includes(q)):VISA_COUNTRIES;
+  listEl.innerHTML='';
+  if(!filtered.length){listEl.innerHTML='<div class="pp-empty">No countries match your search.</div>';return;}
+  const statusColor={unresearched:'var(--text3)','visa-free':'var(--green)',voa:'var(--blue)',evisa:'var(--blue)',advance:'var(--amber)','have-valid':'var(--green)'};
+  const easeColor={H:'var(--green)',M:'var(--amber)',L:'var(--red)'};
+  const easeLabel={H:'Easy',M:'Medium',L:'Hard'};
+  filtered.forEach(([id,name])=>{
+    const c=getCountryData(id);
+    const ease=EASE_IMPORT[id];
+    const details=document.createElement('details');
+    const statusLabel=(VISA_STATUS_OPTS.find(([k])=>k===c.status)||['',c.status])[1];
+    details.innerHTML=`<summary class="grp-head" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff;border-top:none;gap:10px">
+        <span style="flex:1;min-width:0">${name}${c.seeded?' <span style="font-size:8.5px;font-weight:700;color:var(--amber);background:var(--amber-t);padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle">PRE-FILLED</span>':''}</span>
+        <span style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+          ${ease?`<span title="Ease imported from your spreadsheet (H1B-based)" style="font-size:8.5px;font-weight:700;color:#fff;background:${easeColor[ease]};padding:1px 6px;border-radius:3px">${easeLabel[ease]}</span>`:''}
+          <span style="color:${statusColor[c.status]||'var(--text3)'};font-weight:700;font-size:11px">${statusLabel}</span>
+        </span>
+      </summary>
+      <div style="padding:12px 20px;border-bottom:1px solid var(--border-l)">
+        ${ease?`<div style="font-size:11px;color:var(--text2);background:#f5f7fb;border-radius:4px;padding:6px 10px;margin-bottom:10px">Ease rating <strong>${easeLabel[ease]} (${ease})</strong> imported from your uploaded spreadsheet — based on H1B leverage research, not the green-card scenario this tracker otherwise assumes. Treat as a rough signal only.</div>`:''}
+        <div class="tf-grid three">
+          <div class="tf-field"><label>Status</label>
+            <select id="vc-status-${id}">${VISA_STATUS_OPTS.map(([k,v])=>`<option value="${k}"${c.status===k?' selected':''}>${v}</option>`).join('')}</select>
+          </div>
+          <div class="tf-field" id="vc-lead-wrap-${id}" style="display:${c.status==='advance'?'flex':'none'}">
+            <label>Typical Lead Time (weeks)</label><input type="number" id="vc-lead-${id}" min="0" value="${c.leadTimeWeeks||''}" placeholder="6">
+          </div>
+          <div class="tf-field" id="vc-exp-wrap-${id}" style="display:${c.status==='have-valid'?'flex':'none'}">
+            <label>Visa Expiry Date</label><input type="date" id="vc-exp-${id}" value="${c.expiryDate||''}">
+          </div>
+        </div>
+        <div class="tf-field"><label>Source URL (official site you checked)</label><input id="vc-src-${id}" value="${c.sourceUrl||''}" placeholder="https://..."></div>
+        <div class="tf-field"><label>Notes</label><textarea id="vc-notes-${id}" rows="3" style="width:100%">${c.notes||''}</textarea></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <span style="font-size:10.5px;color:${c.seeded?'var(--amber)':'var(--text3)'}">${c.verifiedDate?'✓ Verified by you '+fmtDY(c.verifiedDate):c.seeded?'⚠ Pre-filled research — not yet verified by you':'Not yet verified'}</span>
+          <button class="tf-save" onclick="saveVisaCountry('${id}')">Mark Verified &amp; Save</button>
+        </div>
+      </div>`;
+    listEl.appendChild(details);
+    const statusSel=details.querySelector(`#vc-status-${id}`);
+    statusSel.onchange=()=>{
+      details.querySelector(`#vc-lead-wrap-${id}`).style.display=statusSel.value==='advance'?'flex':'none';
+      details.querySelector(`#vc-exp-wrap-${id}`).style.display=statusSel.value==='have-valid'?'flex':'none';
+    };
+  });
+}
+function saveVisaCountry(id){
+  const get=eid=>document.getElementById(eid)?.value.trim()||'';
+  VS.countries[id]={
+    status:get(`vc-status-${id}`)||'unresearched',
+    leadTimeWeeks:parseInt(get(`vc-lead-${id}`))||null,
+    expiryDate:get(`vc-exp-${id}`)||null,
+    sourceUrl:get(`vc-src-${id}`),
+    notes:get(`vc-notes-${id}`),
+    verifiedDate:iso(),
+  };
+  saveVisa();
+  renderVisa();
+}
+
+let collectionMode='wishlist';
+function renderCollection(){
+  const el=document.getElementById('panel-collection');
+  el.innerHTML=`<div class="panel">
+    <div class="panel-head" style="justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span class="ph-name">Collection</span>
+      <div class="rate-toggles" style="width:280px">
+        <button class="rate-btn${collectionMode==='wishlist'?' active':''}" onclick="setCollectionMode('wishlist')">Wishlist</button>
+        <button class="rate-btn${collectionMode==='hof'?' active':''}" onclick="setCollectionMode('hof')">Hall of Fame</button>
+      </div>
+    </div>
+    <div id="collection-body"></div>
+  </div>`;
+  renderCollectionBody();
+}
+function setCollectionMode(m){collectionMode=m;renderCollectionBody();}
+function renderCollectionBody(){
+  const body=document.getElementById('collection-body');
+  if(!body)return;
+  if(collectionMode==='wishlist')renderWishlistBody(body);
+  else renderHOFBody(body);
+}
+let wlSubMode='browse';
+function renderWishlistBody(body){
   const wlIds=Object.keys(TS.wishlist);
   const wlProps=PROPS.filter(([id])=>TS.wishlist[id]);
-  let mode='browse';
-  const render=(m)=>{
-    mode=m;
-    const showProps=m==='wishlist'?wlProps:PROPS.filter(([id])=>!PS.visited[id]);
-    el.innerHTML=`<div class="panel">
-      <div class="panel-head"><span class="ph-name">Property Wishlist</span><span class="ph-fee">${wlIds.length} saved</span><span class="ph-tag">Properties to visit next</span></div>
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div class="wl-toggle">
-          <button class="wl-toggle-btn${m==='browse'?' active':''}" onclick="wlMode('browse')">Browse Unvisited</button>
-          <button class="wl-toggle-btn${m==='wishlist'?' active':''}" onclick="wlMode('wishlist')">My Wishlist (${wlIds.length})</button>
-        </div>
+  const showProps=wlSubMode==='wishlist'?wlProps:PROPS.filter(([id])=>!PS.visited[id]);
+  body.innerHTML=`
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="wl-toggle">
+        <button class="wl-toggle-btn${wlSubMode==='browse'?' active':''}" onclick="wlMode('browse')">Browse Unvisited</button>
+        <button class="wl-toggle-btn${wlSubMode==='wishlist'?' active':''}" onclick="wlMode('wishlist')">My Wishlist (${wlIds.length})</button>
       </div>
-      <div style="padding:14px 16px 18px">
-        ${!showProps.length?`<div class="pp-empty">${m==='wishlist'?'No properties wishlisted yet. Browse unvisited properties and click ♡ to save.':'All properties have been visited!'}</div>`:''}
-        <div class="pp-grid" id="wl-grid"></div>
-      </div>
+    </div>
+    <div style="padding:14px 16px 18px">
+      ${!showProps.length?`<div class="pp-empty">${wlSubMode==='wishlist'?'No properties wishlisted yet. Browse unvisited properties and click ♡ to save.':'All properties have been visited!'}</div>`:''}
+      <div class="pp-grid" id="wl-grid"></div>
     </div>`;
-    const grid=el.querySelector('#wl-grid');
-    showProps.forEach(([id,name,brand,city,country,,cat])=>{
-      const wl=!!TS.wishlist[id];const bc=BC[brand]||BC['Other'];
-      const card=document.createElement('div');card.className='prop-card'+(wl?' wishlisted':'');
-      card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span><span class="prop-stamp">${wl?'❤️':''}</span></div>
-        <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
-        <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
-          <button class="prop-btn${wl?' wl':' wl-add'}" onclick="toggleWishlistOnly('${id}')">${wl?'❤️ Saved':'♡ Wishlist'}</button>
-        </div>`;
-      grid.appendChild(card);
-    });
-  };
-  window.wlMode=(m)=>render(m);
-  render('browse');
+  const grid=body.querySelector('#wl-grid');
+  showProps.forEach(([id,name,brand,city,country,,cat])=>{
+    const wl=!!TS.wishlist[id];const bc=BC[brand]||BC['Other'];
+    const card=document.createElement('div');card.className='prop-card'+(wl?' wishlisted':'');
+    card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span><span class="prop-stamp">${wl?'❤️':''}</span></div>
+      <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
+      <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
+        <button class="prop-btn${wl?' wl':' wl-add'}" onclick="toggleWishlistOnly('${id}')">${wl?'❤️ Saved':'♡ Wishlist'}</button>
+      </div>`;
+    grid.appendChild(card);
+  });
 }
-function toggleWishlistOnly(id){if(TS.wishlist[id])delete TS.wishlist[id];else TS.wishlist[id]=true;saveTravel();renderWishlist();}
+function wlMode(m){wlSubMode=m;renderCollectionBody();}
+function toggleWishlistOnly(id){if(TS.wishlist[id])delete TS.wishlist[id];else TS.wishlist[id]=true;saveTravel();renderCollectionBody();}
+
+function miniCalendarHTML(){
+  const events=collectDeadlines();
+  const today=iso();
+  const {year,month}=calView;
+  const firstOfMonth=new Date(year,month,1);
+  const startOffset=firstOfMonth.getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const byDay={};
+  events.forEach(e=>{if(e.date.startsWith(`${year}-${String(month+1).padStart(2,'0')}`)){const d=parseInt(e.date.slice(8,10));(byDay[d]=byDay[d]||[]).push(e);}});
+  const monthName=new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  let cells='';
+  for(let i=0;i<startOffset;i++)cells+='<div></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEvents=byDay[d]||[];
+    const isToday=dateStr===today;
+    cells+=`<div style="min-height:44px;border:1px solid var(--border-l);border-radius:4px;padding:3px 4px;${isToday?'background:#f0f4ff;border-color:var(--blue)':''}">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:${isToday?'var(--blue)':'var(--text3)'};font-weight:${isToday?700:400}">${d}</div>
+      ${dayEvents.slice(0,1).map(e=>`<div style="font-size:8px;color:var(--${e.urgency==='red'?'red':e.urgency==='amber'?'amber':'blue'});margin-top:1px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.icon}</div>`).join('')}
+      ${dayEvents.length>1?`<div style="font-size:7.5px;color:var(--text3)">+${dayEvents.length-1}</div>`:''}
+    </div>`;
+  }
+  return`<div style="padding:12px 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="calNav(-1)" style="background:#f0f2f7;border:1px solid var(--border);color:var(--text2);border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:12px">‹</button>
+        <span style="font-size:12px;font-weight:600">${monthName}</span>
+        <button onclick="calNav(1)" style="background:#f0f2f7;border:1px solid var(--border);color:var(--text2);border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:12px">›</button>
+      </div>
+      <span style="font-size:10.5px;color:var(--blue);cursor:pointer;font-weight:600" onclick="calToday()">Today</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px">
+      ${['S','M','T','W','T','F','S'].map(d=>`<div style="font-size:8.5px;font-weight:700;color:var(--text3);text-align:center">${d}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">${cells}</div>
+  </div>`;
+}
+let calView={year:CY,month:CM};
+function calNav(dir){calView.month+=dir;if(calView.month<0){calView.month=11;calView.year--;}if(calView.month>11){calView.month=0;calView.year++;}document.getElementById('dash-calendar-inline').innerHTML=miniCalendarHTML();}
+function calToday(){calView={year:CY,month:CM};document.getElementById('dash-calendar-inline').innerHTML=miniCalendarHTML();}
+
+function collectDeadlines(){
+  const events=[];
+  const add=(date,label,urgency,icon)=>{if(date)events.push({date,label,urgency,icon});};
+  // Trips
+  TS.trips.forEach(t=>{
+    if(t.status!=='completed'&&t.startDate)add(t.startDate,`${t.destination||'Trip'} begins`,'blue','✈️');
+  });
+  // Monthly credits — deadline is last day of THIS month, only if unused this month
+  const lastDayThisMonth=new Date(CY,CM+1,0).toISOString().slice(0,10);
+  if(!mUsed(S.doordash,CY,CM))add(lastDayThisMonth,'DoorDash credit ($25) expires','amber','🍔');
+  if(!mUsed(S.lyft,CY,CM))add(lastDayThisMonth,'Lyft credit ($10) expires','amber','🚗');
+  if(!mUsed(S.peloton,CY,CM))add(lastDayThisMonth,'Peloton credit ($10) expires','amber','🚴');
+  // Semi-annual windows
+  const h1End=new Date(CY,5,30).toISOString().slice(0,10),h2End=new Date(CY,11,31).toISOString().slice(0,10);
+  if(now<=new Date(CY,5,30)&&countSemiProp(S.diningH1,1)<6)add(h1End,'Dining Credit H1 window closes','red','🍽️');
+  if(now<=new Date(CY,5,30)&&countSemiProp(S.stubhubH1,1)<6)add(h1End,'StubHub Credit H1 window closes','red','🎟️');
+  if(now>new Date(CY,5,30)&&now<=new Date(CY,11,31)&&countSemiProp(S.diningH2,2)<6)add(h2End,'Dining Credit H2 window closes','amber','🍽️');
+  if(now>new Date(CY,5,30)&&now<=new Date(CY,11,31)&&countSemiProp(S.stubhubH2,2)<6)add(h2End,'StubHub Credit H2 window closes','amber','🎟️');
+  // Calendar-year credits
+  if(calYrSt(S.editBook1).cls!=='st-used')add(h2End,'The Edit — Booking 1 expires unused','amber','🏨');
+  if(calYrSt(S.editBook2).cls!=='st-used')add(h2End,'The Edit — Booking 2 expires unused','amber','🏨');
+  if(CY===2026&&calYrSt(S.selectHotel).cls!=='st-used')add(h2End,'2026 Select Hotel Credit expires unused','amber','🏨');
+  // Anniversary-based credits (next occurrence this year, if not yet used since anniversary)
+  [[S.resAnniv,S.travelCredit,'$300 Travel Credit resets','blue','💳'],
+   [S.hyattAnniv,S.hyattFreeNight,'Hyatt Free Night cert resets','blue','🌙']].forEach(([anniv,usedOn,label])=>{
+    if(!anniv)return;
+    const a=new Date(anniv+'T12:00:00');
+    let next=new Date(CY,a.getMonth(),a.getDate());
+    if(next<now)next=new Date(CY+1,a.getMonth(),a.getDate());
+    add(next.toISOString().slice(0,10),label,'blue','🔄');
+  });
+  // Radha's cards — monthly + anniversary deadlines
+  if(!mUsed(RS.goldDining,CY,CM))add(lastDayThisMonth,"Radha: Amex Gold dining credit expires",'amber','🍔');
+  if(!mUsed(RS.goldUber,CY,CM))add(lastDayThisMonth,"Radha: Amex Gold Uber Cash expires",'amber','🚗');
+  if(!mUsed(RS.citiLyft,CY,CM))add(lastDayThisMonth,"Radha: Citi AA Exec Lyft credit expires",'amber','🚕');
+  if(!mUsed(RS.citiGrubhub,CY,CM))add(lastDayThisMonth,"Radha: Citi AA Exec Grubhub credit expires",'amber','🍔');
+  if(calYrSt(RS.citiAvisBudget).cls!=='st-used')add(h2End,"Radha: Citi AA Exec Avis/Budget credit expires unused",'amber','🚙');
+  [[RS.vxAnniv,RS.vxTravelCredit,"Radha: Venture X $300 travel credit resets",'blue','💳'],
+   [RS.cspAnniv,RS.cspHotelCredit,"Radha: CSP $100 hotel credit resets",'blue','🏨'],
+   [RS.rhyAnniv,RS.rhyFreeNight,"Radha: Hyatt free night cert resets",'blue','🌙']].forEach(([anniv,usedOn,label,urg,icon])=>{
+    if(!anniv)return;
+    const a=new Date(anniv+'T12:00:00');
+    let next=new Date(CY,a.getMonth(),a.getDate());
+    if(next<now)next=new Date(CY+1,a.getMonth(),a.getDate());
+    add(next.toISOString().slice(0,10),label,urg,icon);
+  });
+  // Passport & visa expiries
+  if(VS.passportExpiry.will)add(VS.passportExpiry.will,"Will's passport expires",'red','🛂');
+  if(VS.passportExpiry.radha)add(VS.passportExpiry.radha,"Radha's passport expires",'red','🛂');
+  Object.entries(VS.countries).forEach(([id,c])=>{
+    if(c.status==='have-valid'&&c.expiryDate){
+      const name=(VISA_COUNTRIES.find(x=>x[0]===id)||[,id])[1];
+      add(c.expiryDate,`Radha's ${name} visa expires`,'amber','🛂');
+    }
+  });
+  return events.sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+// ── WHERE CAN I GO RIGHT NOW? ─────────────────────────────────────────────────
+let affordState={nights:3,rate:'s',sort:'best'};
+function affordCalcHTML(){
+  const combined=(S.hyattPtsBalance||0)+(S.urPtsBalance||0);
+  return`${balanceInputsHTML()}
+    <div style="padding:14px 20px;border-bottom:1px solid var(--border-l);display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:11.5px;font-weight:600;color:var(--navy2)">${combined.toLocaleString()} points on hand</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--text2);font-weight:500">Nights</span>
+        <button class="nc-btn" onclick="affordNights(-1)">−</button>
+        <span class="nc-val" id="afford-nights-val" style="font-size:15px">${affordState.nights}</span>
+        <button class="nc-btn" onclick="affordNights(1)">+</button>
+      </div>
+      <div class="rate-toggles" style="width:220px">
+        <button class="rate-btn${affordState.rate==='lo'?' active':''}" onclick="affordRate('lo')">Off-Peak</button>
+        <button class="rate-btn${affordState.rate==='s'?' active':''}" onclick="affordRate('s')">Standard</button>
+        <button class="rate-btn${affordState.rate==='hi'?' active':''}" onclick="affordRate('hi')">Peak</button>
+      </div>
+    </div>
+    <div id="afford-results"></div>`;
+}
+function affordNights(d){affordState.nights=Math.min(14,Math.max(1,affordState.nights+d));document.getElementById('afford-nights-val').textContent=affordState.nights;affordUpdate();}
+function affordRate(r){affordState.rate=r;document.querySelectorAll('#calc-mode-body .rate-btn').forEach(b=>{if(['Off-Peak','Standard','Peak'].includes(b.textContent))b.classList.toggle('active',b.textContent.toLowerCase().includes(r==='lo'?'off':r==='hi'?'peak':'stand'));});affordUpdate();}
+function affordUpdate(){
+  const resEl=document.getElementById('afford-results');if(!resEl)return;
+  const combined=(S.hyattPtsBalance||0)+(S.urPtsBalance||0);
+  const {nights,rate}=affordState;
+  const paidNights=nights-Math.floor(nights/5);
+  if(!combined){resEl.innerHTML='<div class="pp-empty">Add your Hyatt and UR balances above to see what you can afford.</div>';return;}
+  const scored=PROPS.map(p=>{
+    const cat=p[6];const cost=CHART[cat][rate]*paidNights;
+    return{p,cost,afford:cost<=combined};
+  });
+  const affordable=scored.filter(s=>s.afford);
+  const sorted=[...affordable].sort((a,b)=>affordState.sort==='best'?b.p[6]-a.p[6]:a.cost-b.cost);
+  const cheapestOutOfReach=scored.filter(s=>!s.afford).sort((a,b)=>a.cost-b.cost)[0];
+  resEl.innerHTML=`
+    <div style="padding:10px 20px;background:#f5f7fb;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span style="font-size:12px;font-weight:600;color:var(--navy)">${affordable.length} of ${PROPS.length} properties affordable for ${nights} night${nights>1?'s':''}</span>
+      <div class="rate-toggles" style="width:180px">
+        <button class="rate-btn${affordState.sort==='best'?' active':''}" onclick="affordSort('best')">Best First</button>
+        <button class="rate-btn${affordState.sort==='cheap'?' active':''}" onclick="affordSort('cheap')">Cheapest First</button>
+      </div>
+    </div>
+    ${cheapestOutOfReach?`<div style="padding:10px 20px;background:var(--amber-t);color:var(--amber);font-size:11.5px">
+      Almost there: <strong>${cheapestOutOfReach.p[1]}</strong> (Cat ${cheapestOutOfReach.p[6]}) needs just ${(cheapestOutOfReach.cost-combined).toLocaleString()} more points.
+    </div>`:''}
+    <div class="pp-grid" style="padding:14px 20px" id="afford-grid"></div>`;
+  const grid=document.getElementById('afford-grid');
+  if(!sorted.length){grid.innerHTML='<div class="pp-empty">Nothing affordable yet at this length of stay — try fewer nights or Off-Peak rate.</div>';return;}
+  sorted.forEach(({p,cost})=>{
+    const[id,name,brand,city,country,,cat]=p;
+    const bc=BC[brand]||BC['Other'];
+    const card=document.createElement('div');card.className='prop-card';
+    card.innerHTML=`<div class="prop-top"><span class="prop-badge" style="background:${bc}">${brand}</span></div>
+      <div class="prop-name">${name}</div><div class="prop-loc">${city}, ${country}</div>
+      <div class="prop-footer"><span class="prop-cat">Cat ${cat}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${cost.toLocaleString()} pts</span></div>`;
+    grid.appendChild(card);
+  });
+}
+function affordSort(s){affordState.sort=s;affordUpdate();}
+
+// ── REDEMPTION HALL OF FAME ───────────────────────────────────────────────────
+let showRedForm=false;
+function cpp(r){return r.points>0?(r.cashValue/r.points*100):0;}
+function renderHOFBody(body){
+  const reds=[...TS.redemptions].sort((a,b)=>cpp(b)-cpp(a));
+  const avgCpp=reds.length?reds.reduce((s,r)=>s+cpp(r),0)/reds.length:0;
+  const totalPtsUsed=reds.reduce((s,r)=>s+r.points,0);
+  const totalCashVal=reds.reduce((s,r)=>s+r.cashValue,0);
+  body.innerHTML=`
+    <div class="trip-panel-head" style="border-radius:0">
+      <div class="tph-left"><div class="tph-title">Redemption Hall of Fame</div><div class="tph-ct">${reds.length} logged · avg ${avgCpp.toFixed(2)}¢/pt</div></div>
+      <button class="new-trip-btn" onclick="openRedForm()" style="background:var(--navy);color:#fff">+ Log Redemption</button>
+    </div>
+    <div id="red-form-wrap" style="display:${showRedForm?'block':'none'}">
+      <div class="trip-form-wrap">
+        <div class="trip-form-title">Log a Redemption</div>
+        <div class="tf-grid">
+          <div class="tf-field"><label>Property</label>
+            <input id="rf-prop" list="hyatt-prop-list" placeholder="Park Hyatt Tokyo" oninput="redPropHint(this.value)">
+          </div>
+          <div class="tf-field"><label>Date</label><input type="date" id="rf-date" value="${iso()}"></div>
+          <div class="tf-field"><label>Nights</label><input type="number" id="rf-nights" min="1" value="1"></div>
+          <div class="tf-field"><label>Points Paid</label><input type="number" id="rf-points" min="0" placeholder="30000"></div>
+          <div class="tf-field"><label>Cash Rate You Avoided</label><input type="number" id="rf-cash" min="0" placeholder="950"></div>
+        </div>
+        <div class="tf-field"><label>Notes</label><input id="rf-notes" placeholder="Suite upgrade, anniversary trip, etc."></div>
+        <div id="rf-hint" style="font-size:11px;color:var(--text3);margin:4px 0"></div>
+        <div class="tf-actions"><button class="tf-save" onclick="saveRedemption()">Save</button><button class="tf-cancel" onclick="cancelRedForm()">Cancel</button></div>
+      </div>
+    </div>
+    ${!reds.length?`<div class="trip-empty-state"><div class="trip-empty-icon">🏆</div><div class="trip-empty-text">No redemptions logged yet</div><div class="trip-empty-sub">Log your award stays to see your best-ever value per point</div></div>`:`
+    <div class="kpi-grid" style="padding:14px 20px 0">
+      <div class="kpi"><div class="kpi-v" style="color:var(--green)">${avgCpp.toFixed(2)}¢</div><div class="kpi-l">Avg Value / Point</div></div>
+      <div class="kpi"><div class="kpi-v">${totalPtsUsed.toLocaleString()}</div><div class="kpi-l">Total Points Redeemed</div></div>
+      <div class="kpi"><div class="kpi-v" style="color:var(--navy2)">$${totalCashVal.toLocaleString()}</div><div class="kpi-l">Total Cash Value Captured</div></div>
+    </div>
+    <div class="grp-head">Ranked by Value per Point</div>
+    ${reds.map((r,i)=>{
+      const c=cpp(r);const isTop=i===0;
+      return`<div class="dq-item" style="${isTop?'background:linear-gradient(90deg,#fff9ec,transparent)':''}">
+        <div style="width:20px;text-align:center;font-weight:700;color:${isTop?'#c9962a':'var(--text3)'};font-family:'IBM Plex Mono',monospace;font-size:12px">${isTop?'🥇':'#'+(i+1)}</div>
+        <div class="dq-text">${r.propName}<span class="dq-note">${fmtDY(r.date)} · ${r.nights} night${r.nights>1?'s':''} · ${r.points.toLocaleString()} pts for $${r.cashValue.toLocaleString()}${r.notes?' · '+r.notes:''}</span></div>
+        <div class="dq-val green">${c.toFixed(2)}¢/pt</div>
+        <button class="trip-del-btn" style="margin-left:8px" onclick="deleteRedemption('${r.id}')">✕</button>
+      </div>`;
+    }).join('')}`}`;
+}
+function redPropHint(val){
+  const hint=document.getElementById('rf-hint');if(!hint)return;
+  const match=PROPS.find(([,name])=>name.toLowerCase()===val.toLowerCase());
+  if(!match){hint.textContent='';return;}
+  const cat=match[6];
+  hint.textContent=`Cat ${cat} · Hyatt standard rate ~${CHART[cat].s.toLocaleString()} pts/night · est. cash ~$${CASH_EST[cat]}/night`;
+}
+function openRedForm(){showRedForm=true;renderCollectionBody();}
+function cancelRedForm(){showRedForm=false;renderCollectionBody();}
+function saveRedemption(){
+  const get=id=>document.getElementById(id)?.value.trim()||'';
+  const propName=get('rf-prop'),points=parseInt(get('rf-points'))||0,cashValue=parseInt(get('rf-cash'))||0;
+  if(!propName||!points||!cashValue){alert('Please fill in property, points paid, and cash value.');return;}
+  TS.redemptions.push({id:'red-'+Date.now(),propName,date:get('rf-date')||iso(),nights:parseInt(get('rf-nights'))||1,points,cashValue,notes:get('rf-notes')});
+  showRedForm=false;saveTravel();renderCollectionBody();
+}
+function deleteRedemption(id){if(!confirm('Delete this redemption?'))return;TS.redemptions=TS.redemptions.filter(r=>r.id!==id);saveTravel();renderCollectionBody();}
+
+
+
+// ── ERROR CONTAINMENT ────────────────────────────────────────────────────────
+// A bug in one section's render function should not blank the whole app.
+// safeRender catches it, shows a visible message in that section only, and
+// logs the real error to the console for debugging.
+function safeRender(label,fn){
+  try{fn();}
+  catch(err){
+    console.error(`[Travel HQ] Error rendering ${label}:`,err);
+    const targets={dashboard:'dash-content',cards:'panel-overview',travel:'panel-trips',passport:'pp-grid'};
+    const elId=targets[label];
+    const el=elId&&document.getElementById(elId);
+    if(el)el.innerHTML=`<div style="background:var(--red-t);color:var(--red);border-radius:6px;padding:16px 20px;font-size:12.5px;line-height:1.6">
+      <strong>This section hit an error and couldn't render.</strong><br>
+      Your saved data is untouched — try another tab, or reload the page. If it persists, open the browser console (F12) for details, or export your data as a precaution.<br>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;opacity:.75">${(err&&err.message)||err}</span>
+    </div>`;
+  }
+}
+window.onerror=function(msg,src,line,col,err){
+  console.error('[Travel HQ] Uncaught error:',msg,'at',src+':'+line);
+  const existing=document.getElementById('global-err-banner');
+  if(existing)return true;
+  const banner=document.createElement('div');
+  banner.id='global-err-banner';
+  banner.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#b51d15;color:#fff;padding:10px 16px;font-family:Inter,sans-serif;font-size:12px;z-index:9998;display:flex;justify-content:space-between;align-items:center;gap:12px';
+  banner.innerHTML=`<span>Something broke in the app (${msg}). Your saved data should be fine — try reloading, or export a backup first if you're able to.</span>
+    <span style="cursor:pointer;font-weight:600;flex-shrink:0" onclick="this.parentElement.remove()">Dismiss ✕</span>`;
+  document.body.appendChild(banner);
+  return true; // prevents the default blank-page browser error behavior
+};
 
 // ── RENDER DISPATCHER ──────────────────────────────────────────────────────
 function renderSection(section,tab){
-  if(section==='dashboard')renderDashboard();
-  else if(section==='cards')renderCards();
-  else if(section==='travel')renderTravel();
+  if(section==='dashboard')safeRender('dashboard',renderDashboard);
+  else if(section==='cards')safeRender('cards',renderCards);
+  else if(section==='travel')safeRender('travel',renderTravel);
   // passport renders separately via initPMap/renderPassport
 }
 
 // ── INITIALIZATION ─────────────────────────────────────────────────────────
 document.getElementById('nav-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 async function init(){
-  await Promise.all([load(),loadPassport(),loadTravel()]);
+  const dl=document.getElementById('hyatt-prop-list');
+  if(dl)dl.innerHTML=PROPS.map(([id,name])=>`<option value="${name}">`).join('');
+  try{
+    await Promise.all([load(),loadPassport(),loadTravel(),loadRadha(),loadVisa()]);
+  }catch(err){
+    console.error('[Travel HQ] Failed to load saved data:',err);
+    alert('There was a problem loading your saved data. Starting with a blank state — your backup file (if you have one) can restore it via Import.');
+  }
   setSection('dashboard');
 }
 init();
